@@ -209,7 +209,10 @@ function familyPattern(word: string): string {
 }
 
 function datamusePos(tags: string[] | undefined): string[] {
-  return unique((tags ?? []).filter((tag) => POS_TAGS.has(tag)), 4);
+  return unique(
+    (tags ?? []).filter((tag) => POS_TAGS.has(tag)),
+    4,
+  );
 }
 
 function mapFamily(items: DatamuseWord[], originalWord: string): WordFamilyItem[] {
@@ -222,7 +225,10 @@ function mapFamily(items: DatamuseWord[], originalWord: string): WordFamilyItem[
 }
 
 function mapWords(items: DatamuseWord[], limit = 12): string[] {
-  return unique(items.map((item) => item.word), limit);
+  return unique(
+    items.map((item) => item.word),
+    limit,
+  );
 }
 
 function buildCollocations(
@@ -269,9 +275,7 @@ export async function GET(request: Request) {
       fetchDatamuse({ rel_bgb: word, max: '8' }),
       primaryPos === 'adjective' ? fetchDatamuse({ rel_jja: word, max: '8' }) : Promise.resolve([]),
       primaryPos === 'noun' ? fetchDatamuse({ rel_jjb: word, max: '8' }) : Promise.resolve([]),
-      familyPrefix
-        ? fetchDatamuse({ ml: word, sp: `${familyPrefix}*`, md: 'p', max: '24' })
-        : Promise.resolve([]),
+      familyPrefix ? fetchDatamuse({ ml: word, sp: `${familyPrefix}*`, md: 'p', max: '24' }) : Promise.resolve([]),
       context ? fetchDatamuse(contextParams) : Promise.resolve([]),
     ]);
 
