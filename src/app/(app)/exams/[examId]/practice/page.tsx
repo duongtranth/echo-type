@@ -280,8 +280,8 @@ export default function ExamPracticePage() {
 
       {timedOutAt && !result && (
         <div className="rounded-xl border border-red-200 bg-red-50 p-4 text-sm text-red-800">
-          <strong>Time limit reached.</strong> Your answers at the deadline were snapshotted. You can keep working; after
-          submission the app will show both your score at the time limit and your final score.
+          <strong>Time limit reached.</strong> Your answers at the deadline were snapshotted. You can keep working;
+          after submission the app will show both your score at the time limit and your final score.
         </div>
       )}
 
@@ -453,7 +453,9 @@ export default function ExamPracticePage() {
               disabled={submitting || !attemptId}
               className="w-full rounded-lg bg-indigo-600 px-4 py-3 text-sm font-semibold text-white hover:bg-indigo-700 disabled:opacity-50"
             >
-              {submitting ? 'Submitting…' : `Submit answers${unansweredCount > 0 ? ` (${unansweredCount} unanswered)` : ''}`}
+              {submitting
+                ? 'Submitting…'
+                : `Submit answers${unansweredCount > 0 ? ` (${unansweredCount} unanswered)` : ''}`}
             </button>
           )}
 
