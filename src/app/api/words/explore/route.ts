@@ -201,7 +201,10 @@ function mergeSenses(primary: ExplorerSense[], secondary: ExplorerSense[]): Expl
   const seen = new Set<string>();
 
   for (const sense of [...primary, ...secondary]) {
-    const key = `${sense.pos.toLowerCase()}::${sense.definition.toLowerCase().replace(/[^a-z0-9]+/g, ' ').trim()}`;
+    const key = `${sense.pos.toLowerCase()}::${sense.definition
+      .toLowerCase()
+      .replace(/[^a-z0-9]+/g, ' ')
+      .trim()}`;
     if (!sense.definition.trim() || seen.has(key)) continue;
     seen.add(key);
     merged.push(sense);
