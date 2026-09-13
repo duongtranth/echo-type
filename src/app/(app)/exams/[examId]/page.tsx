@@ -137,9 +137,7 @@ export default function ExamEditorPage() {
           href={`/exams/${bundle.test.id}/practice`}
           aria-disabled={bundle.questions.length === 0}
           className={`inline-flex items-center justify-center gap-2 rounded-lg px-4 py-2 text-sm font-semibold text-white ${
-            bundle.questions.length > 0
-              ? 'bg-emerald-600 hover:bg-emerald-700'
-              : 'pointer-events-none bg-slate-300'
+            bundle.questions.length > 0 ? 'bg-emerald-600 hover:bg-emerald-700' : 'pointer-events-none bg-slate-300'
           }`}
         >
           <Play className="h-4 w-4" />
@@ -151,7 +149,8 @@ export default function ExamEditorPage() {
         <section className="rounded-xl border border-slate-200 bg-white p-5 shadow-sm">
           <h2 className="font-semibold text-slate-900">Extracted source</h2>
           <p className="mt-1 text-xs text-slate-500">
-            Phase 1 keeps the original extracted text visible while you verify questions. OCR/AI parsing can populate the editor later.
+            Phase 1 keeps the original extracted text visible while you verify questions. OCR/AI parsing can populate
+            the editor later.
           </p>
           <pre className="mt-4 max-h-[70vh] overflow-auto whitespace-pre-wrap rounded-lg bg-slate-50 p-4 text-sm leading-6 text-slate-700">
             {selectedSection?.sourceText || 'No source text.'}
@@ -159,7 +158,10 @@ export default function ExamEditorPage() {
         </section>
 
         <div className="space-y-6">
-          <form onSubmit={(event) => void handleSubmit(event)} className="space-y-4 rounded-xl border border-slate-200 bg-white p-5 shadow-sm">
+          <form
+            onSubmit={(event) => void handleSubmit(event)}
+            className="space-y-4 rounded-xl border border-slate-200 bg-white p-5 shadow-sm"
+          >
             <div className="flex items-center gap-2">
               <Plus className="h-4 w-4 text-indigo-500" />
               <h2 className="font-semibold text-slate-900">Add question</h2>
@@ -276,9 +278,7 @@ export default function ExamEditorPage() {
                           Q{question.number} · {question.type}
                         </p>
                         <p className="mt-1 text-sm text-slate-800">{question.prompt}</p>
-                        <p className="mt-2 text-xs text-emerald-700">
-                          Answer: {question.correctAnswers.join(' / ')}
-                        </p>
+                        <p className="mt-2 text-xs text-emerald-700">Answer: {question.correctAnswers.join(' / ')}</p>
                       </div>
                       <button
                         type="button"
