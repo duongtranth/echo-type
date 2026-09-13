@@ -51,12 +51,30 @@ describe('POST /api/translate', () => {
     generateTextMock.mockReset();
   });
 
+  it('maps the legacy zh-CN target to Vietnamese in AI prompts', async () => {
+    generateTextMock.mockResolvedValue({ text: 'Xin chào thế giới.' });
+
+    const response = await POST(
+      makeRequest({
+        text: 'Hello world.',
+        targetLang: 'zh-CN',
+      }),
+    );
+
+    expect(response.status).toBe(200);
+    expect(generateTextMock).toHaveBeenCalledWith(
+      expect.objectContaining({
+        system: expect.stringContaining('to Vietnamese'),
+      }),
+    );
+  });
+
   it('returns structured selection fields even when includeRelated is false', async () => {
     generateTextMock.mockResolvedValue({
       text: JSON.stringify({
-        itemTranslation: '垃圾',
+        itemTranslation: 'rác',
         exampleSentence: 'Will someone take out the trash?',
-        exampleTranslation: '谁来倒垃圾？',
+        exampleTranslation: 'Ai sẽ mang rác ra ngoài?',
         pronunciation: 'træʃ',
       }),
     });
@@ -72,21 +90,26 @@ describe('POST /api/translate', () => {
 
     expect(response.status).toBe(200);
     await expect(response.json()).resolves.toMatchObject({
-      translation: '垃圾',
-      itemTranslation: '垃圾',
+      translation: 'rác',
+      itemTranslation: 'rác',
       exampleSentence: 'Will someone take out the trash?',
-      exampleTranslation: '谁来倒垃圾？',
+      exampleTranslation: 'Ai sẽ mang rác ra ngoài?',
       pronunciation: 'træʃ',
     });
+    expect(generateTextMock).toHaveBeenCalledWith(
+      expect.objectContaining({
+        system: expect.stringContaining('to Vietnamese'),
+      }),
+    );
   });
 
   it('extracts structured translation JSON surrounded by model commentary', async () => {
     generateTextMock.mockResolvedValue({
       text: `Here is the translation:
       {
-        "itemTranslation": "绝对美味",
+        "itemTranslation": "cực kỳ ngon",
         "exampleSentence": "The food was absolutely delicious.",
-        "exampleTranslation": "食物非常美味。"
+        "exampleTranslation": "Món ăn cực kỳ ngon."
       }
       Hope this helps!`,
     });
@@ -102,10 +125,10 @@ describe('POST /api/translate', () => {
 
     expect(response.status).toBe(200);
     await expect(response.json()).resolves.toMatchObject({
-      translation: '绝对美味',
-      itemTranslation: '绝对美味',
+      translation: 'cực kỳ ngon',
+      itemTranslation: 'cực kỳ ngon',
       exampleSentence: 'The food was absolutely delicious.',
-      exampleTranslation: '食物非常美味。',
+      exampleTranslation: 'Món ăn cực kỳ ngon.',
     });
   });
 
