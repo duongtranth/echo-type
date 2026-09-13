@@ -1,10 +1,13 @@
 'use client';
 
-import { AlertCircle, FileText, Loader2, Upload } from 'lucide-react';
+import { AlertCircle, FileText, Loader2, Sparkles, Upload } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
+import { createExamFromParsedDraft } from '@/lib/exams/import';
 import { createExamFromExtractedText } from '@/lib/exams/repository';
-import type { ExamType } from '@/types/exam';
+import { PROVIDER_REGISTRY } from '@/lib/providers';
+import { useProviderStore } from '@/stores/provider-store';
+import type { ExamType, ParsedExamDraft } from '@/types/exam';
 
 interface ExtractedPdf {
   text: string;
@@ -15,15 +18,25 @@ interface ExtractedPdf {
   };
 }
 
+interface ParsedExamResponse {
+  draft: ParsedExamDraft;
+  truncated?: boolean;
+  error?: string;
+}
+
 const MAX_PDF_SIZE = 10 * 1024 * 1024;
 
 export default function ImportExamPage() {
   const router = useRouter();
+  const activeProviderId = useProviderStore((state) => state.activeProviderId);
+  const activeConfig = useProviderStore((state) => state.getActiveConfig());
+  const providers = useProviderStore((state) => state.providers);
   const [examType, setExamType] = useState<ExamType>('IELTS');
   const [title, setTitle] = useState('');
   const [file, setFile] = useState<File | null>(null);
   const [data, setData] = useState<ExtractedPdf | null>(null);
   const [extracting, setExtracting] = useState(false);
+  const [parsing, setParsing] = useState(false);
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState('');
 
@@ -71,7 +84,7 @@ export default function ImportExamPage() {
     }
   };
 
-  const saveDraft = async () => {
+  const saveManualDraft = async () => {
     if (!data) return;
     setSaving(true);
     setError('');
@@ -90,13 +103,53 @@ export default function ImportExamPage() {
     }
   };
 
+  const parseWithAI = async () => {
+    if (!data) return;
+    setParsing(true);
+    setError('');
+
+    try {
+      const apiKey = activeConfig.auth.apiKey || activeConfig.auth.accessToken || '';
+      const headerKey = PROVIDER_REGISTRY[activeProviderId].headerKey;
+      const headers: Record<string, string> = { 'Content-Type': 'application/json' };
+      if (apiKey) headers[headerKey] = apiKey;
+
+      const response = await fetch('/api/exams/parse', {
+        method: 'POST',
+        headers,
+        body: JSON.stringify({
+          examType,
+          text: data.text,
+          provider: activeProviderId,
+          providerConfigs: providers,
+        }),
+      });
+      const json = (await response.json()) as ParsedExamResponse;
+      if (!response.ok || !json.draft) {
+        throw new Error(json.error || 'AI could not parse this exam.');
+      }
+
+      const imported = await createExamFromParsedDraft({
+        title,
+        examType,
+        sourceFilename: file?.name,
+        rawText: data.text,
+        draft: json.draft,
+      });
+      router.push(`/exams/${imported.testId}`);
+    } catch (cause) {
+      setError(cause instanceof Error ? cause.message : 'AI could not parse this exam.');
+      setParsing(false);
+    }
+  };
+
   return (
     <div className="mx-auto w-full max-w-4xl space-y-6 p-4 md:p-8">
       <div>
         <p className="text-sm font-medium text-indigo-600">Import exam</p>
         <h1 className="text-2xl font-semibold text-slate-900">Create an IELTS or TOEIC draft from PDF</h1>
         <p className="mt-1 text-sm text-slate-500">
-          EchoType extracts the PDF text first. You can verify the source and add questions before practising.
+          Extract the PDF first, then let your configured EchoType AI provider structure explicit sections, questions, and answer keys.
         </p>
       </div>
 
@@ -150,7 +203,7 @@ export default function ImportExamPage() {
               className="inline-flex items-center justify-center gap-2 rounded-lg bg-indigo-600 px-4 py-2 text-sm font-medium text-white hover:bg-indigo-700 disabled:opacity-50"
             >
               {extracting && <Loader2 className="h-4 w-4 animate-spin" />}
-              {extracting ? 'Extracting…' : 'Extract PDF'}
+              {extracting ? 'Extracting…' : data ? 'Extract again' : 'Extract PDF'}
             </button>
           </div>
         )}
@@ -180,14 +233,29 @@ export default function ImportExamPage() {
               </pre>
             </div>
 
-            <button
-              type="button"
-              onClick={() => void saveDraft()}
-              disabled={saving || data.text.trim().length === 0}
-              className="w-full rounded-lg bg-emerald-600 px-4 py-2.5 text-sm font-semibold text-white hover:bg-emerald-700 disabled:opacity-50"
-            >
-              {saving ? 'Saving draft…' : 'Save exam draft'}
-            </button>
+            <div className="grid gap-3 sm:grid-cols-2">
+              <button
+                type="button"
+                onClick={() => void parseWithAI()}
+                disabled={parsing || saving || data.text.trim().length === 0}
+                className="inline-flex items-center justify-center gap-2 rounded-lg bg-indigo-600 px-4 py-2.5 text-sm font-semibold text-white hover:bg-indigo-700 disabled:opacity-50"
+              >
+                {parsing ? <Loader2 className="h-4 w-4 animate-spin" /> : <Sparkles className="h-4 w-4" />}
+                {parsing ? 'Parsing exam…' : 'AI parse & save'}
+              </button>
+              <button
+                type="button"
+                onClick={() => void saveManualDraft()}
+                disabled={saving || parsing || data.text.trim().length === 0}
+                className="rounded-lg border border-slate-200 bg-white px-4 py-2.5 text-sm font-semibold text-slate-700 hover:bg-slate-50 disabled:opacity-50"
+              >
+                {saving ? 'Saving draft…' : 'Save without AI'}
+              </button>
+            </div>
+
+            <p className="text-xs leading-5 text-slate-500">
+              AI only imports questions when an explicit answer can be matched from the source. Unanswered questions are skipped instead of hallucinating an answer; you can add them manually in the editor.
+            </p>
           </div>
         )}
       </div>
