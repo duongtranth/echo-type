@@ -36,9 +36,14 @@ describe('language-store', () => {
     });
   });
 
-  it('detects zh browser locales', () => {
-    expect(detectInterfaceLanguage('zh-CN')).toBe('zh');
-    expect(detectInterfaceLanguage('zh-TW')).toBe('zh');
+  it('maps Vietnamese browser locales to the legacy second-locale slot', () => {
+    expect(detectInterfaceLanguage('vi-VN')).toBe('zh');
+    expect(detectInterfaceLanguage('vi')).toBe('zh');
+  });
+
+  it('does not auto-select Vietnamese for Chinese browser locales', () => {
+    expect(detectInterfaceLanguage('zh-CN')).toBe('en');
+    expect(detectInterfaceLanguage('zh-TW')).toBe('en');
   });
 
   it('defaults to english when browser locale is missing', () => {
@@ -49,7 +54,7 @@ describe('language-store', () => {
   it('initializes from browser language when no explicit preference exists', () => {
     Object.defineProperty(globalThis, 'navigator', {
       configurable: true,
-      value: { language: 'zh-CN' },
+      value: { language: 'vi-VN' },
     });
 
     useLanguageStore.getState().initialize();
@@ -85,7 +90,7 @@ describe('language-store', () => {
     );
     Object.defineProperty(globalThis, 'navigator', {
       configurable: true,
-      value: { language: 'zh-CN' },
+      value: { language: 'vi-VN' },
     });
 
     useLanguageStore.getState().initialize();
@@ -101,7 +106,7 @@ describe('language-store', () => {
     storage.set('echotype_language_settings', '{bad json');
     Object.defineProperty(globalThis, 'navigator', {
       configurable: true,
-      value: { language: 'zh-CN' },
+      value: { language: 'vi-VN' },
     });
 
     useLanguageStore.getState().initialize();
