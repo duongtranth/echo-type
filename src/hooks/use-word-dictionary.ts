@@ -38,6 +38,8 @@ export interface WordMeaning {
   definition: string;
   definitionEnglish: string;
   examples: WordExample[];
+  /** Legacy single-example view retained for existing consumers. */
+  example?: string;
   synonyms: string[];
   antonyms: string[];
   contextMatch?: boolean;
@@ -246,18 +248,23 @@ async function translateSenses(
   });
   const translated = await fetchBatchTranslations(texts, targetLang);
 
-  return senses.map((sense, index) => ({
-    pos: sense.pos,
-    definition: translated[layout[index]!.definitionIndex] || sense.definition,
-    definitionEnglish: sense.definition,
-    examples: layout[index]!.exampleIndexes.map((translationIndex, exampleIndex) => ({
+  return senses.map((sense, index) => {
+    const examples = layout[index]!.exampleIndexes.map((translationIndex, exampleIndex) => ({
       text: sense.examples[exampleIndex]!,
       translation: translated[translationIndex] || undefined,
-    })),
-    synonyms: sense.synonyms,
-    antonyms: sense.antonyms,
-    contextMatch: sense.contextMatch,
-  }));
+    }));
+
+    return {
+      pos: sense.pos,
+      definition: translated[layout[index]!.definitionIndex] || sense.definition,
+      definitionEnglish: sense.definition,
+      examples,
+      example: examples[0]?.text,
+      synonyms: sense.synonyms,
+      antonyms: sense.antonyms,
+      contextMatch: sense.contextMatch,
+    };
+  });
 }
 
 function isUsefulEnglishExample(word: string, sentence: string): boolean {
