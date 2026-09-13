@@ -105,7 +105,6 @@ function NavLink({
     }
 
     if (collapsed) {
-      // Collapsed: show only parent icon, no children
       const link = (
         <Link
           href={item.href}
@@ -164,7 +163,6 @@ function NavLink({
     );
   }
 
-  // depth >= 1: child item — minimal, text-only style
   const childActive = pathname.startsWith(item.href);
   return (
     <Link
@@ -235,17 +233,17 @@ function UpdateIndicator({ collapsed }: { collapsed: boolean }) {
 }
 
 export function Sidebar({ open = false, onOpenChange }: SidebarProps = {}) {
-  const zh = useLanguageStore((s) => s.interfaceLanguage) === 'zh';
+  const vi = useLanguageStore((s) => s.interfaceLanguage) === 'zh';
   const pathname = usePathname();
   const [collapsed, setCollapsed] = useState(false);
   const { messages } = useI18n('sidebar');
 
   const navGroups: NavGroup[] = [
     {
-      label: zh ? '学习' : 'Learning',
+      label: vi ? 'Học tập' : 'Learning',
       items: PRIMARY_LEARNING_LINKS.slice(0, 5).map((link) => ({
         ...link,
-        label: zh ? link.zh : link.en,
+        label: vi ? link.zh : link.en,
         icon: {
           today: LayoutDashboard,
           courses: BookOpen,
@@ -259,10 +257,10 @@ export function Sidebar({ open = false, onOpenChange }: SidebarProps = {}) {
       })),
     },
     {
-      label: zh ? '专项训练' : 'Focused practice',
+      label: vi ? 'Luyện tập chuyên sâu' : 'Focused practice',
       items: PRIMARY_LEARNING_LINKS.slice(5).map((link) => ({
         ...link,
-        label: zh ? link.zh : link.en,
+        label: vi ? link.zh : link.en,
         icon: link.section === 'conversation' ? MessageCircle : link.section === 'exams' ? BookOpen : Volume2,
       })),
     },
@@ -272,17 +270,12 @@ export function Sidebar({ open = false, onOpenChange }: SidebarProps = {}) {
     <aside
       className={cn(
         'h-screen bg-white border-r border-slate-100 flex flex-col shrink-0',
-        // Mobile: fixed overlay with slide animation
         'fixed inset-y-0 left-0 z-50 transition-transform duration-200',
-        // Desktop: relative positioning (normal flow)
         'md:relative md:translate-x-0',
-        // Width
         collapsed ? 'w-[60px]' : 'w-60',
-        // Slide animation on mobile only
         open ? 'translate-x-0' : '-translate-x-full md:translate-x-0',
       )}
     >
-      {/* Close button - mobile only */}
       <button
         type="button"
         onClick={() => onOpenChange?.(false)}
@@ -292,7 +285,6 @@ export function Sidebar({ open = false, onOpenChange }: SidebarProps = {}) {
         <X className="w-5 h-5 text-slate-600" />
       </button>
 
-      {/* Logo */}
       <div className={cn('border-b border-slate-100', collapsed ? 'px-2 py-4' : 'px-4 py-4')}>
         <Link href="/" prefetch={false} className="flex items-center gap-2.5 cursor-pointer group">
           <div className="w-8 h-8 rounded-xl bg-gradient-to-br from-indigo-500 to-violet-600 flex items-center justify-center shadow-sm shadow-indigo-200 shrink-0">
@@ -311,7 +303,6 @@ export function Sidebar({ open = false, onOpenChange }: SidebarProps = {}) {
         </Link>
       </div>
 
-      {/* Nav */}
       <nav className={cn('flex-1 py-3 space-y-4 overflow-y-auto', collapsed ? 'px-1.5' : 'px-2')}>
         {navGroups.map((group) => (
           <div key={group.label}>
@@ -329,10 +320,8 @@ export function Sidebar({ open = false, onOpenChange }: SidebarProps = {}) {
         ))}
       </nav>
 
-      {/* Update indicator - only in Tauri desktop */}
       {IS_TAURI && <UpdateIndicator collapsed={collapsed} />}
 
-      {/* User menu + Collapse toggle */}
       <div className={cn('border-t border-slate-100', collapsed ? 'px-2 py-2 space-y-1' : 'px-2 py-2 space-y-1')}>
         <NavLink
           item={{ href: '/settings', section: 'settings', label: messages.items.settings, icon: Settings }}
