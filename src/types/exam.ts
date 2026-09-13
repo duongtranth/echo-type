@@ -14,6 +14,28 @@ export type ExamQuestionType =
 
 export type ExamStatus = 'draft' | 'ready';
 
+export interface ParsedExamQuestion {
+  number: number;
+  type: ExamQuestionType;
+  prompt: string;
+  options?: string[];
+  correctAnswers?: string[];
+  explanation?: string;
+}
+
+export interface ParsedExamSection {
+  skill: ExamSkill;
+  title: string;
+  instructions?: string;
+  sourceText?: string;
+  questions: ParsedExamQuestion[];
+}
+
+export interface ParsedExamDraft {
+  title?: string;
+  sections: ParsedExamSection[];
+}
+
 export interface ExamTest {
   id: string;
   title: string;
