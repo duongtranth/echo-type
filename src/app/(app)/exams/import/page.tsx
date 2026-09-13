@@ -16,6 +16,7 @@ interface ExtractedPdf {
     title: string | null;
     author: string | null;
   };
+  extractionMethod?: string;
 }
 
 interface ParsedExamResponse {
@@ -36,6 +37,7 @@ export default function ImportExamPage() {
   const [file, setFile] = useState<File | null>(null);
   const [data, setData] = useState<ExtractedPdf | null>(null);
   const [extracting, setExtracting] = useState(false);
+  const [ocring, setOcring] = useState(false);
   const [parsing, setParsing] = useState(false);
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState('');
@@ -75,12 +77,35 @@ export default function ImportExamPage() {
         throw new Error(json.error || 'Could not extract this PDF.');
       }
 
-      setData(json);
+      setData({ ...json, extractionMethod: 'pdf-text' });
       if (json.metadata?.title) setTitle(json.metadata.title);
     } catch (cause) {
       setError(cause instanceof Error ? cause.message : 'Could not extract this PDF.');
     } finally {
       setExtracting(false);
+    }
+  };
+
+  const extractWithPaddleOCR = async () => {
+    if (!file) return;
+    setOcring(true);
+    setError('');
+
+    try {
+      const formData = new FormData();
+      formData.append('file', file);
+      const response = await fetch('/api/exams/ocr', { method: 'POST', body: formData });
+      const json = (await response.json()) as ExtractedPdf & { error?: string };
+
+      if (!response.ok) {
+        throw new Error(json.error || 'PaddleOCR-VL could not parse this PDF.');
+      }
+
+      setData(json);
+    } catch (cause) {
+      setError(cause instanceof Error ? cause.message : 'PaddleOCR-VL could not parse this PDF.');
+    } finally {
+      setOcring(false);
     }
   };
 
@@ -143,13 +168,15 @@ export default function ImportExamPage() {
     }
   };
 
+  const extractionBusy = extracting || ocring;
+
   return (
     <div className="mx-auto w-full max-w-4xl space-y-6 p-4 md:p-8">
       <div>
         <p className="text-sm font-medium text-indigo-600">Import exam</p>
         <h1 className="text-2xl font-semibold text-slate-900">Create an IELTS or TOEIC draft from PDF</h1>
         <p className="mt-1 text-sm text-slate-500">
-          Extract the PDF first, then let your configured EchoType AI provider structure explicit sections, questions, and answer keys.
+          Use fast text extraction for normal PDFs, or PaddleOCR-VL for scanned and layout-heavy tests, then structure the result with your configured AI provider.
         </p>
       </div>
 
@@ -191,20 +218,34 @@ export default function ImportExamPage() {
         </label>
 
         {file && (
-          <div className="flex flex-col gap-3 rounded-lg bg-slate-50 p-3 sm:flex-row sm:items-center sm:justify-between">
+          <div className="space-y-3 rounded-lg bg-slate-50 p-3">
             <div className="flex min-w-0 items-center gap-2">
               <FileText className="h-4 w-4 shrink-0 text-indigo-500" />
               <span className="truncate text-sm text-slate-700">{file.name}</span>
             </div>
-            <button
-              type="button"
-              onClick={() => void extractPdf()}
-              disabled={extracting}
-              className="inline-flex items-center justify-center gap-2 rounded-lg bg-indigo-600 px-4 py-2 text-sm font-medium text-white hover:bg-indigo-700 disabled:opacity-50"
-            >
-              {extracting && <Loader2 className="h-4 w-4 animate-spin" />}
-              {extracting ? 'Extracting…' : data ? 'Extract again' : 'Extract PDF'}
-            </button>
+            <div className="grid gap-2 sm:grid-cols-2">
+              <button
+                type="button"
+                onClick={() => void extractPdf()}
+                disabled={extractionBusy}
+                className="inline-flex items-center justify-center gap-2 rounded-lg bg-indigo-600 px-4 py-2 text-sm font-medium text-white hover:bg-indigo-700 disabled:opacity-50"
+              >
+                {extracting && <Loader2 className="h-4 w-4 animate-spin" />}
+                {extracting ? 'Extracting…' : 'Fast PDF text'}
+              </button>
+              <button
+                type="button"
+                onClick={() => void extractWithPaddleOCR()}
+                disabled={extractionBusy}
+                className="inline-flex items-center justify-center gap-2 rounded-lg border border-indigo-200 bg-white px-4 py-2 text-sm font-medium text-indigo-700 hover:bg-indigo-50 disabled:opacity-50"
+              >
+                {ocring && <Loader2 className="h-4 w-4 animate-spin" />}
+                {ocring ? 'Running OCR…' : 'PaddleOCR-VL'}
+              </button>
+            </div>
+            <p className="text-xs text-slate-500">
+              PaddleOCR-VL requires the server environment variable PADDLEOCR_VL_URL, for example http://127.0.0.1:8080.
+            </p>
           </div>
         )}
 
@@ -222,6 +263,9 @@ export default function ImportExamPage() {
               <span className="rounded-full bg-slate-100 px-2 py-1">
                 {data.text.split(/\s+/).filter(Boolean).length.toLocaleString()} words
               </span>
+              {data.extractionMethod && (
+                <span className="rounded-full bg-indigo-50 px-2 py-1 text-indigo-700">{data.extractionMethod}</span>
+              )}
               {data.metadata.author && <span className="rounded-full bg-slate-100 px-2 py-1">{data.metadata.author}</span>}
             </div>
 
