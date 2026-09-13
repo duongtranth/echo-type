@@ -1,67 +1,67 @@
 {
   "page": {
-    "loading": "正在加载学习分析...",
-    "error": "加载学习分析失败：{{message}}",
-    "title": "学习分析",
-    "subtitle": "跟踪你的学习进度，并找出需要加强的地方",
+    "loading": "Đang tải số liệu phân tích...",
+    "error": "Tải số liệu phân tích thất bại: {{message}}",
+    "title": "Phân tích học tập",
+    "subtitle": "Theo dõi tiến độ học tập và tìm ra những phần cần cải thiện",
     "stats": {
-      "streak": "连续天数",
-      "totalSessions": "总练习次数",
-      "avgAccuracy": "平均准确率",
-      "avgWpm": "平均 WPM",
+      "streak": "Chuỗi ngày liên tiếp",
+      "totalSessions": "Tổng số buổi luyện tập",
+      "avgAccuracy": "Độ chính xác trung bình",
+      "avgWpm": "WPM trung bình",
       "currentDays": "{{count}} {{unit}}",
-      "longest": "最长：{{count}} {{unit}}"
+      "longest": "Dài nhất: {{count}} {{unit}}"
     }
   },
   "modules": {
-    "listen": "听力",
-    "speak": "口语",
-    "read": "阅读",
-    "write": "写作"
+    "listen": "Nghe",
+    "speak": "Nói",
+    "read": "Đọc",
+    "write": "Viết"
   },
   "charts": {
     "accuracyTrend": {
-      "title": "准确率趋势",
-      "empty": "还没有准确率数据",
-      "tooltipLabel": "准确率"
+      "title": "Xu hướng độ chính xác",
+      "empty": "Chưa có dữ liệu độ chính xác",
+      "tooltipLabel": "Độ chính xác"
     },
     "activityHeatmap": {
-      "title": "活跃度热力图",
-      "summary": "{{sessions}} 次练习，分布在 {{days}} 个活跃日",
-      "dayLabels": ["", "一", "", "三", "", "五", ""],
-      "cellTitle": "{{date}}：{{count}}{{sessionLabel}}",
-      "session": "次练习",
-      "sessions": "次练习",
-      "less": "少",
-      "more": "多"
+      "title": "Bản đồ nhiệt hoạt động",
+      "summary": "{{sessions}} buổi luyện tập trong {{days}} ngày hoạt động",
+      "dayLabels": ["", "T2", "", "T4", "", "T6", ""],
+      "cellTitle": "{{date}}: {{count}} {{sessionLabel}}",
+      "session": "buổi",
+      "sessions": "buổi",
+      "less": "Ít",
+      "more": "Nhiều"
     },
     "dailySessions": {
-      "title": "每日练习次数",
-      "empty": "还没有练习数据"
+      "title": "Số buổi luyện tập theo ngày",
+      "empty": "Chưa có dữ liệu buổi luyện tập"
     },
     "moduleBreakdown": {
-      "title": "模块分布",
-      "empty": "还没有练习数据",
-      "tooltipValue": "{{count}} 次练习（{{time}}）"
+      "title": "Phân bổ theo mô-đun",
+      "empty": "Chưa có dữ liệu buổi luyện tập",
+      "tooltipValue": "{{count}} buổi ({{time}})"
     },
     "reviewForecast": {
-      "title": "复习预测",
-      "summary": "未来 7 天共有 {{count}} 项",
-      "empty": "暂无即将到来的复习",
-      "tooltipValue": "{{count}} 项",
-      "tooltipLabel": "复习"
+      "title": "Dự báo ôn tập",
+      "summary": "{{count}} mục trong 7 ngày tới",
+      "empty": "Không có lịch ôn tập sắp tới",
+      "tooltipValue": "{{count}} mục",
+      "tooltipLabel": "Ôn tập"
     },
     "vocabularyGrowth": {
-      "title": "词汇增长",
-      "empty": "还没有词汇数据",
-      "tooltipValue": "{{count}} 项",
-      "tooltipLabel": "词汇"
+      "title": "Tăng trưởng từ vựng",
+      "empty": "Chưa có dữ liệu từ vựng",
+      "tooltipValue": "{{count}} mục",
+      "tooltipLabel": "Từ vựng"
     },
     "wpmTrend": {
-      "title": "WPM 变化趋势",
-      "empty": "还没有 WPM 数据",
+      "title": "Xu hướng WPM",
+      "empty": "Chưa có dữ liệu WPM",
       "tooltipValue": "{{value}} WPM",
-      "tooltipLabel": "速度"
+      "tooltipLabel": "Tốc độ"
     }
   }
 }

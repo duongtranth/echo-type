@@ -1,13 +1,16 @@
 {
   "topics": {
-    "dailyLife": { "label": "日常生活", "hint": "来聊聊日常生活和每天的活动吧。" },
-    "travel": { "label": "旅行", "hint": "来聊聊旅行经历和梦想目的地吧。" },
-    "food": { "label": "美食", "hint": "来聊聊美食、烹饪和餐厅吧。" },
-    "hobbies": { "label": "兴趣爱好", "hint": "来聊聊兴趣爱好和你喜欢做的事吧。" },
-    "moviesMusic": { "label": "电影和音乐", "hint": "来聊聊电影、电视剧和音乐吧。" },
-    "workCareer": { "label": "工作与职业", "hint": "来聊聊工作、职业目标和职场生活吧。" },
-    "technology": { "label": "科技", "hint": "来聊聊科技和最新趋势吧。" },
-    "culture": { "label": "文化", "hint": "来聊聊不同的文化和传统吧。" }
+    "dailyLife": { "label": "Đời sống hằng ngày", "hint": "Hãy nói về sinh hoạt và hoạt động thường ngày của bạn." },
+    "travel": { "label": "Du lịch", "hint": "Hãy nói về những chuyến đi và điểm đến trong mơ." },
+    "food": { "label": "Ẩm thực", "hint": "Hãy nói về món ăn, nấu nướng và nhà hàng." },
+    "hobbies": { "label": "Sở thích", "hint": "Hãy nói về sở thích và những điều bạn thích làm." },
+    "moviesMusic": { "label": "Phim ảnh & Âm nhạc", "hint": "Hãy nói về phim, chương trình truyền hình và âm nhạc." },
+    "workCareer": {
+      "label": "Công việc & Sự nghiệp",
+      "hint": "Hãy nói về công việc, mục tiêu sự nghiệp và đời sống nơi công sở."
+    },
+    "technology": { "label": "Công nghệ", "hint": "Hãy nói về công nghệ và các xu hướng mới nhất." },
+    "culture": { "label": "Văn hóa", "hint": "Hãy nói về các nền văn hóa và truyền thống khác nhau." }
   },
-  "opening": "你好！👋 我是你的英语对话伙伴。你可以聊任何话题——或者选择上面的话题开始。你想聊什么？"
+  "opening": "Xin chào! 👋 Mình là bạn đồng hành luyện nói tiếng Anh của bạn. Bạn có thể nói về bất kỳ chủ đề nào — hoặc chọn một chủ đề ở trên để bắt đầu. Bạn muốn nói về điều gì?"
 }

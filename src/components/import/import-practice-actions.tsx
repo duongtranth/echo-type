@@ -36,7 +36,7 @@ export function ImportPracticeActions({
             href="/learn"
             className="block rounded-xl bg-indigo-600 p-4 font-semibold text-white hover:bg-indigo-700"
           >
-            Open as a course · 作为课程学习
+            Open as a course · Mở dưới dạng khóa học
           </Link>
           {actions.map((action) => {
             const Icon = moduleIcons[action.module];

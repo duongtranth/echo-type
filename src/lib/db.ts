@@ -32,6 +32,14 @@ export interface AlignmentCacheEntry {
   createdAt: number;
 }
 
+export interface WordImageEntry {
+  cacheKey: string;
+  blob: Blob;
+  mimeType: string;
+  attribution: { photographer: string; photographerUrl: string; unsplashUrl: string };
+  createdAt: number;
+}
+
 class EchoTypeDB extends Dexie {
   contents!: Table<ContentItem>;
   records!: Table<LearningRecord>;
@@ -55,6 +63,7 @@ class EchoTypeDB extends Dexie {
   importJobs!: Table<ImportJob>;
   syncConflicts!: Table<SyncConflict>;
   syncEntityState!: Table<SyncEntityState>;
+  wordImages!: Table<WordImageEntry>;
 
   constructor(name: string) {
     super(name);
@@ -301,6 +310,8 @@ class EchoTypeDB extends Dexie {
       });
     // Also upgrade development databases that opened v18 before CAS state was introduced.
     this.version(19).stores({ syncEntityState: 'id' });
+    // Version 20: add wordImages table for cached vocabulary illustration photos
+    this.version(20).stores({ wordImages: 'cacheKey, createdAt' });
     // Track all mutations, including scheduling, folder edits and long-session completion.
     for (const name of ['records', 'sessions', 'favoriteFolders', 'books', 'collections', 'weakSpots']) {
       this.table(name).hook('creating', (_key, row) => {

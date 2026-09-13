@@ -3,7 +3,7 @@ import type { WordBook } from '@/types/wordbook';
 export const testBooks: WordBook[] = [
   {
     id: 'graduate',
-    name: '考研英语核心词汇',
+    name: 'Từ vựng cốt lõi thi Cao học (Trung Quốc)',
     nameEn: 'Graduate Entrance',
     description:
       'Must-know vocabulary for the National Graduate Entrance Exam (考研), focused on reading and translation.',
@@ -16,7 +16,7 @@ export const testBooks: WordBook[] = [
   },
   {
     id: 'toefl',
-    name: '托福核心词汇',
+    name: 'Từ vựng cốt lõi TOEFL',
     nameEn: 'TOEFL',
     description:
       'Comprehensive vocabulary for the TOEFL exam, covering academic English across reading, listening, speaking, and writing.',
@@ -29,7 +29,7 @@ export const testBooks: WordBook[] = [
   },
   {
     id: 'ielts',
-    name: '雅思核心词汇',
+    name: 'Từ vựng cốt lõi IELTS',
     nameEn: 'IELTS',
     description: 'Essential vocabulary for the IELTS exam, covering academic and general training modules.',
     kind: 'vocabulary',
@@ -41,7 +41,7 @@ export const testBooks: WordBook[] = [
   },
   {
     id: 'gre',
-    name: 'GRE核心词汇',
+    name: 'Từ vựng cốt lõi GRE',
     nameEn: 'GRE',
     description: 'High-frequency vocabulary for the GRE exam, essential for graduate school admissions in the US.',
     kind: 'vocabulary',
@@ -53,7 +53,7 @@ export const testBooks: WordBook[] = [
   },
   {
     id: 'gmat',
-    name: 'GMAT核心词汇',
+    name: 'Từ vựng cốt lõi GMAT',
     nameEn: 'GMAT',
     description: 'Targeted vocabulary for the GMAT exam, focused on business and analytical reasoning contexts.',
     kind: 'vocabulary',
@@ -65,7 +65,7 @@ export const testBooks: WordBook[] = [
   },
   {
     id: 'sat',
-    name: 'SAT核心词汇',
+    name: 'Từ vựng cốt lõi SAT',
     nameEn: 'SAT',
     description: 'Key vocabulary for the SAT exam, covering critical reading and evidence-based writing.',
     kind: 'vocabulary',

@@ -17,9 +17,9 @@ const MODULE_COLORS: Record<string, string> = {
 
 function formatTime(ms: number, language: 'en' | 'zh'): string {
   const mins = Math.round(ms / 60_000);
-  if (mins < 60) return language === 'zh' ? `${mins} 分钟` : `${mins}m`;
+  if (mins < 60) return language === 'zh' ? `${mins} phút` : `${mins}m`;
   const hrs = Math.floor(mins / 60);
-  return language === 'zh' ? `${hrs} 小时 ${mins % 60} 分钟` : `${hrs}h ${mins % 60}m`;
+  return language === 'zh' ? `${hrs} giờ ${mins % 60} phút` : `${hrs}h ${mins % 60}m`;
 }
 
 export function ModuleBreakdown({ data }: Props) {

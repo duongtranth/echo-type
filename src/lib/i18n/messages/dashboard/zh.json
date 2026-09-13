@@ -1,125 +1,125 @@
 {
   "header": {
-    "title": "欢迎使用 EchoType",
-    "subtitle": "通过听、说、读、写掌握英语",
-    "analytics": "查看分析"
+    "title": "Chào mừng đến với EchoType",
+    "subtitle": "Chinh phục tiếng Anh qua nghe, nói, đọc và viết",
+    "analytics": "Xem phân tích"
   },
   "stats": {
-    "streak": "连续学习",
-    "content": "内容",
-    "sessions": "练习次数",
-    "words": "单词",
-    "articles": "文章",
-    "accuracy": "准确率",
-    "avgWpm": "平均 WPM"
+    "streak": "Chuỗi ngày",
+    "content": "Nội dung",
+    "sessions": "Buổi luyện tập",
+    "words": "Từ vựng",
+    "articles": "Bài viết",
+    "accuracy": "Độ chính xác",
+    "avgWpm": "WPM trung bình"
   },
   "modules": {
     "listen": {
-      "label": "听力",
-      "description": "使用 TTS 进行听力练习"
+      "label": "Nghe",
+      "description": "Nghe bằng TTS"
     },
     "speak": {
-      "label": "口语",
-      "description": "朗读并获得反馈"
+      "label": "Nói",
+      "description": "Đọc to và nhận phản hồi"
     },
     "read": {
-      "label": "阅读",
-      "description": "阅读理解练习"
+      "label": "Đọc",
+      "description": "Luyện đọc hiểu"
     },
     "write": {
-      "label": "写作",
-      "description": "打字练习"
+      "label": "Viết",
+      "description": "Luyện gõ chữ"
     }
   },
   "autoLanguageNotice": {
-    "title": "界面语言已匹配你的浏览器",
-    "description": "EchoType 当前使用 {{language}} 界面，因为这与你的浏览器语言一致。你可以随时在设置中修改。",
-    "cta": "查看语言设置"
+    "title": "Ngôn ngữ giao diện đã khớp với trình duyệt của bạn",
+    "description": "EchoType hiện đang dùng giao diện {{language}} vì khớp với ngôn ngữ trình duyệt của bạn. Bạn có thể đổi bất cứ lúc nào trong Cài đặt.",
+    "cta": "Xem cài đặt ngôn ngữ"
   },
   "aiSetup": {
-    "title": "尚未配置 AI 模型",
-    "description": "当前还没有可用的 AI 模型。智能对话、内容生成、翻译、分类和发音评估等功能暂不可用，请先前往设置页面配置 API 密钥和模型。",
-    "cta": "去配置模型"
+    "title": "Chưa cấu hình mô hình AI",
+    "description": "Hiện chưa có mô hình AI khả dụng. Trò chuyện, tạo nội dung, dịch thuật, phân loại và đánh giá phát âm sẽ không dùng được cho đến khi bạn cấu hình khóa API và mô hình trong Cài đặt.",
+    "cta": "Cấu hình mô hình"
   },
   "aiDisconnected": {
-    "title": "当前 AI 服务未连接",
-    "description": "你选择的服务商（{{providerId}}）尚未配置 API 密钥，AI 功能可能无法正常使用。",
-    "cta": "配置"
+    "title": "Dịch vụ AI hiện chưa được kết nối",
+    "description": "Nhà cung cấp bạn chọn ({{providerId}}) chưa có khóa API, nên các tính năng AI có thể không hoạt động.",
+    "cta": "Cấu hình"
   },
   "onboarding": {
-    "title": "几秒钟内开始学习",
-    "description": "浏览内置词书和场景包，或者导入你自己的学习内容。",
-    "wordBooks": "词书",
-    "import": "导入"
+    "title": "Bắt đầu chỉ trong vài giây",
+    "description": "Duyệt qua các sổ từ vựng và gói tình huống có sẵn — hoặc nhập nội dung của riêng bạn.",
+    "wordBooks": "Sổ từ vựng",
+    "import": "Nhập"
   },
   "learningGoal": {
-    "title": "选择你的学习目标",
-    "description": "告诉 EchoType 你更想在哪类英语能力上进步，今天的计划会向这个方向倾斜。",
-    "ctaAssessment": "开始评估",
-    "currentTitle": "当前学习目标",
-    "weakSpots": "查看薄弱点"
+    "title": "Chọn mục tiêu học tập của bạn",
+    "description": "Cho EchoType biết bạn muốn tiến bộ ở mảng tiếng Anh nào, kế hoạch hôm nay sẽ ưu tiên theo hướng đó.",
+    "ctaAssessment": "Làm bài đánh giá",
+    "currentTitle": "Mục tiêu học tập hiện tại",
+    "weakSpots": "Xem điểm yếu"
   },
   "assessment": {
-    "title": "评估你的英语水平",
-    "description": "通过 15 道快速测试题获得基于 CEFR 等级的个性化学习建议。",
-    "cta": "开始评估",
-    "reminderTitle": "该重新评估你的水平了！",
-    "reminderDescription": "自上次评估以来你已经完成了 50+ 次练习（{{level}}）。准备好检查你的进步了吗？"
+    "title": "Đánh giá trình độ tiếng Anh của bạn",
+    "description": "Làm bài kiểm tra nhanh 15 câu để nhận gợi ý học tập cá nhân hóa dựa trên trình độ CEFR của bạn.",
+    "cta": "Làm bài đánh giá",
+    "reminderTitle": "Đến lúc đánh giá lại trình độ của bạn rồi!",
+    "reminderDescription": "Bạn đã hoàn thành hơn 50 buổi luyện tập kể từ lần đánh giá trước ({{level}}). Sẵn sàng kiểm tra tiến bộ của mình chưa?"
   },
   "miniAnalytics": {
-    "activity": "活动记录",
-    "lastWeeks": "近 {{count}} 周",
-    "activeDays": "活跃 {{count}} 天",
-    "reviewForecast": "复习预报",
-    "practiceBreakdown": "练习分布",
-    "details": "详情",
-    "review": "复习",
-    "noActivity": "暂无活动记录",
-    "noSessions": "暂无练习记录",
-    "noUpcomingReviews": "暂无待复习内容",
-    "dueToday": "今日待复习",
-    "thisWeek": "本周",
-    "sessions": "次练习"
+    "activity": "Hoạt động",
+    "lastWeeks": "{{count}} tuần qua",
+    "activeDays": "Số ngày hoạt động: {{count}}",
+    "reviewForecast": "Dự báo ôn tập",
+    "practiceBreakdown": "Phân bổ luyện tập",
+    "details": "Chi tiết",
+    "review": "Ôn tập",
+    "noActivity": "Chưa có hoạt động nào",
+    "noSessions": "Chưa có buổi luyện tập nào",
+    "noUpcomingReviews": "Không có lịch ôn tập sắp tới",
+    "dueToday": "đến hạn hôm nay",
+    "thisWeek": "tuần này",
+    "sessions": "buổi"
   },
   "sections": {
-    "startLearning": "开始学习",
-    "recentActivity": "最近活动"
+    "startLearning": "Bắt đầu học",
+    "recentActivity": "Hoạt động gần đây"
   },
   "recentActivity": {
-    "empty": "还没有练习记录。开始练习吧！",
-    "unknown": "未知内容"
+    "empty": "Chưa có buổi luyện tập nào. Hãy bắt đầu luyện tập!",
+    "unknown": "Không xác định"
   },
   "reviewCard": {
-    "title": "今日复习",
-    "description": "在这里清理今天到期的复习任务，与下面的今日前进式学习计划分开。",
-    "noReviewsTitle": "当前没有到期复习",
-    "noReviewsDescription": "继续完成今天的计划吧。到期项目会自动显示在这里。",
-    "itemsDue": "有 {{count}} 项待复习",
-    "reviewFirst": "先复习 {{title}}，或者想学新内容时继续下面的今日计划。",
-    "openReview": "打开复习"
+    "title": "Ôn tập hôm nay",
+    "description": "Hoàn thành các mục cần ôn tập ở đây, tách biệt với kế hoạch học nội dung mới bên dưới.",
+    "noReviewsTitle": "Hiện chưa có mục nào cần ôn tập",
+    "noReviewsDescription": "Cứ tiếp tục theo kế hoạch hôm nay. Các mục đến hạn sẽ tự động xuất hiện ở đây.",
+    "itemsDue": "{{count}} mục cần ôn tập",
+    "reviewFirst": "Hãy ôn tập {{title}} trước, hoặc tiếp tục kế hoạch học nội dung mới bên dưới khi bạn muốn.",
+    "openReview": "Mở phần ôn tập"
   },
   "todayPlan": {
-    "title": "今日计划",
-    "loading": "正在生成今日计划...",
-    "empty": "导入词书或学习内容后，这里会生成个性化学习任务。",
-    "explanationWithLevel": "根据你的 {{level}} 等级、薄弱项，以及本周尚未充分练习的技能生成。今天到期的复习任务会显示在上方。",
-    "explanationWithoutLevel": "根据你最近的练习、薄弱项，以及本周尚未充分练习的技能生成。今天到期的复习任务会显示在上方。",
-    "skip": "跳过",
-    "start": "开始",
-    "completed": "已完成 {{done}}/{{total}}",
-    "reopen": "查看",
-    "lastPracticed": "{{time}} 完成",
-    "accuracy": "准确率 {{value}}",
+    "title": "Kế hoạch hôm nay",
+    "loading": "Đang tạo kế hoạch hôm nay...",
+    "empty": "Nhập một sổ từ vựng hoặc nội dung học tập để nhận các nhiệm vụ học tập cá nhân hóa.",
+    "explanationWithLevel": "Dựa trên trình độ {{level}}, điểm yếu của bạn, và các kỹ năng chưa luyện đủ trong tuần này. Các mục cần ôn tập hôm nay hiển thị ở phần Ôn tập hôm nay phía trên.",
+    "explanationWithoutLevel": "Dựa trên quá trình luyện tập gần đây, điểm yếu của bạn, và các kỹ năng chưa luyện đủ trong tuần này. Các mục cần ôn tập hôm nay hiển thị ở phần Ôn tập hôm nay phía trên.",
+    "skip": "Bỏ qua",
+    "start": "Bắt đầu",
+    "completed": "Đã hoàn thành {{done}}/{{total}}",
+    "reopen": "Mở",
+    "lastPracticed": "Luyện lần cuối {{time}}",
+    "accuracy": "Độ chính xác {{value}}",
     "wpm": "WPM {{value}}"
   },
   "goalDialog": {
-    "trigger": "设置目标",
-    "title": "每日学习目标",
-    "description": "设置你的每日目标，计划会根据这些目标重新生成。",
-    "newWordsPerDay": "每日新词数",
-    "sessionsPerDay": "每日练习次数",
-    "balancedLabel": "{{count}} 均衡",
-    "balancedDescription": "4 均衡是默认选项，可稳定覆盖听、说、读、写四项练习。",
-    "save": "保存目标"
+    "trigger": "Đặt mục tiêu",
+    "title": "Mục tiêu học tập hằng ngày",
+    "description": "Đặt chỉ tiêu hằng ngày của bạn. Kế hoạch sẽ được tạo lại dựa trên các mục tiêu này.",
+    "newWordsPerDay": "Số từ mới mỗi ngày",
+    "sessionsPerDay": "Số buổi luyện tập mỗi ngày",
+    "balancedLabel": "{{count}} Cân bằng",
+    "balancedDescription": "4 Cân bằng là lựa chọn mặc định, đảm bảo phủ đều cả nghe, nói, đọc và viết.",
+    "save": "Lưu mục tiêu"
   }
 }

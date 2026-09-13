@@ -4,6 +4,9 @@ import { ArrowLeft, CheckCircle2, Clock3, Flag, RotateCcw, Save, XCircle } from 
 import Link from 'next/link';
 import { useParams } from 'next/navigation';
 import { type FormEvent, useCallback, useEffect, useMemo, useState } from 'react';
+import { Button } from '@/components/ui/button';
+import { Card } from '@/components/ui/card';
+import { Input } from '@/components/ui/input';
 import {
   captureTimedExamSnapshot,
   getExamBundle,
@@ -12,6 +15,7 @@ import {
   submitExamAttempt,
 } from '@/lib/exams/repository';
 import { formatExamTime, getSuggestedExamTimeLimitSeconds } from '@/lib/exams/timing';
+import { cn } from '@/lib/utils';
 import type { ExamAttemptProgress, ExamBundle, ExamSubmissionResult } from '@/types/exam';
 
 type SaveState = 'idle' | 'saving' | 'saved' | 'error';
@@ -198,13 +202,13 @@ export default function ExamPracticePage() {
     }
   };
 
-  if (loading) return <div className="p-8 text-sm text-slate-500">Loading practice…</div>;
+  if (loading) return <div className="p-8 text-sm text-muted-foreground">Loading practice…</div>;
 
   if (!bundle) {
     return (
       <div className="p-8">
-        <p className="text-slate-700">Exam not found.</p>
-        <Link href="/exams" className="mt-3 inline-block text-sm font-medium text-indigo-600">
+        <p className="text-foreground">Exam not found.</p>
+        <Link href="/exams" className="mt-3 inline-block text-sm font-medium text-primary">
           Back to test library
         </Link>
       </div>
@@ -212,7 +216,7 @@ export default function ExamPracticePage() {
   }
 
   if (!attemptReady && bundle.questions.length > 0) {
-    return <div className="p-8 text-sm text-slate-500">Preparing your attempt…</div>;
+    return <div className="p-8 text-sm text-muted-foreground">Preparing your attempt…</div>;
   }
 
   const sourceText = bundle.sections.find((section) => section.sourceText)?.sourceText;
@@ -223,91 +227,92 @@ export default function ExamPracticePage() {
         <div>
           <Link
             href={`/exams/${bundle.test.id}`}
-            className="inline-flex items-center gap-1 text-sm text-slate-500 hover:text-indigo-600"
+            className="inline-flex items-center gap-1 text-sm text-muted-foreground hover:text-primary"
           >
             <ArrowLeft className="h-4 w-4" />
             Edit exam
           </Link>
-          <p className="mt-3 text-sm font-semibold text-indigo-600">
+          <p className="mt-3 text-sm font-semibold text-primary">
             {bundle.test.examType} {timeLimitSeconds ? 'timed test' : 'practice'}
           </p>
-          <h1 className="text-2xl font-semibold text-slate-900">{bundle.test.title}</h1>
-          <p className="mt-1 text-sm text-slate-500">
+          <h1 className="font-heading text-2xl font-semibold text-foreground">{bundle.test.title}</h1>
+          <p className="mt-1 text-sm text-muted-foreground">
             {bundle.questions.length} questions · {answeredCount} answered
           </p>
         </div>
 
         <div className="flex flex-wrap gap-3">
           {timeLimitSeconds && remainingSeconds !== undefined && !result && (
-            <div
-              className={`rounded-xl border px-5 py-3 text-center ${
+            <Card
+              className={cn(
+                'p-0 px-5 py-3 text-center',
                 timedOutAt || remainingSeconds === 0
-                  ? 'border-red-200 bg-red-50 text-red-800'
+                  ? 'border-destructive/30 bg-destructive/10 text-destructive'
                   : remainingSeconds <= 300
                     ? 'border-amber-200 bg-amber-50 text-amber-800'
-                    : 'border-slate-200 bg-white text-slate-800'
-              }`}
+                    : 'text-foreground',
+              )}
             >
               <p className="flex items-center justify-center gap-1 text-xs font-semibold uppercase tracking-wide">
                 <Clock3 className="h-3.5 w-3.5" /> Time
               </p>
               <p className="mt-1 text-xl font-bold">{formatExamTime(remainingSeconds)}</p>
-            </div>
+            </Card>
           )}
 
           {result && (
-            <div className="rounded-xl border border-emerald-200 bg-emerald-50 px-5 py-3 text-center">
-              <p className="text-xs font-semibold uppercase tracking-wide text-emerald-700">Final score</p>
-              <p className="text-2xl font-bold text-emerald-800">
+            <Card className="border-success/30 bg-success/10 p-0 px-5 py-3 text-center">
+              <p className="text-xs font-semibold uppercase tracking-wide text-success">Final score</p>
+              <p className="text-2xl font-bold text-success">
                 {result.score}/{result.total}
               </p>
-              <p className="mt-1 text-xs text-emerald-700">{formatExamTime(result.durationSeconds)}</p>
-            </div>
+              <p className="mt-1 text-xs text-success">{formatExamTime(result.durationSeconds)}</p>
+            </Card>
           )}
 
           {result?.timeLimitSeconds && result.timedScore !== undefined && result.timedTotal !== undefined && (
-            <div className="rounded-xl border border-indigo-200 bg-indigo-50 px-5 py-3 text-center">
-              <p className="text-xs font-semibold uppercase tracking-wide text-indigo-700">
+            <Card className="border-primary/30 bg-primary/10 p-0 px-5 py-3 text-center">
+              <p className="text-xs font-semibold uppercase tracking-wide text-primary">
                 {result.timedOutAt ? 'At time limit' : 'Within time'}
               </p>
-              <p className="text-2xl font-bold text-indigo-800">
+              <p className="text-2xl font-bold text-primary">
                 {result.timedScore}/{result.timedTotal}
               </p>
-            </div>
+            </Card>
           )}
         </div>
       </div>
 
       {timedOutAt && !result && (
-        <div className="rounded-xl border border-red-200 bg-red-50 p-4 text-sm text-red-800">
+        <div className="rounded-xl border border-destructive/30 bg-destructive/10 p-4 text-sm text-destructive">
           <strong>Time limit reached.</strong> Your answers at the deadline were snapshotted. You can keep working;
           after submission the app will show both your score at the time limit and your final score.
         </div>
       )}
 
       <div className="grid gap-6 xl:grid-cols-[minmax(0,1fr)_minmax(420px,0.9fr)]">
-        <section className="rounded-xl border border-slate-200 bg-white p-5 shadow-sm">
-          <h2 className="font-semibold text-slate-900">Source</h2>
-          <pre className="mt-4 max-h-[75vh] overflow-auto whitespace-pre-wrap rounded-lg bg-slate-50 p-4 text-sm leading-7 text-slate-700">
+        <Card className="p-5">
+          <h2 className="font-semibold text-foreground">Source</h2>
+          <pre className="mt-4 max-h-[75vh] overflow-auto whitespace-pre-wrap rounded-lg bg-muted/50 p-4 text-sm leading-7 text-foreground">
             {sourceText || 'No source text attached to this exam.'}
           </pre>
-        </section>
+        </Card>
 
         <form onSubmit={(event) => void handleSubmit(event)} className="space-y-4">
           {bundle.questions.length > 0 && (
-            <section className="sticky top-4 z-10 rounded-xl border border-slate-200 bg-white/95 p-4 shadow-sm backdrop-blur">
+            <Card className="sticky top-4 z-10 p-4 backdrop-blur">
               <div className="flex flex-wrap items-center justify-between gap-3">
                 <div>
-                  <p className="text-sm font-semibold text-slate-900">Question navigator</p>
-                  <p className="text-xs text-slate-500">
+                  <p className="text-sm font-semibold text-foreground">Question navigator</p>
+                  <p className="text-xs text-muted-foreground">
                     {answeredCount}/{bundle.questions.length} answered · {flaggedQuestionIds.length} flagged
                   </p>
                 </div>
-                <div className="flex items-center gap-1.5 text-xs text-slate-500">
+                <div className="flex items-center gap-1.5 text-xs text-muted-foreground">
                   <Save className="h-3.5 w-3.5" />
                   {saveState === 'saving' && 'Saving…'}
                   {saveState === 'saved' && 'Saved'}
-                  {saveState === 'error' && <span className="text-red-600">Save failed</span>}
+                  {saveState === 'error' && <span className="text-destructive">Save failed</span>}
                   {saveState === 'idle' && 'Autosave ready'}
                 </div>
               </div>
@@ -318,17 +323,17 @@ export default function ExamPracticePage() {
                   const questionResult = resultByQuestionId.get(question.id);
                   const active = currentQuestionId === question.id;
 
-                  let className = 'border-slate-200 bg-white text-slate-600 hover:border-indigo-300';
+                  let className = 'border-border bg-card text-muted-foreground hover:border-primary/40';
                   if (questionResult) {
                     className = questionResult.correct
-                      ? 'border-emerald-300 bg-emerald-50 text-emerald-700'
-                      : 'border-red-300 bg-red-50 text-red-700';
+                      ? 'border-success/40 bg-success/10 text-success'
+                      : 'border-destructive/40 bg-destructive/10 text-destructive';
                   } else if (flagged) {
                     className = 'border-amber-300 bg-amber-50 text-amber-800';
                   } else if (answered) {
-                    className = 'border-emerald-200 bg-emerald-50 text-emerald-700';
+                    className = 'border-success/30 bg-success/10 text-success';
                   }
-                  if (active) className += ' ring-2 ring-indigo-400 ring-offset-1';
+                  if (active) className += ' ring-2 ring-ring ring-offset-1';
 
                   return (
                     <button
@@ -343,13 +348,13 @@ export default function ExamPracticePage() {
                   );
                 })}
               </div>
-            </section>
+            </Card>
           )}
 
           {bundle.questions.length === 0 ? (
-            <div className="rounded-xl border border-dashed border-slate-300 bg-white p-8 text-center text-sm text-slate-500">
+            <Card className="border-dashed p-8 text-center text-sm text-muted-foreground">
               This exam has no questions yet. Return to the editor and add one first.
-            </div>
+            </Card>
           ) : (
             bundle.questions.map((question) => {
               const questionResult = resultByQuestionId.get(question.id);

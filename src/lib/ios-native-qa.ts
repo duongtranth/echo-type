@@ -16,8 +16,8 @@ const SPEAK_VOICE_KEY = 'echotype_native_qa_voice_transcript';
 const READ_VOICE_KEY = 'echotype_native_qa_read_transcript';
 const FAVORITE_FOLDERS_KEY = 'echotype_favorite_folders_seeded_v1';
 const DEFAULT_FOLDERS = [
-  { id: 'default', name: '默认收藏', emoji: '⭐', sortOrder: 0, createdAt: 0 },
-  { id: 'auto', name: '智能收藏', emoji: '🤖', sortOrder: 1, createdAt: 0 },
+  { id: 'default', name: 'Yêu thích mặc định', emoji: '⭐', sortOrder: 0, createdAt: 0 },
+  { id: 'auto', name: 'Yêu thích thông minh', emoji: '🤖', sortOrder: 1, createdAt: 0 },
 ] as const;
 
 export const IOS_NATIVE_QA_IMPORT_ITEM_ID = 'ios-qa-import-item';
@@ -454,9 +454,9 @@ async function seedCollection() {
   const collection: CollectionItem = {
     id: IOS_NATIVE_QA_COLLECTION_ID,
     title: 'Rescheduling Meetings',
-    titleZh: '改约与改期',
+    titleZh: 'Đổi lịch hẹn',
     description: 'Useful phrases for changing plans and moving appointments.',
-    descriptionZh: '用于调整时间和改期的实用表达。',
+    descriptionZh: 'Các cách diễn đạt hữu ích để thay đổi kế hoạch và dời lịch hẹn.',
     scenario: 'Rescheduling meetings and appointments',
     category: 'work',
     difficulty: 'intermediate',

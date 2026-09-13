@@ -1,21 +1,21 @@
 {
   "error": {
-    "title": "更新失败",
-    "description": "检查更新时出现问题。",
-    "unknown": "未知错误",
-    "close": "关闭",
-    "retry": "重试"
+    "title": "Cập nhật thất bại",
+    "description": "Đã xảy ra sự cố khi kiểm tra cập nhật.",
+    "unknown": "Lỗi không xác định",
+    "close": "Đóng",
+    "retry": "Thử lại"
   },
   "downloaded": {
-    "title": "重启以应用更新？",
-    "description": "版本 {{version}} 已下载完成，准备安装。立即重启以应用更新。",
-    "later": "稍后",
-    "restartNow": "立即重启"
+    "title": "Khởi động lại để áp dụng cập nhật?",
+    "description": "Phiên bản {{version}} đã được tải xuống và sẵn sàng cài đặt. Khởi động lại ngay để áp dụng cập nhật.",
+    "later": "Để sau",
+    "restartNow": "Khởi động lại ngay"
   },
   "available": {
-    "title": "有可用更新",
-    "whatsNew": "更新内容",
-    "download": "下载",
-    "downloading": "下载中..."
+    "title": "Có bản cập nhật mới",
+    "whatsNew": "Có gì mới",
+    "download": "Tải xuống",
+    "downloading": "Đang tải xuống..."
   }
 }

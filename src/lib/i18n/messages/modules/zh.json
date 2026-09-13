@@ -1,14 +1,14 @@
 {
   "listen": {
-    "title": "听力",
-    "description": "通过语音合成收听英语内容"
+    "title": "Nghe",
+    "description": "Nghe nội dung tiếng Anh bằng công nghệ chuyển văn bản thành giọng nói"
   },
   "read": {
-    "title": "阅读",
-    "description": "大声朗读英语内容，获取发音反馈"
+    "title": "Đọc",
+    "description": "Đọc to nội dung tiếng Anh và nhận phản hồi về phát âm"
   },
   "write": {
-    "title": "写作",
-    "description": "实时反馈的英语打字练习"
+    "title": "Viết",
+    "description": "Luyện gõ tiếng Anh với phản hồi theo thời gian thực"
   }
 }

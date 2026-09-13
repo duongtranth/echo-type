@@ -4,7 +4,14 @@ import { ArrowLeft, Clock3, Play, Plus, Trash2 } from 'lucide-react';
 import Link from 'next/link';
 import { useParams } from 'next/navigation';
 import { type FormEvent, useCallback, useEffect, useMemo, useState } from 'react';
+import { Badge } from '@/components/ui/badge';
+import { Button } from '@/components/ui/button';
+import { Card } from '@/components/ui/card';
+import { Input } from '@/components/ui/input';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { Textarea } from '@/components/ui/textarea';
 import { addExamQuestion, deleteExamQuestion, getExamBundle } from '@/lib/exams/repository';
+import { cn } from '@/lib/utils';
 import type { ExamBundle, ExamQuestionType } from '@/types/exam';
 
 const QUESTION_TYPES: { value: ExamQuestionType; label: string }[] = [
@@ -102,214 +109,196 @@ export default function ExamEditorPage() {
   };
 
   if (loading) {
-    return <div className="p-8 text-sm text-slate-500">Loading exam…</div>;
+    return <div className="p-8 text-sm text-muted-foreground">Loading exam…</div>;
   }
 
   if (!bundle) {
     return (
       <div className="p-8">
-        <p className="text-slate-700">Exam not found.</p>
-        <Link href="/exams" className="mt-3 inline-block text-sm font-medium text-indigo-600">
+        <p className="text-foreground">Exam not found.</p>
+        <Link href="/exams" className="mt-3 inline-block text-sm font-medium text-primary">
           Back to test library
         </Link>
       </div>
     );
   }
 
-  const practiceLinkClass = `inline-flex items-center justify-center gap-2 rounded-lg px-4 py-2 text-sm font-semibold ${
-    bundle.questions.length > 0
-      ? 'border border-slate-200 bg-white text-slate-700 hover:bg-slate-50'
-      : 'pointer-events-none border border-slate-200 bg-slate-100 text-slate-400'
-  }`;
-  const timedLinkClass = `inline-flex items-center justify-center gap-2 rounded-lg px-4 py-2 text-sm font-semibold text-white ${
-    bundle.questions.length > 0 ? 'bg-emerald-600 hover:bg-emerald-700' : 'pointer-events-none bg-slate-300'
-  }`;
+  const hasQuestions = bundle.questions.length > 0;
 
   return (
     <div className="mx-auto w-full max-w-7xl space-y-6 p-4 md:p-8">
       <div className="flex flex-col gap-4 lg:flex-row lg:items-start lg:justify-between">
         <div>
-          <Link href="/exams" className="inline-flex items-center gap-1 text-sm text-slate-500 hover:text-indigo-600">
+          <Link
+            href="/exams"
+            className="inline-flex items-center gap-1 text-sm text-muted-foreground hover:text-primary"
+          >
             <ArrowLeft className="h-4 w-4" />
             Test library
           </Link>
           <div className="mt-3 flex items-center gap-2">
-            <span className="rounded-full bg-indigo-50 px-2 py-1 text-xs font-semibold text-indigo-700">
-              {bundle.test.examType}
-            </span>
-            <span className="rounded-full bg-slate-100 px-2 py-1 text-xs text-slate-600">{bundle.test.status}</span>
+            <Badge className="bg-primary/10 text-primary">{bundle.test.examType}</Badge>
+            <Badge variant="secondary">{bundle.test.status}</Badge>
           </div>
-          <h1 className="mt-2 text-2xl font-semibold text-slate-900">{bundle.test.title}</h1>
-          <p className="mt-1 text-sm text-slate-500">{bundle.test.sourceFilename || 'Imported exam'}</p>
+          <h1 className="font-heading mt-2 text-2xl font-semibold text-foreground">{bundle.test.title}</h1>
+          <p className="mt-1 text-sm text-muted-foreground">{bundle.test.sourceFilename || 'Imported exam'}</p>
         </div>
         <div className="flex flex-col gap-2 sm:flex-row">
-          <Link
-            href={`/exams/${bundle.test.id}/practice`}
-            aria-disabled={bundle.questions.length === 0}
-            className={practiceLinkClass}
+          <Button variant="outline" asChild className={cn(!hasQuestions && 'pointer-events-none opacity-50')}>
+            <Link href={`/exams/${bundle.test.id}/practice`} aria-disabled={!hasQuestions}>
+              <Play className="h-4 w-4" />
+              Practice ({bundle.questions.length})
+            </Link>
+          </Button>
+          <Button
+            asChild
+            className={cn(
+              'bg-success text-white hover:bg-success/90',
+              !hasQuestions && 'pointer-events-none opacity-50',
+            )}
           >
-            <Play className="h-4 w-4" />
-            Practice ({bundle.questions.length})
-          </Link>
-          <Link
-            href={`/exams/${bundle.test.id}/practice?mode=test`}
-            aria-disabled={bundle.questions.length === 0}
-            className={timedLinkClass}
-          >
-            <Clock3 className="h-4 w-4" />
-            Timed test
-          </Link>
+            <Link href={`/exams/${bundle.test.id}/practice?mode=test`} aria-disabled={!hasQuestions}>
+              <Clock3 className="h-4 w-4" />
+              Timed test
+            </Link>
+          </Button>
         </div>
       </div>
 
       <div className="grid gap-6 xl:grid-cols-[minmax(0,1.2fr)_minmax(360px,0.8fr)]">
-        <section className="rounded-xl border border-slate-200 bg-white p-5 shadow-sm">
-          <h2 className="font-semibold text-slate-900">Extracted source</h2>
-          <p className="mt-1 text-xs text-slate-500">
+        <Card className="p-5">
+          <h2 className="font-semibold text-foreground">Extracted source</h2>
+          <p className="mt-1 text-xs text-muted-foreground">
             Keep the original extracted text visible while you verify imported questions and answers.
           </p>
-          <pre className="mt-4 max-h-[70vh] overflow-auto whitespace-pre-wrap rounded-lg bg-slate-50 p-4 text-sm leading-6 text-slate-700">
+          <pre className="mt-4 max-h-[70vh] overflow-auto whitespace-pre-wrap rounded-lg bg-muted/50 p-4 text-sm leading-6 text-foreground">
             {selectedSection?.sourceText || 'No source text.'}
           </pre>
-        </section>
+        </Card>
 
         <div className="space-y-6">
-          <form
-            onSubmit={(event) => void handleSubmit(event)}
-            className="space-y-4 rounded-xl border border-slate-200 bg-white p-5 shadow-sm"
-          >
-            <div className="flex items-center gap-2">
-              <Plus className="h-4 w-4 text-indigo-500" />
-              <h2 className="font-semibold text-slate-900">Add question</h2>
-            </div>
+          <Card className="p-5">
+            <form onSubmit={(event) => void handleSubmit(event)} className="space-y-4">
+              <div className="flex items-center gap-2">
+                <Plus className="h-4 w-4 text-primary" />
+                <h2 className="font-semibold text-foreground">Add question</h2>
+              </div>
 
-            {bundle.sections.length > 1 && (
-              <label className="block space-y-1 text-sm font-medium text-slate-700">
-                Section
-                <select
-                  value={sectionId}
-                  onChange={(event) => setSectionId(event.target.value)}
-                  className="w-full rounded-lg border border-slate-200 px-3 py-2 font-normal"
-                >
-                  {bundle.sections.map((section) => (
-                    <option key={section.id} value={section.id}>
-                      {section.title}
-                    </option>
-                  ))}
-                </select>
-              </label>
-            )}
+              {bundle.sections.length > 1 && (
+                <label className="block space-y-1 text-sm font-medium text-foreground">
+                  Section
+                  <Select value={sectionId} onValueChange={setSectionId}>
+                    <SelectTrigger className="w-full">
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {bundle.sections.map((section) => (
+                        <SelectItem key={section.id} value={section.id}>
+                          {section.title}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </label>
+              )}
 
-            <div className="grid grid-cols-[100px_1fr] gap-3">
-              <label className="space-y-1 text-sm font-medium text-slate-700">
-                Number
-                <input
-                  type="number"
-                  min="1"
-                  value={number}
-                  onChange={(event) => setNumber(event.target.value)}
-                  className="w-full rounded-lg border border-slate-200 px-3 py-2 font-normal"
+              <div className="grid grid-cols-[100px_1fr] gap-3">
+                <label className="space-y-1 text-sm font-medium text-foreground">
+                  Number
+                  <Input type="number" min="1" value={number} onChange={(event) => setNumber(event.target.value)} />
+                </label>
+                <label className="space-y-1 text-sm font-medium text-foreground">
+                  Type
+                  <Select value={type} onValueChange={(value) => setType(value as ExamQuestionType)}>
+                    <SelectTrigger className="w-full">
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {QUESTION_TYPES.map((item) => (
+                        <SelectItem key={item.value} value={item.value}>
+                          {item.label}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </label>
+              </div>
+
+              <label className="block space-y-1 text-sm font-medium text-foreground">
+                Prompt
+                <Textarea
+                  rows={3}
+                  value={prompt}
+                  onChange={(event) => setPrompt(event.target.value)}
+                  placeholder="Question text"
                 />
               </label>
-              <label className="space-y-1 text-sm font-medium text-slate-700">
-                Type
-                <select
-                  value={type}
-                  onChange={(event) => setType(event.target.value as ExamQuestionType)}
-                  className="w-full rounded-lg border border-slate-200 px-3 py-2 font-normal"
-                >
-                  {QUESTION_TYPES.map((item) => (
-                    <option key={item.value} value={item.value}>
-                      {item.label}
-                    </option>
-                  ))}
-                </select>
+
+              <label className="block space-y-1 text-sm font-medium text-foreground">
+                Options
+                <Textarea
+                  rows={4}
+                  value={options}
+                  onChange={(event) => setOptions(event.target.value)}
+                  placeholder={'One option per line\nA. First option\nB. Second option'}
+                />
               </label>
-            </div>
 
-            <label className="block space-y-1 text-sm font-medium text-slate-700">
-              Prompt
-              <textarea
-                rows={3}
-                value={prompt}
-                onChange={(event) => setPrompt(event.target.value)}
-                className="w-full rounded-lg border border-slate-200 px-3 py-2 font-normal"
-                placeholder="Question text"
-              />
-            </label>
+              <label className="block space-y-1 text-sm font-medium text-foreground">
+                Correct answer(s)
+                <Input
+                  value={answers}
+                  onChange={(event) => setAnswers(event.target.value)}
+                  placeholder="TRUE | T (use | for accepted alternatives)"
+                />
+              </label>
 
-            <label className="block space-y-1 text-sm font-medium text-slate-700">
-              Options
-              <textarea
-                rows={4}
-                value={options}
-                onChange={(event) => setOptions(event.target.value)}
-                className="w-full rounded-lg border border-slate-200 px-3 py-2 font-normal"
-                placeholder={'One option per line\nA. First option\nB. Second option'}
-              />
-            </label>
+              <label className="block space-y-1 text-sm font-medium text-foreground">
+                Explanation (optional)
+                <Textarea rows={2} value={explanation} onChange={(event) => setExplanation(event.target.value)} />
+              </label>
 
-            <label className="block space-y-1 text-sm font-medium text-slate-700">
-              Correct answer(s)
-              <input
-                value={answers}
-                onChange={(event) => setAnswers(event.target.value)}
-                className="w-full rounded-lg border border-slate-200 px-3 py-2 font-normal"
-                placeholder="TRUE | T (use | for accepted alternatives)"
-              />
-            </label>
+              {error && <p className="text-sm text-destructive">{error}</p>}
 
-            <label className="block space-y-1 text-sm font-medium text-slate-700">
-              Explanation (optional)
-              <textarea
-                rows={2}
-                value={explanation}
-                onChange={(event) => setExplanation(event.target.value)}
-                className="w-full rounded-lg border border-slate-200 px-3 py-2 font-normal"
-              />
-            </label>
+              <Button type="submit" disabled={saving} className="w-full">
+                {saving ? 'Adding…' : 'Add question'}
+              </Button>
+            </form>
+          </Card>
 
-            {error && <p className="text-sm text-red-600">{error}</p>}
-
-            <button
-              type="submit"
-              disabled={saving}
-              className="w-full rounded-lg bg-indigo-600 px-4 py-2 text-sm font-semibold text-white hover:bg-indigo-700 disabled:opacity-50"
-            >
-              {saving ? 'Adding…' : 'Add question'}
-            </button>
-          </form>
-
-          <section className="rounded-xl border border-slate-200 bg-white p-5 shadow-sm">
-            <h2 className="font-semibold text-slate-900">Questions ({bundle.questions.length})</h2>
+          <Card className="p-5">
+            <h2 className="font-semibold text-foreground">Questions ({bundle.questions.length})</h2>
             <div className="mt-4 space-y-3">
               {bundle.questions.length === 0 ? (
-                <p className="text-sm text-slate-500">No questions yet. Add the first verified question above.</p>
+                <p className="text-sm text-muted-foreground">
+                  No questions yet. Add the first verified question above.
+                </p>
               ) : (
                 bundle.questions.map((question) => (
-                  <div key={question.id} className="rounded-lg border border-slate-100 bg-slate-50 p-3">
+                  <div key={question.id} className="rounded-lg border border-border bg-muted/40 p-3">
                     <div className="flex items-start justify-between gap-3">
                       <div className="min-w-0">
-                        <p className="text-xs font-semibold uppercase tracking-wide text-indigo-600">
+                        <p className="text-xs font-semibold uppercase tracking-wide text-primary">
                           Q{question.number} · {question.type}
                         </p>
-                        <p className="mt-1 text-sm text-slate-800">{question.prompt}</p>
-                        <p className="mt-2 text-xs text-emerald-700">Answer: {question.correctAnswers.join(' / ')}</p>
+                        <p className="mt-1 text-sm text-foreground">{question.prompt}</p>
+                        <p className="mt-2 text-xs text-success">Answer: {question.correctAnswers.join(' / ')}</p>
                       </div>
-                      <button
-                        type="button"
+                      <Button
+                        variant="ghost"
+                        size="icon-sm"
                         onClick={() => void handleDeleteQuestion(question.id)}
-                        className="rounded-md p-1.5 text-slate-400 hover:bg-red-50 hover:text-red-600"
+                        className="text-muted-foreground hover:bg-destructive/10 hover:text-destructive"
                         aria-label={`Delete question ${question.number}`}
                       >
                         <Trash2 className="h-4 w-4" />
-                      </button>
+                      </Button>
                     </div>
                   </div>
                 ))
               )}
             </div>
-          </section>
+          </Card>
         </div>
       </div>
     </div>

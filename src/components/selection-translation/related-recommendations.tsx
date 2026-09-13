@@ -29,7 +29,7 @@ export function RelatedRecommendations({ type, related, onSelect }: Props) {
         onClick={() => setExpanded(!expanded)}
         className="flex items-center justify-between w-full px-3 py-1.5 text-xs font-medium text-slate-500 hover:bg-slate-50 transition-colors"
       >
-        相关推荐
+        Gợi ý liên quan
         <ChevronDown className={cn('h-3 w-3 transition-transform', expanded ? '' : '-rotate-90')} />
       </button>
       {expanded && (
@@ -37,7 +37,7 @@ export function RelatedRecommendations({ type, related, onSelect }: Props) {
           {/* Words: synonyms + word family */}
           {type === 'word' && related.synonyms && related.synonyms.length > 0 && (
             <div>
-              <p className="text-[10px] text-slate-400 mb-1">近义词</p>
+              <p className="text-[10px] text-slate-400 mb-1">Từ đồng nghĩa</p>
               <div className="flex flex-wrap gap-1">
                 {related.synonyms.map((s) => (
                   <button
@@ -54,7 +54,7 @@ export function RelatedRecommendations({ type, related, onSelect }: Props) {
           )}
           {type === 'word' && related.wordFamily && related.wordFamily.length > 0 && (
             <div>
-              <p className="text-[10px] text-slate-400 mb-1">词族</p>
+              <p className="text-[10px] text-slate-400 mb-1">Họ từ</p>
               <div className="flex flex-wrap gap-1">
                 {related.wordFamily.map((w) => (
                   <button
@@ -73,7 +73,7 @@ export function RelatedRecommendations({ type, related, onSelect }: Props) {
           {/* Phrases: related phrases */}
           {type === 'phrase' && related.relatedPhrases && related.relatedPhrases.length > 0 && (
             <div>
-              <p className="text-[10px] text-slate-400 mb-1">相关短语</p>
+              <p className="text-[10px] text-slate-400 mb-1">Cụm từ liên quan</p>
               <div className="flex flex-wrap gap-1">
                 {related.relatedPhrases.map((p) => (
                   <button
@@ -92,7 +92,7 @@ export function RelatedRecommendations({ type, related, onSelect }: Props) {
           {/* Sentences: key vocabulary */}
           {type === 'sentence' && related.keyVocabulary && related.keyVocabulary.length > 0 && (
             <div>
-              <p className="text-[10px] text-slate-400 mb-1">关键词汇</p>
+              <p className="text-[10px] text-slate-400 mb-1">Từ vựng chính</p>
               <div className="space-y-0.5">
                 {related.keyVocabulary.map((kv) => (
                   <button

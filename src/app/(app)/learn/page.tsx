@@ -22,15 +22,15 @@ export default function LearnPage() {
       <header className="flex flex-wrap items-start justify-between gap-4">
         <div>
           <Link href="/dashboard" className="text-sm text-indigo-600">
-            {t('Today', '今日学习')}
+            {t('Today', 'Hôm nay')}
           </Link>
           <h1 className="mt-2 font-[var(--font-poppins)] text-3xl font-semibold text-indigo-950">
-            {t('Your learning shelf', '我的课程')}
+            {t('Your learning shelf', 'Kệ học tập của bạn')}
           </h1>
           <p className="mt-2 text-sm text-slate-600">
             {t(
               'Your materials, organized into lessons. Original files and progress stay with you.',
-              '将你的材料整理成一课一课的练习，保留原文与学习记录。',
+              'Tài liệu của bạn được sắp xếp thành từng bài học. Tệp gốc và tiến độ học tập luôn được giữ lại.',
             )}
           </p>
         </div>
@@ -39,29 +39,29 @@ export default function LearnPage() {
           className="inline-flex min-h-11 items-center gap-2 rounded-xl bg-indigo-600 px-4 text-sm font-semibold text-white"
         >
           <Plus className="h-4 w-4" />
-          {t('Import material', '导入材料')}
+          {t('Import material', 'Nhập tài liệu')}
         </Link>
       </header>
       <QuickPractice />
       <label className="flex items-center gap-3 rounded-xl bg-white px-4 py-3 shadow-sm">
         <Search className="h-5 w-5 text-slate-400" />
         <input
-          aria-label={t('Search courses', '搜索课程')}
+          aria-label={t('Search courses', 'Tìm khóa học')}
           className="w-full bg-transparent text-sm outline-none"
-          placeholder={t('Find a course…', '查找课程…')}
+          placeholder={t('Find a course…', 'Tìm khóa học…')}
           value={search}
           onChange={(e) => setSearch(e.target.value)}
         />
       </label>
       {error ? (
         <div role="alert">
-          {t('Unable to load courses.', '无法加载课程。')}{' '}
+          {t('Unable to load courses.', 'Không thể tải khóa học.')}{' '}
           <button type="button" onClick={retry} className="underline">
-            {t('Retry', '重试')}
+            {t('Retry', 'Thử lại')}
           </button>
         </div>
       ) : !data ? (
-        <p role="status">{t('Preparing lessons…', '正在准备课程…')}</p>
+        <p role="status">{t('Preparing lessons…', 'Đang chuẩn bị bài học…')}</p>
       ) : (
         <div className="grid gap-4 md:grid-cols-2">
           {[...data.units]
@@ -85,23 +85,26 @@ export default function LearnPage() {
                   <p className="mt-2 text-sm text-slate-500">
                     {t(
                       `${lessons.length} lessons · ${completed} completed`,
-                      `${lessons.length} 课 · 已完成 ${completed} 课`,
+                      `${lessons.length} bài · đã hoàn thành ${completed} bài`,
                     )}
                   </p>
                   <p className="mt-1 text-xs text-slate-500">
                     {t(
                       `${drills} drill lessons complete · practice history preserved`,
-                      `${drills} 课专项练习完成 · 历史记录保留`,
+                      `${drills} bài luyện tập chuyên sâu hoàn thành · lịch sử luyện tập được giữ lại`,
                     )}
                   </p>
                   <progress
-                    aria-label={t('Course progress', '课程进度')}
+                    aria-label={t('Course progress', 'Tiến độ khóa học')}
                     className="mt-5 h-1.5 w-full accent-indigo-600"
                     value={completed}
                     max={lessons.length || 1}
                   />
                   <div className="mt-4 flex items-center justify-between text-sm font-medium text-indigo-600">
-                    {t(completed ? 'Continue course' : 'Open course', completed ? '继续课程' : '开始课程')}
+                    {t(
+                      completed ? 'Continue course' : 'Open course',
+                      completed ? 'Tiếp tục khóa học' : 'Bắt đầu khóa học',
+                    )}
                     <ArrowRight className="h-4 w-4" />
                   </div>
                 </Link>
@@ -111,7 +114,7 @@ export default function LearnPage() {
             <p className="rounded-2xl bg-white p-6 text-slate-600">
               {t(
                 'Import an article, book, or audio to start your first course.',
-                '导入文章、书籍或音频，开始第一门课程。',
+                'Nhập một bài viết, sách hoặc âm thanh để bắt đầu khóa học đầu tiên của bạn.',
               )}
             </p>
           )}

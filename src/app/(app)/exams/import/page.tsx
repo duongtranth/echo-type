@@ -3,6 +3,12 @@
 import { AlertCircle, FileText, Loader2, Sparkles, Upload } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
+import { Alert, AlertDescription } from '@/components/ui/alert';
+import { Badge } from '@/components/ui/badge';
+import { Button } from '@/components/ui/button';
+import { Card } from '@/components/ui/card';
+import { Input } from '@/components/ui/input';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { createExamFromParsedDraft } from '@/lib/exams/import';
 import { createExamFromExtractedText } from '@/lib/exams/repository';
 import { PROVIDER_REGISTRY } from '@/lib/providers';
@@ -173,43 +179,43 @@ export default function ImportExamPage() {
   return (
     <div className="mx-auto w-full max-w-4xl space-y-6 p-4 md:p-8">
       <div>
-        <p className="text-sm font-medium text-indigo-600">Import exam</p>
-        <h1 className="text-2xl font-semibold text-slate-900">Create an IELTS or TOEIC draft from PDF</h1>
-        <p className="mt-1 text-sm text-slate-500">
+        <p className="text-sm font-medium text-primary">Import exam</p>
+        <h1 className="font-heading text-2xl font-semibold text-foreground">Create an IELTS or TOEIC draft from PDF</h1>
+        <p className="mt-1 text-sm text-muted-foreground">
           Use fast text extraction for normal PDFs, or PaddleOCR-VL for scanned and layout-heavy tests, then structure
           the result with your configured AI provider.
         </p>
       </div>
 
-      <div className="space-y-5 rounded-xl border border-slate-200 bg-white p-5 shadow-sm">
+      <Card className="space-y-5 p-5">
         <div className="grid gap-4 sm:grid-cols-2">
-          <label className="space-y-1 text-sm font-medium text-slate-700">
+          <label className="space-y-1 text-sm font-medium text-foreground">
             Exam
-            <select
-              value={examType}
-              onChange={(event) => setExamType(event.target.value as ExamType)}
-              className="w-full rounded-lg border border-slate-200 bg-white px-3 py-2 font-normal text-slate-800 outline-none focus:border-indigo-400"
-            >
-              <option value="IELTS">IELTS</option>
-              <option value="TOEIC">TOEIC</option>
-            </select>
+            <Select value={examType} onValueChange={(value) => setExamType(value as ExamType)}>
+              <SelectTrigger className="w-full">
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="IELTS">IELTS</SelectItem>
+                <SelectItem value="TOEIC">TOEIC</SelectItem>
+              </SelectContent>
+            </Select>
           </label>
 
-          <label className="space-y-1 text-sm font-medium text-slate-700">
+          <label className="space-y-1 text-sm font-medium text-foreground">
             Title
-            <input
+            <Input
               value={title}
               onChange={(event) => setTitle(event.target.value)}
               placeholder="e.g. Cambridge IELTS 19 - Test 1"
-              className="w-full rounded-lg border border-slate-200 px-3 py-2 font-normal text-slate-800 outline-none focus:border-indigo-400"
             />
           </label>
         </div>
 
-        <label className="flex cursor-pointer flex-col items-center justify-center rounded-xl border-2 border-dashed border-slate-200 px-4 py-8 text-center hover:border-indigo-300 hover:bg-indigo-50/30">
-          <Upload className="h-8 w-8 text-indigo-400" />
-          <span className="mt-2 text-sm font-medium text-slate-700">Choose test PDF</span>
-          <span className="mt-1 text-xs text-slate-400">PDF, maximum 10 MB</span>
+        <label className="flex cursor-pointer flex-col items-center justify-center rounded-xl border-2 border-dashed border-border px-4 py-8 text-center hover:border-primary/40 hover:bg-primary/5">
+          <Upload className="h-8 w-8 text-primary/60" />
+          <span className="mt-2 text-sm font-medium text-foreground">Choose test PDF</span>
+          <span className="mt-1 text-xs text-muted-foreground">PDF, maximum 10 MB</span>
           <input
             type="file"
             accept="application/pdf,.pdf"
@@ -219,94 +225,72 @@ export default function ImportExamPage() {
         </label>
 
         {file && (
-          <div className="space-y-3 rounded-lg bg-slate-50 p-3">
+          <div className="space-y-3 rounded-lg bg-muted/50 p-3">
             <div className="flex min-w-0 items-center gap-2">
-              <FileText className="h-4 w-4 shrink-0 text-indigo-500" />
-              <span className="truncate text-sm text-slate-700">{file.name}</span>
+              <FileText className="h-4 w-4 shrink-0 text-primary" />
+              <span className="truncate text-sm text-foreground">{file.name}</span>
             </div>
             <div className="grid gap-2 sm:grid-cols-2">
-              <button
-                type="button"
-                onClick={() => void extractPdf()}
-                disabled={extractionBusy}
-                className="inline-flex items-center justify-center gap-2 rounded-lg bg-indigo-600 px-4 py-2 text-sm font-medium text-white hover:bg-indigo-700 disabled:opacity-50"
-              >
+              <Button onClick={() => void extractPdf()} disabled={extractionBusy}>
                 {extracting && <Loader2 className="h-4 w-4 animate-spin" />}
                 {extracting ? 'Extracting…' : 'Fast PDF text'}
-              </button>
-              <button
-                type="button"
-                onClick={() => void extractWithPaddleOCR()}
-                disabled={extractionBusy}
-                className="inline-flex items-center justify-center gap-2 rounded-lg border border-indigo-200 bg-white px-4 py-2 text-sm font-medium text-indigo-700 hover:bg-indigo-50 disabled:opacity-50"
-              >
+              </Button>
+              <Button variant="outline" onClick={() => void extractWithPaddleOCR()} disabled={extractionBusy}>
                 {ocring && <Loader2 className="h-4 w-4 animate-spin" />}
                 {ocring ? 'Running OCR…' : 'PaddleOCR-VL'}
-              </button>
+              </Button>
             </div>
-            <p className="text-xs text-slate-500">
+            <p className="text-xs text-muted-foreground">
               PaddleOCR-VL requires the server environment variable PADDLEOCR_VL_URL, for example http://127.0.0.1:8080.
             </p>
           </div>
         )}
 
         {error && (
-          <div className="flex items-start gap-2 rounded-lg bg-red-50 p-3 text-sm text-red-700">
+          <Alert variant="destructive">
             <AlertCircle className="mt-0.5 h-4 w-4 shrink-0" />
-            {error}
-          </div>
+            <AlertDescription>{error}</AlertDescription>
+          </Alert>
         )}
 
         {data && (
-          <div className="space-y-4 border-t border-slate-100 pt-4">
-            <div className="flex flex-wrap gap-2 text-xs text-slate-600">
-              <span className="rounded-full bg-slate-100 px-2 py-1">{data.pageCount} pages</span>
-              <span className="rounded-full bg-slate-100 px-2 py-1">
-                {data.text.split(/\s+/).filter(Boolean).length.toLocaleString()} words
-              </span>
-              {data.extractionMethod && (
-                <span className="rounded-full bg-indigo-50 px-2 py-1 text-indigo-700">{data.extractionMethod}</span>
-              )}
-              {data.metadata.author && (
-                <span className="rounded-full bg-slate-100 px-2 py-1">{data.metadata.author}</span>
-              )}
+          <div className="space-y-4 border-t border-border pt-4">
+            <div className="flex flex-wrap gap-2 text-xs">
+              <Badge variant="secondary">{data.pageCount} pages</Badge>
+              <Badge variant="secondary">{data.text.split(/\s+/).filter(Boolean).length.toLocaleString()} words</Badge>
+              {data.extractionMethod && <Badge className="bg-primary/10 text-primary">{data.extractionMethod}</Badge>}
+              {data.metadata.author && <Badge variant="secondary">{data.metadata.author}</Badge>}
             </div>
 
             <div>
-              <p className="mb-2 text-sm font-medium text-slate-700">Extraction preview</p>
-              <pre className="max-h-72 overflow-auto whitespace-pre-wrap rounded-lg border border-slate-200 bg-slate-50 p-4 text-xs leading-6 text-slate-700">
+              <p className="mb-2 text-sm font-medium text-foreground">Extraction preview</p>
+              <pre className="max-h-72 overflow-auto whitespace-pre-wrap rounded-lg border border-border bg-muted/50 p-4 text-xs leading-6 text-foreground">
                 {data.text.slice(0, 5000)}
                 {data.text.length > 5000 ? '\n\n…' : ''}
               </pre>
             </div>
 
             <div className="grid gap-3 sm:grid-cols-2">
-              <button
-                type="button"
-                onClick={() => void parseWithAI()}
-                disabled={parsing || saving || data.text.trim().length === 0}
-                className="inline-flex items-center justify-center gap-2 rounded-lg bg-indigo-600 px-4 py-2.5 text-sm font-semibold text-white hover:bg-indigo-700 disabled:opacity-50"
-              >
+              <Button onClick={() => void parseWithAI()} disabled={parsing || saving || data.text.trim().length === 0}>
                 {parsing ? <Loader2 className="h-4 w-4 animate-spin" /> : <Sparkles className="h-4 w-4" />}
                 {parsing ? 'Parsing exam…' : 'AI parse & save'}
-              </button>
-              <button
-                type="button"
+              </Button>
+              <Button
+                variant="outline"
                 onClick={() => void saveManualDraft()}
                 disabled={saving || parsing || data.text.trim().length === 0}
-                className="rounded-lg border border-slate-200 bg-white px-4 py-2.5 text-sm font-semibold text-slate-700 hover:bg-slate-50 disabled:opacity-50"
               >
                 {saving ? 'Saving draft…' : 'Save without AI'}
-              </button>
+              </Button>
             </div>
 
-            <p className="text-xs leading-5 text-slate-500">
+            <p className="text-xs leading-5 text-muted-foreground">
               AI only imports questions when an explicit answer can be matched from the source. Unanswered questions are
               skipped instead of hallucinating an answer; you can add them manually in the editor.
             </p>
           </div>
         )}
-      </div>
+      </Card>
     </div>
   );
 }

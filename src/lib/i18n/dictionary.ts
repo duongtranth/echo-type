@@ -49,15 +49,11 @@ type CanonicalNamespaces = {
 export type MessageKey<N extends Namespace> = keyof CanonicalNamespaces[N];
 
 // The upstream app historically used `zh` as its second persisted locale code.
-// This fork keeps that storage value for backward compatibility, but presents it
-// as Vietnamese. Namespaces not translated to Vietnamese yet intentionally fall
-// back to English so the UI never mixes Vietnamese with Chinese.
-const VIETNAMESE_NAMESPACES = new Set<Namespace>(['common', 'sidebar']);
-
+// This fork keeps that storage value for backward compatibility, but every
+// namespace's `zh` message file now contains Vietnamese content instead of Chinese.
 function resolveMessages<N extends Namespace>(language: InterfaceLanguage, namespace: N): CanonicalNamespaces[N] {
   const localized = messages[namespace] as unknown as Record<string, CanonicalNamespaces[N]>;
-  const locale = language === 'zh' && !VIETNAMESE_NAMESPACES.has(namespace) ? 'en' : language;
-  return localized[locale] ?? localized.en;
+  return localized[language] ?? localized.en;
 }
 
 function formatMessage(template: string, values?: Record<string, string | number>) {

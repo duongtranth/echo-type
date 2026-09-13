@@ -38,6 +38,6 @@ describe('i18n dictionary', () => {
 
   it('reads nested common labels for both locales', () => {
     expect(getMessage('en', 'common', 'actions')).toMatchObject({ settings: 'Settings' });
-    expect(getMessage('zh', 'common', 'actions')).toMatchObject({ settings: '设置' });
+    expect(getMessage('zh', 'common', 'actions')).toMatchObject({ settings: 'Cài đặt' });
   });
 });

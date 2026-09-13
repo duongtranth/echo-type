@@ -3,7 +3,7 @@ import type { WordBook } from '@/types/wordbook';
 export const textbookBooks: WordBook[] = [
   {
     id: 'pep-junior7',
-    name: '人教版初一英语',
+    name: 'Tiếng Anh PEP lớp 7',
     nameEn: 'PEP Grade 7',
     description: 'Vocabulary from the PEP (人教版) Grade 7 English textbook, covering both semesters.',
     kind: 'vocabulary',
@@ -15,7 +15,7 @@ export const textbookBooks: WordBook[] = [
   },
   {
     id: 'pep-junior8',
-    name: '人教版初二英语',
+    name: 'Tiếng Anh PEP lớp 8',
     nameEn: 'PEP Grade 8',
     description: 'Vocabulary from the PEP (人教版) Grade 8 English textbook, covering both semesters.',
     kind: 'vocabulary',
@@ -27,7 +27,7 @@ export const textbookBooks: WordBook[] = [
   },
   {
     id: 'pep-junior9',
-    name: '人教版初三英语',
+    name: 'Tiếng Anh PEP lớp 9',
     nameEn: 'PEP Grade 9',
     description: 'Vocabulary from the PEP (人教版) Grade 9 English textbook, full year.',
     kind: 'vocabulary',
@@ -39,7 +39,7 @@ export const textbookBooks: WordBook[] = [
   },
   {
     id: 'pep-senior-compulsory',
-    name: '人教版高中必修',
+    name: 'Tiếng Anh PEP THPT - Bắt buộc',
     nameEn: 'PEP Senior Compulsory',
     description: 'Vocabulary from PEP Senior High compulsory modules (Books 1-5), required for all students.',
     kind: 'vocabulary',
@@ -51,7 +51,7 @@ export const textbookBooks: WordBook[] = [
   },
   {
     id: 'pep-senior-elective',
-    name: '人教版高中选修',
+    name: 'Tiếng Anh PEP THPT - Tự chọn',
     nameEn: 'PEP Senior Elective',
     description: 'Vocabulary from PEP Senior High elective modules (Books 6-11), for advanced learners.',
     kind: 'vocabulary',

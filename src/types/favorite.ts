@@ -56,8 +56,8 @@ export interface AutoCollectSettings {
 }
 
 export const DEFAULT_FOLDERS: FavoriteFolder[] = [
-  { id: 'default', name: '默认收藏', emoji: '⭐', sortOrder: 0, createdAt: 0 },
-  { id: 'auto', name: '智能收藏', emoji: '🤖', sortOrder: 1, createdAt: 0 },
+  { id: 'default', name: 'Yêu thích mặc định', emoji: '⭐', sortOrder: 0, createdAt: 0 },
+  { id: 'auto', name: 'Yêu thích thông minh', emoji: '🤖', sortOrder: 1, createdAt: 0 },
 ];
 
 export const SENSITIVITY_THRESHOLDS = {

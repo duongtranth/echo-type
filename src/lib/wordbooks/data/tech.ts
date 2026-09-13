@@ -3,7 +3,7 @@ import type { WordBook } from '@/types/wordbook';
 export const techBooks: WordBook[] = [
   {
     id: 'it-words',
-    name: 'IT行业词汇',
+    name: 'Từ vựng ngành IT',
     nameEn: 'IT Industry Words',
     description:
       'Essential vocabulary for the IT industry, covering programming, networking, databases, and software development.',
@@ -16,7 +16,7 @@ export const techBooks: WordBook[] = [
   },
   {
     id: 'it-vocab',
-    name: 'IT技术术语',
+    name: 'Thuật ngữ kỹ thuật IT',
     nameEn: 'IT Technical Terms',
     description:
       'Technical vocabulary for software engineers and IT professionals, from algorithms to system architecture.',
@@ -29,7 +29,7 @@ export const techBooks: WordBook[] = [
   },
   {
     id: 'ai-science',
-    name: 'AI科学词汇',
+    name: 'Từ vựng AI trong khoa học',
     nameEn: 'AI for Science',
     description: 'Vocabulary at the intersection of artificial intelligence and scientific research.',
     kind: 'vocabulary',
@@ -41,7 +41,7 @@ export const techBooks: WordBook[] = [
   },
   {
     id: 'ai-ml',
-    name: 'AI/机器学习词汇',
+    name: 'Từ vựng AI/Học máy',
     nameEn: 'AI & Machine Learning',
     description:
       'Core vocabulary for artificial intelligence and machine learning, from neural networks to transformers.',
@@ -54,7 +54,7 @@ export const techBooks: WordBook[] = [
   },
   {
     id: 'biomedical',
-    name: '生物医学词汇',
+    name: 'Từ vựng y sinh học',
     nameEn: 'Biomedical',
     description:
       'Specialized vocabulary for biomedical science, covering anatomy, pharmacology, and clinical research.',

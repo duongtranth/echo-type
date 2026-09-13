@@ -82,7 +82,7 @@ export function DailyTaskQueue({ reviewOnly = false }: { reviewOnly?: boolean })
       ...extra,
     });
     const candidates: DailyTask[] = buildTodayReviewItems(data.records, data.contents, now).map((item) =>
-      make('review', item.recordId, item.title, 'Due for spaced review', '间隔复习已到期', item.href, 2, {
+      make('review', item.recordId, item.title, 'Due for spaced review', 'Đến hạn ôn tập ngắt quãng', item.href, 2, {
         contentIds: [item.contentId],
         module: item.module,
       }),
@@ -94,7 +94,7 @@ export function DailyTaskQueue({ reviewOnly = false }: { reviewOnly?: boolean })
           item.id,
           item.text,
           'Recall a saved expression',
-          '回忆收藏的表达',
+          'Nhớ lại một cách diễn đạt đã lưu',
           `/favorites/review?item=${encodeURIComponent(item.id)}`,
           2,
         ),
@@ -113,7 +113,7 @@ export function DailyTaskQueue({ reviewOnly = false }: { reviewOnly?: boolean })
           lesson.id,
           lesson.title,
           'One short practice block; save a response or finish an exercise',
-          '完成一个短练习：保存回答或完成一项练习',
+          'Hoàn thành một bài luyện tập ngắn: lưu câu trả lời hoặc hoàn tất một bài tập',
           `/learn/${encodeURIComponent(lesson.unitId)}?lesson=${encodeURIComponent(lesson.id)}`,
           Math.max(1, Math.min(10, lesson.estimatedMinutes)),
           { lessonId: lesson.id, contentIds: lesson.exercises.map((item) => item.id) },
@@ -122,10 +122,19 @@ export function DailyTaskQueue({ reviewOnly = false }: { reviewOnly?: boolean })
     const weak = data.weakSpots[0];
     if (weak)
       candidates.push(
-        make('weak-spot', weak.id, weak.text, 'Retry a recent difficulty', '重练最近的薄弱项', weak.targetHref, 3, {
-          contentIds: [weak.sourceId],
-          module: weak.module,
-        }),
+        make(
+          'weak-spot',
+          weak.id,
+          weak.text,
+          'Retry a recent difficulty',
+          'Luyện lại điểm yếu gần đây',
+          weak.targetHref,
+          3,
+          {
+            contentIds: [weak.sourceId],
+            module: weak.module,
+          },
+        ),
       );
     else
       candidates.push(
@@ -134,10 +143,10 @@ export function DailyTaskQueue({ reviewOnly = false }: { reviewOnly?: boolean })
           'daily-sentence',
           'Practice a sound',
           'Record a sound and listen back',
-          '录制一个音标并回听',
+          'Ghi âm một âm và nghe lại',
           '/pronunciation',
           3,
-          { titleZh: '练习一个音标' },
+          { titleZh: 'Luyện tập một âm' },
         ),
       );
     void database
@@ -188,7 +197,7 @@ export function DailyTaskQueue({ reviewOnly = false }: { reviewOnly?: boolean })
           dateKey,
           originDateKey: dateKey,
           title: 'Daily preferences',
-          titleZh: '每日偏好',
+          titleZh: 'Tùy chọn hằng ngày',
           reason: '',
           reasonZh: '',
           href: '/dashboard',
@@ -239,11 +248,11 @@ export function DailyTaskQueue({ reviewOnly = false }: { reviewOnly?: boolean })
       <div role="alert">
         {error}
         <button className={control} type="button" onClick={retry}>
-          {t('Retry', '重试')}
+          {t('Retry', 'Thử lại')}
         </button>
       </div>
     );
-  if (!data || !state) return <output>{t('Preparing your daily queue…', '正在准备每日任务…')}</output>;
+  if (!data || !state) return <output>{t('Preparing your daily queue…', 'Đang chuẩn bị nhiệm vụ hằng ngày…')}</output>;
   const eligible = state.tasks.filter(
     (task) => task.kind !== 'settings' && (!reviewOnly || ['review', 'favorite', 'weak-spot'].includes(task.kind)),
   );
@@ -262,12 +271,12 @@ export function DailyTaskQueue({ reviewOnly = false }: { reviewOnly?: boolean })
   const progress = dailyWorkspaceProgress(data.sessions, data.contents);
   const statusLabel = (status: DailyTask['status']) =>
     ({
-      pending: t('Ready', '待开始'),
-      'in-progress': t('In progress', '进行中'),
-      paused: t('Paused', '已暂停'),
-      completed: t('Completed', '已完成'),
-      skipped: t('Skipped', '已跳过'),
-      deferred: t('Deferred', '已推迟'),
+      pending: t('Ready', 'Sẵn sàng'),
+      'in-progress': t('In progress', 'Đang thực hiện'),
+      paused: t('Paused', 'Đã tạm dừng'),
+      completed: t('Completed', 'Đã hoàn thành'),
+      skipped: t('Skipped', 'Đã bỏ qua'),
+      deferred: t('Deferred', 'Đã hoãn'),
     })[status];
   return (
     <section
@@ -277,25 +286,27 @@ export function DailyTaskQueue({ reviewOnly = false }: { reviewOnly?: boolean })
       <div className="space-y-5 p-5 sm:p-7">
         <div>
           <h2 className="font-[var(--font-poppins)] text-2xl font-semibold text-indigo-950">
-            {reviewOnly ? t('Your review plan', '今日复习计划') : t('What to practice today', '今天练什么')}
+            {reviewOnly
+              ? t('Your review plan', 'Kế hoạch ôn tập hôm nay')
+              : t('What to practice today', 'Hôm nay luyện gì')}
           </h2>
           <p className="mt-2 text-sm leading-6 text-slate-600">
             {t(
               'Choose your time. Saved practice updates this queue when you return.',
-              '选择可用时间。完成练习后返回，任务会根据已保存记录更新。',
+              'Chọn thời gian bạn có. Khi quay lại, hàng đợi sẽ cập nhật dựa trên tiến độ đã lưu.',
             )}
           </p>
           <p className="mt-1 text-sm text-slate-500">
             {t(
               `Estimated time remaining: ${remaining} of ${minutes} min`,
-              `剩余预计练习时间：${remaining} / ${minutes} 分钟`,
+              `Thời gian ước tính còn lại: ${remaining} / ${minutes} phút`,
             )}
           </p>
         </div>
         <div
           role="group"
           className="flex flex-wrap items-center gap-2"
-          aria-label={t('Daily time budget', '每日时间预算')}
+          aria-label={t('Daily time budget', 'Ngân sách thời gian hằng ngày')}
         >
           {[5, 10, 20, 30, 45].map((value) => (
             <button
@@ -311,12 +322,12 @@ export function DailyTaskQueue({ reviewOnly = false }: { reviewOnly?: boolean })
           ))}
         </div>
         <p className="text-sm text-slate-600">
-          <span data-testid="daily-budget">{minutes}</span> {t('min budget', '分钟预算')} ·{' '}
-          {visible.reduce((sum, task) => sum + task.minutes, 0)} {t('min planned', '分钟已安排')}
+          <span data-testid="daily-budget">{minutes}</span> {t('min budget', 'phút ngân sách')} ·{' '}
+          {visible.reduce((sum, task) => sum + task.minutes, 0)} {t('min planned', 'phút đã lên kế hoạch')}
         </p>
         <details>
           <summary className="min-h-11 cursor-pointer py-2 text-sm text-indigo-700">
-            {t('Learning days', '学习日')}
+            {t('Learning days', 'Ngày học')}
           </summary>
           <div className="flex flex-wrap gap-2">
             {allDays.map((day) => (
@@ -335,7 +346,7 @@ export function DailyTaskQueue({ reviewOnly = false }: { reviewOnly?: boolean })
                 }
               >
                 {zh
-                  ? ['日', '一', '二', '三', '四', '五', '六'][day]
+                  ? ['CN', 'T2', 'T3', 'T4', 'T5', 'T6', 'T7'][day]
                   : ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'][day]}
               </button>
             ))}
@@ -351,9 +362,12 @@ export function DailyTaskQueue({ reviewOnly = false }: { reviewOnly?: boolean })
             {isLearningDay
               ? t(
                   'No tasks ready in this queue. You can still open your courses.',
-                  '此队列暂无待开始任务，仍可打开课程学习。',
+                  'Hiện chưa có nhiệm vụ nào sẵn sàng trong hàng đợi này. Bạn vẫn có thể mở khóa học để học.',
                 )
-              : t('A rest day. Your unfinished work is retained.', '今天是休息日，未完成任务已保留。')}
+              : t(
+                  'A rest day. Your unfinished work is retained.',
+                  'Hôm nay là ngày nghỉ. Công việc dang dở của bạn vẫn được giữ lại.',
+                )}
           </p>
         )}
         <ol className="divide-y divide-slate-100">
@@ -374,16 +388,16 @@ export function DailyTaskQueue({ reviewOnly = false }: { reviewOnly?: boolean })
                   className={`${control} bg-indigo-600 text-white`}
                   onClick={() => void act(task, 'start')}
                 >
-                  {task.status === 'pending' ? t('Start', '开始') : t('Continue', '继续')}
+                  {task.status === 'pending' ? t('Start', 'Bắt đầu') : t('Continue', 'Tiếp tục')}
                 </button>
                 <button type="button" disabled={busy} className={control} onClick={() => void act(task, 'pause')}>
-                  {t('Pause', '暂停')}
+                  {t('Pause', 'Tạm dừng')}
                 </button>
                 <button type="button" disabled={busy} className={control} onClick={() => void act(task, 'defer')}>
-                  {t('Tomorrow', '明天')}
+                  {t('Tomorrow', 'Ngày mai')}
                 </button>
                 <button type="button" disabled={busy} className={control} onClick={() => void act(task, 'skip')}>
-                  {t('Skip', '跳过')}
+                  {t('Skip', 'Bỏ qua')}
                 </button>
               </div>
             </li>
@@ -391,7 +405,7 @@ export function DailyTaskQueue({ reviewOnly = false }: { reviewOnly?: boolean })
         </ol>
         {!!history.length && (
           <div className="space-y-3 rounded-xl bg-slate-50 p-4">
-            <h3 className="text-sm font-semibold">{t('Saved task status', '已保存的任务状态')}</h3>
+            <h3 className="text-sm font-semibold">{t('Saved task status', 'Trạng thái nhiệm vụ đã lưu')}</h3>
             {history.map((task) => (
               <div key={task.id} className="flex items-start justify-between gap-2 text-sm">
                 <div className="min-w-0">
@@ -407,7 +421,7 @@ export function DailyTaskQueue({ reviewOnly = false }: { reviewOnly?: boolean })
                     className={`${control} text-indigo-700`}
                     onClick={() => void act(task, 'restore')}
                   >
-                    {t('Restore', '恢复')}
+                    {t('Restore', 'Khôi phục')}
                   </button>
                 )}
               </div>
@@ -415,12 +429,12 @@ export function DailyTaskQueue({ reviewOnly = false }: { reviewOnly?: boolean })
           </div>
         )}
         <Link href="/learn" className="inline-flex min-h-11 items-center text-sm font-medium text-indigo-700">
-          {t('All courses', '全部课程')}
+          {t('All courses', 'Tất cả khóa học')}
         </Link>
         <p className="text-xs leading-5 text-slate-500">
           {t(
             'Times are estimates for a short practice block. Opening a task never marks it complete.',
-            '时间为短练习的估算。仅打开任务不会标记完成。',
+            'Thời gian chỉ là ước tính cho một bài luyện tập ngắn. Chỉ mở nhiệm vụ sẽ không đánh dấu hoàn thành.',
           )}
         </p>
       </div>

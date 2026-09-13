@@ -534,7 +534,7 @@ function ScenarioCollectionsGroup({ collections }: { collections: CollectionItem
           <div className="w-8 h-8 rounded-lg bg-indigo-100 flex items-center justify-center shrink-0">
             <Layers className="w-4 h-4 text-indigo-700" />
           </div>
-          <h2 className="font-semibold text-indigo-900 text-lg truncate">Scenario Collections</h2>
+          <h2 className="font-semibold text-indigo-900 text-lg truncate">{messages.page.scenarioCollections}</h2>
           <Badge variant="secondary" className="bg-indigo-100 text-indigo-600 shrink-0">
             {collections.length}
           </Badge>

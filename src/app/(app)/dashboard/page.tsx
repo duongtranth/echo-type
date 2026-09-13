@@ -29,12 +29,12 @@ import {
   DashboardRecentActivity,
   type DashboardRecentActivityItem,
 } from '@/components/dashboard/dashboard-recent-activity';
+import { NoticeBanner } from '@/components/dashboard/notice-banner';
+import { StatCard, type StatCardProps } from '@/components/dashboard/stat-card';
 import { TodayWorkspace } from '@/components/learning/today-workspace';
 import {
   IOS_PAGE_CONTAINER_CLASS,
   IOS_PILL_CLASS,
-  IOS_PRIMARY_BUTTON_CLASS,
-  IOS_SECONDARY_BUTTON_CLASS,
   IOS_SUBCARD_CLASS,
   IOSPageHeader,
 } from '@/components/shared/ios-native-ui';
@@ -159,8 +159,6 @@ export default function DashboardPage() {
   const { currentLevel, shouldShowReminder, dismissReminder } = useAssessmentStore();
   const showReminder = shouldShowReminder(stats.totalSessions);
   const showAutoLanguageNotice = initialized && !hasExplicitPreference;
-  const iosNoticeCardClass =
-    'rounded-[26px] border border-white/70 bg-white/82 p-4 shadow-[0_14px_34px_rgba(15,23,42,0.06)]';
 
   useEffect(() => {
     useLearningGoalStore.getState().hydrate();
@@ -265,30 +263,13 @@ export default function DashboardPage() {
     write: { label: dashboard.modules.write.label, icon: PenTool, color: 'bg-purple-500', href: '/write' },
   };
 
-  const statCards = [
-    { label: dashboard.stats.content, value: stats.totalContent, icon: Library, accent: 'border-l-slate-300' },
-    { label: dashboard.stats.sessions, value: stats.totalSessions, icon: TrendingUp, accent: 'border-l-slate-300' },
-    {
-      label: dashboard.stats.words,
-      value: stats.totalWords.toLocaleString(),
-      icon: Hash,
-      accent: 'border-l-slate-300',
-    },
-    { label: dashboard.stats.articles, value: stats.articlesPracticed, icon: FileText, accent: 'border-l-slate-300' },
-    {
-      label: dashboard.stats.accuracy,
-      value: `${stats.avgAccuracy}%`,
-      icon: Target,
-      accent: 'border-l-emerald-400',
-      prominent: true,
-    },
-    {
-      label: dashboard.stats.avgWpm,
-      value: stats.avgWpm,
-      icon: PenTool,
-      accent: 'border-l-indigo-400',
-      prominent: true,
-    },
+  const statCards: Array<{ label: string; value: string | number; icon: LucideIcon; tone: StatCardProps['tone'] }> = [
+    { label: dashboard.stats.content, value: stats.totalContent, icon: Library, tone: 'default' },
+    { label: dashboard.stats.sessions, value: stats.totalSessions, icon: TrendingUp, tone: 'default' },
+    { label: dashboard.stats.words, value: stats.totalWords.toLocaleString(), icon: Hash, tone: 'default' },
+    { label: dashboard.stats.articles, value: stats.articlesPracticed, icon: FileText, tone: 'default' },
+    { label: dashboard.stats.accuracy, value: `${stats.avgAccuracy}%`, icon: Target, tone: 'success' },
+    { label: dashboard.stats.avgWpm, value: stats.avgWpm, icon: PenTool, tone: 'primary' },
   ];
 
   const modules: Array<{
@@ -414,7 +395,7 @@ export default function DashboardPage() {
       ) : (
         <div className="flex items-start justify-between gap-4">
           <div>
-            <h1 className="text-3xl font-bold text-indigo-900">{dashboard.header.title}</h1>
+            <h1 className="font-heading text-3xl font-bold text-indigo-900">{dashboard.header.title}</h1>
             <p className="mt-1 text-indigo-600">{dashboard.header.subtitle}</p>
           </div>
           {stats.streak > 0 && (
@@ -467,43 +448,23 @@ export default function DashboardPage() {
       ) : null}
 
       {showAutoLanguageNotice && (
-        <div
-          className={
-            isIOSNativeHost
-              ? `${iosNoticeCardClass} flex flex-col gap-3`
-              : 'flex items-center gap-3 rounded-lg border border-indigo-200 bg-indigo-50/60 px-4 py-2.5'
+        <NoticeBanner
+          icon={Settings}
+          tone="indigo"
+          title={dashboard.autoLanguageNotice.title}
+          description={dashboard.autoLanguageNotice.description.replace(
+            '{{language}}',
+            common.nativeLanguageNames[interfaceLanguage],
+          )}
+          actions={
+            <Link href="/settings">
+              <Button size="sm" variant="outline" className="cursor-pointer">
+                <Settings className="mr-1.5 h-3.5 w-3.5" />
+                {dashboard.autoLanguageNotice.cta}
+              </Button>
+            </Link>
           }
-        >
-          <div className="min-w-0 flex-1">
-            <p
-              className={
-                isIOSNativeHost ? 'text-sm font-semibold text-slate-900' : 'text-sm font-semibold text-indigo-900'
-              }
-            >
-              {dashboard.autoLanguageNotice.title}
-            </p>
-            <p className={isIOSNativeHost ? 'mt-1 text-sm leading-6 text-slate-500' : 'text-xs text-indigo-600'}>
-              {dashboard.autoLanguageNotice.description.replace(
-                '{{language}}',
-                common.nativeLanguageNames[interfaceLanguage],
-              )}
-            </p>
-          </div>
-          <Link href="/settings" className={isIOSNativeHost ? 'self-start' : ''}>
-            <Button
-              size="sm"
-              variant="outline"
-              className={
-                isIOSNativeHost
-                  ? `${IOS_SECONDARY_BUTTON_CLASS} cursor-pointer`
-                  : 'border-indigo-200 text-indigo-700 hover:bg-indigo-50 cursor-pointer shrink-0'
-              }
-            >
-              <Settings className="mr-1.5 h-3.5 w-3.5" />
-              {dashboard.autoLanguageNotice.cta}
-            </Button>
-          </Link>
-        </div>
+        />
       )}
 
       {/* Stats row */}
@@ -525,294 +486,116 @@ export default function DashboardPage() {
               : 'grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-3'
           }
         >
-          {statCards.map(({ label, value, icon: Icon, accent }) => (
-            <div
-              key={label}
-              className={
-                isIOSNativeHost
-                  ? 'rounded-[24px] border border-white/70 bg-white/82 px-4 py-3.5 shadow-[0_14px_34px_rgba(15,23,42,0.06)]'
-                  : `rounded-lg border border-slate-100 bg-white px-3 py-2.5 shadow-sm border-l-3 ${accent}`
-              }
-            >
-              <div className="flex items-center justify-between mb-1">
-                <span
-                  className={
-                    isIOSNativeHost
-                      ? 'text-[11px] font-semibold uppercase tracking-[0.12em] text-slate-400'
-                      : 'text-xs font-medium text-indigo-600'
-                  }
-                >
-                  {label}
-                </span>
-                <Icon className={isIOSNativeHost ? 'w-4 h-4 text-slate-400' : 'w-3.5 h-3.5 text-indigo-400'} />
-              </div>
-              <div
-                className={
-                  isIOSNativeHost
-                    ? 'text-[1.75rem] font-bold tracking-[-0.03em] text-slate-950'
-                    : 'text-xl font-bold text-indigo-900'
-                }
-              >
-                {value}
-              </div>
-            </div>
+          {statCards.map(({ label, value, icon, tone }) => (
+            <StatCard key={label} label={label} value={value} icon={icon} tone={tone} />
           ))}
         </div>
       </div>
 
       {/* AI Provider setup prompt */}
       {!hasProvider && (
-        <div
-          className={
-            isIOSNativeHost
-              ? `${iosNoticeCardClass} flex flex-col gap-3`
-              : 'flex items-center gap-3 rounded-lg border border-violet-200 bg-gradient-to-r from-violet-50 to-indigo-50 px-4 py-3'
+        <NoticeBanner
+          icon={Sparkles}
+          tone="violet"
+          title={dashboard.aiSetup.title}
+          description={dashboard.aiSetup.description}
+          actions={
+            <Link href="/settings">
+              <Button size="sm" className="cursor-pointer bg-violet-600 hover:bg-violet-700">
+                <Settings className="w-3.5 h-3.5 mr-1.5" /> {dashboard.aiSetup.cta}
+              </Button>
+            </Link>
           }
-        >
-          <div
-            className={
-              isIOSNativeHost
-                ? 'flex h-11 w-11 items-center justify-center rounded-2xl bg-gradient-to-br from-violet-500 to-indigo-600 shadow-[0_14px_28px_rgba(99,102,241,0.2)]'
-                : 'w-9 h-9 rounded-lg bg-gradient-to-br from-violet-500 to-indigo-600 flex items-center justify-center shrink-0'
-            }
-          >
-            <Sparkles className="w-4.5 h-4.5 text-white" />
-          </div>
-          <div className="flex-1 min-w-0">
-            <p
-              className={
-                isIOSNativeHost ? 'text-sm font-semibold text-slate-900' : 'text-sm font-semibold text-indigo-900'
-              }
-            >
-              {dashboard.aiSetup.title}
-            </p>
-            <p className={isIOSNativeHost ? 'mt-1 text-sm leading-6 text-slate-500' : 'text-xs text-indigo-500'}>
-              {dashboard.aiSetup.description}
-            </p>
-          </div>
-          <Link href="/settings" className={isIOSNativeHost ? 'self-start' : ''}>
-            <Button
-              size="sm"
-              className={
-                isIOSNativeHost
-                  ? `${IOS_PRIMARY_BUTTON_CLASS} bg-violet-600 shadow-[0_12px_26px_rgba(124,58,237,0.22)] hover:bg-violet-700 cursor-pointer`
-                  : 'bg-violet-600 hover:bg-violet-700 text-white cursor-pointer shrink-0'
-              }
-            >
-              <Settings className="w-3.5 h-3.5 mr-1.5" /> {dashboard.aiSetup.cta}
-            </Button>
-          </Link>
-        </div>
+        />
       )}
 
       {/* Active provider not connected warning */}
       {hasProvider && !activeProviderConnected && (
-        <div
-          className={
-            isIOSNativeHost
-              ? `${iosNoticeCardClass} flex flex-col gap-3`
-              : 'flex items-center gap-3 rounded-lg border border-amber-200 bg-amber-50/60 px-4 py-2.5'
+        <NoticeBanner
+          icon={Zap}
+          tone="amber"
+          title={dashboard.aiDisconnected.title}
+          description={dashboard.aiDisconnected.description.replace('{{providerId}}', activeProviderId)}
+          actions={
+            <Link href="/settings">
+              <Button
+                size="sm"
+                variant="outline"
+                className="cursor-pointer border-amber-200 text-amber-700 hover:bg-amber-50"
+              >
+                <Settings className="w-3.5 h-3.5 mr-1.5" /> {dashboard.aiDisconnected.cta}
+              </Button>
+            </Link>
           }
-        >
-          <div
-            className={
-              isIOSNativeHost
-                ? 'flex h-10 w-10 items-center justify-center rounded-2xl bg-amber-500 shadow-[0_12px_26px_rgba(245,158,11,0.18)]'
-                : 'w-8 h-8 rounded-lg bg-amber-500 flex items-center justify-center shrink-0'
-            }
-          >
-            <Zap className="w-4 h-4 text-white" />
-          </div>
-          <div className="flex-1 min-w-0">
-            <p
-              className={
-                isIOSNativeHost ? 'text-sm font-semibold text-slate-900' : 'text-sm font-semibold text-indigo-900'
-              }
-            >
-              {dashboard.aiDisconnected.title}
-            </p>
-            <p className={isIOSNativeHost ? 'mt-1 text-sm leading-6 text-slate-500' : 'text-xs text-indigo-500'}>
-              {dashboard.aiDisconnected.description.replace('{{providerId}}', activeProviderId)}
-            </p>
-          </div>
-          <Link href="/settings" className={isIOSNativeHost ? 'self-start' : ''}>
-            <Button
-              size="sm"
-              variant="outline"
-              className={
-                isIOSNativeHost
-                  ? 'h-10 rounded-full border border-amber-200 px-4 text-amber-700 hover:bg-amber-50 cursor-pointer'
-                  : 'border-amber-200 text-amber-700 hover:bg-amber-50 cursor-pointer shrink-0'
-              }
-            >
-              <Settings className="w-3.5 h-3.5 mr-1.5" /> {dashboard.aiDisconnected.cta}
-            </Button>
-          </Link>
-        </div>
+        />
       )}
 
       {/* New-user onboarding */}
       {isNewUser && (
-        <div
-          className={
-            isIOSNativeHost
-              ? `${iosNoticeCardClass} flex flex-col gap-3`
-              : 'flex items-center gap-3 rounded-lg border border-indigo-200 bg-indigo-50/60 px-4 py-3'
+        <NoticeBanner
+          icon={BookMarked}
+          tone="indigo"
+          title={dashboard.onboarding.title}
+          description={dashboard.onboarding.description}
+          actions={
+            <>
+              <Link href="/library/wordbooks">
+                <Button size="sm" className="cursor-pointer">
+                  <BookMarked className="w-3.5 h-3.5 mr-1.5" /> {dashboard.onboarding.wordBooks}
+                </Button>
+              </Link>
+              <Link href="/library/import">
+                <Button size="sm" variant="outline" className="cursor-pointer">
+                  <Upload className="w-3.5 h-3.5 mr-1.5" /> {dashboard.onboarding.import}
+                </Button>
+              </Link>
+            </>
           }
-        >
-          <div
-            className={
-              isIOSNativeHost
-                ? 'flex h-11 w-11 items-center justify-center rounded-2xl bg-indigo-600 shadow-[0_14px_28px_rgba(79,70,229,0.22)]'
-                : 'w-9 h-9 rounded-lg bg-indigo-600 flex items-center justify-center shrink-0'
-            }
-          >
-            <BookMarked className="w-4.5 h-4.5 text-white" />
-          </div>
-          <div className="flex-1 min-w-0">
-            <p
-              className={
-                isIOSNativeHost ? 'text-sm font-semibold text-slate-900' : 'text-sm font-semibold text-indigo-900'
-              }
-            >
-              {dashboard.onboarding.title}
-            </p>
-            <p className={isIOSNativeHost ? 'mt-1 text-sm leading-6 text-slate-500' : 'text-xs text-indigo-500'}>
-              {dashboard.onboarding.description}
-            </p>
-          </div>
-          <div className={`flex gap-2 ${isIOSNativeHost ? 'flex-wrap' : 'shrink-0'}`}>
-            <Link href="/library/wordbooks">
-              <Button
-                size="sm"
-                className={
-                  isIOSNativeHost
-                    ? `${IOS_PRIMARY_BUTTON_CLASS} bg-indigo-600 shadow-[0_12px_26px_rgba(79,70,229,0.2)] hover:bg-indigo-700 cursor-pointer`
-                    : 'bg-indigo-600 hover:bg-indigo-700 cursor-pointer'
-                }
-              >
-                <BookMarked className="w-3.5 h-3.5 mr-1.5" /> {dashboard.onboarding.wordBooks}
-              </Button>
-            </Link>
-            <Link href="/library/import">
-              <Button
-                size="sm"
-                variant="outline"
-                className={
-                  isIOSNativeHost
-                    ? `${IOS_SECONDARY_BUTTON_CLASS} cursor-pointer`
-                    : 'border-indigo-200 text-indigo-600 hover:bg-indigo-50 cursor-pointer'
-                }
-              >
-                <Upload className="w-3.5 h-3.5 mr-1.5" /> {dashboard.onboarding.import}
-              </Button>
-            </Link>
-          </div>
-        </div>
+        />
       )}
 
       {/* First-time assessment prompt */}
       {!currentLevel && !isNewUser && (
-        <div
-          className={
-            isIOSNativeHost
-              ? `${iosNoticeCardClass} flex flex-col gap-3`
-              : 'flex items-center gap-3 rounded-lg border border-amber-200 bg-amber-50/60 px-4 py-2.5'
+        <NoticeBanner
+          icon={Target}
+          tone="amber"
+          title={dashboard.assessment.title}
+          description={dashboard.assessment.description}
+          actions={
+            <Link href="/settings">
+              <Button size="sm" className="cursor-pointer bg-amber-500 hover:bg-amber-600">
+                <Target className="w-3.5 h-3.5 mr-1.5" /> {dashboard.assessment.cta}
+              </Button>
+            </Link>
           }
-        >
-          <div
-            className={
-              isIOSNativeHost
-                ? 'flex h-10 w-10 items-center justify-center rounded-2xl bg-amber-500 shadow-[0_12px_26px_rgba(245,158,11,0.18)]'
-                : 'w-8 h-8 rounded-lg bg-amber-500 flex items-center justify-center shrink-0'
-            }
-          >
-            <Target className="w-4 h-4 text-white" />
-          </div>
-          <div className="flex-1 min-w-0">
-            <p
-              className={
-                isIOSNativeHost ? 'text-sm font-semibold text-slate-900' : 'text-sm font-semibold text-indigo-900'
-              }
-            >
-              {dashboard.assessment.title}
-            </p>
-            <p className={isIOSNativeHost ? 'mt-1 text-sm leading-6 text-slate-500' : 'text-xs text-indigo-500'}>
-              {dashboard.assessment.description}
-            </p>
-          </div>
-          <Link href="/settings" className={isIOSNativeHost ? 'self-start' : ''}>
-            <Button
-              size="sm"
-              className={
-                isIOSNativeHost
-                  ? 'h-10 rounded-full bg-amber-500 px-4 text-white shadow-[0_12px_26px_rgba(245,158,11,0.18)] hover:bg-amber-600 cursor-pointer'
-                  : 'bg-amber-500 hover:bg-amber-600 text-white cursor-pointer shrink-0'
-              }
-            >
-              <Target className="w-3.5 h-3.5 mr-1.5" /> {dashboard.assessment.cta}
-            </Button>
-          </Link>
-        </div>
+        />
       )}
 
       {/* Re-test reminder */}
       {showReminder && currentLevel && (
-        <div
-          className={
-            isIOSNativeHost
-              ? `${iosNoticeCardClass} flex flex-col gap-3`
-              : 'flex items-center gap-3 rounded-lg border border-emerald-200 bg-emerald-50/60 px-4 py-2.5'
-          }
-        >
-          <div
-            className={
-              isIOSNativeHost
-                ? 'flex h-10 w-10 items-center justify-center rounded-2xl bg-emerald-500 shadow-[0_12px_26px_rgba(16,185,129,0.18)]'
-                : 'w-8 h-8 rounded-lg bg-emerald-500 flex items-center justify-center shrink-0'
-            }
-          >
-            <TrendingUp className="w-4 h-4 text-white" />
-          </div>
-          <div className="flex-1 min-w-0">
-            <p
-              className={
-                isIOSNativeHost ? 'text-sm font-semibold text-slate-900' : 'text-sm font-semibold text-indigo-900'
-              }
-            >
-              {dashboard.assessment.reminderTitle}
-            </p>
-            <p className={isIOSNativeHost ? 'mt-1 text-sm leading-6 text-slate-500' : 'text-xs text-indigo-500'}>
-              {dashboard.assessment.reminderDescription.replace('{{level}}', currentLevel)}
-            </p>
-          </div>
-          <div className={`flex gap-2 ${isIOSNativeHost ? 'flex-wrap' : 'shrink-0'}`}>
-            <Link href="/settings">
+        <NoticeBanner
+          icon={TrendingUp}
+          tone="emerald"
+          title={dashboard.assessment.reminderTitle}
+          description={dashboard.assessment.reminderDescription.replace('{{level}}', currentLevel)}
+          actions={
+            <>
+              <Link href="/settings">
+                <Button size="sm" className="cursor-pointer bg-emerald-500 hover:bg-emerald-600">
+                  <Target className="w-3.5 h-3.5 mr-1.5" /> {dashboard.assessment.cta}
+                </Button>
+              </Link>
               <Button
                 size="sm"
-                className={
-                  isIOSNativeHost
-                    ? 'h-10 rounded-full bg-emerald-500 px-4 text-white shadow-[0_12px_26px_rgba(16,185,129,0.18)] hover:bg-emerald-600 cursor-pointer'
-                    : 'bg-emerald-500 hover:bg-emerald-600 text-white cursor-pointer'
-                }
+                variant="outline"
+                onClick={dismissReminder}
+                className="cursor-pointer border-emerald-200 text-emerald-600 hover:bg-emerald-50"
               >
-                <Target className="w-3.5 h-3.5 mr-1.5" /> {dashboard.assessment.cta}
+                {common.actions.dismiss}
               </Button>
-            </Link>
-            <Button
-              size="sm"
-              variant="outline"
-              onClick={dismissReminder}
-              className={
-                isIOSNativeHost
-                  ? 'h-10 rounded-full border-emerald-200 px-4 text-emerald-700 hover:bg-emerald-50 cursor-pointer'
-                  : 'border-emerald-200 text-emerald-600 hover:bg-emerald-50 cursor-pointer'
-              }
-            >
-              {common.actions.dismiss}
-            </Button>
-          </div>
-        </div>
+            </>
+          }
+        />
       )}
 
       {/* Mini Analytics */}

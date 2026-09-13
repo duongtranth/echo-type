@@ -3,7 +3,7 @@ import type { WordBook } from '@/types/wordbook';
 export const professionalBooks: WordBook[] = [
   {
     id: 'business-english',
-    name: '商务英语核心词汇',
+    name: 'Từ vựng cốt lõi tiếng Anh thương mại',
     nameEn: 'Business English',
     description: 'Professional vocabulary for the modern workplace, from emails and meetings to negotiations.',
     kind: 'vocabulary',
@@ -15,7 +15,7 @@ export const professionalBooks: WordBook[] = [
   },
   {
     id: 'bec',
-    name: 'BEC商务英语证书词汇',
+    name: 'Từ vựng chứng chỉ BEC',
     nameEn: 'BEC Certificate',
     description: 'Targeted vocabulary for the Cambridge Business English Certificate exam series.',
     kind: 'vocabulary',
@@ -27,7 +27,7 @@ export const professionalBooks: WordBook[] = [
   },
   {
     id: 'daily-vocab',
-    name: '日常高频词汇',
+    name: 'Từ vựng thông dụng hằng ngày',
     nameEn: 'Daily Essentials',
     description:
       'The most useful everyday English words for daily conversation, shopping, travel, and social situations.',
@@ -40,7 +40,7 @@ export const professionalBooks: WordBook[] = [
   },
   {
     id: 'coca',
-    name: 'COCA高频学术词汇',
+    name: 'Từ vựng học thuật tần suất cao COCA',
     nameEn: 'COCA Academic',
     description:
       'Top academic words from the Corpus of Contemporary American English, essential for reading comprehension.',

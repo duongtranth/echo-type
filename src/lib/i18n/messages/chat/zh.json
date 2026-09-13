@@ -1,68 +1,68 @@
 {
   "header": {
-    "title": "AI 英语导师",
-    "closeChat": "关闭聊天"
+    "title": "Gia sư AI tiếng Anh",
+    "closeChat": "Đóng trò chuyện"
   },
   "content": {
-    "practicing": "正在练习：",
-    "clearContent": "清除当前内容"
+    "practicing": "Đang luyện tập:",
+    "clearContent": "Xóa nội dung đang hoạt động"
   },
   "status": {
-    "thinking": "思考中..."
+    "thinking": "Đang suy nghĩ..."
   },
   "input": {
-    "placeholderContent": "就当前内容提问...",
-    "placeholderGeneral": "随便问我什么..."
+    "placeholderContent": "Hỏi về nội dung này...",
+    "placeholderGeneral": "Hỏi mình bất cứ điều gì..."
   },
   "emptyState": {
-    "greeting": "你好！我是你的英语导师。",
-    "hint": "告诉我你想做什么，我来帮你。"
+    "greeting": "Xin chào! Mình là gia sư tiếng Anh của bạn.",
+    "hint": "Cho mình biết bạn muốn làm gì và mình sẽ thực hiện."
   },
   "quickActions": {
-    "dailyChat": "日常对话",
+    "dailyChat": "Trò chuyện hằng ngày",
     "dailyChatPrompt": "Let's have a daily English conversation. Start a topic and I'll practice with you.",
-    "grammarCheck": "语法检查",
+    "grammarCheck": "Kiểm tra ngữ pháp",
     "grammarCheckPrompt": "Check my grammar and explain the corrections with short examples.",
-    "librarySearch": "内容搜索",
+    "librarySearch": "Tìm trong thư viện",
     "librarySearchPrompt": "Search my library for travel-related content and recommend one practice item.",
-    "translate": "翻译",
+    "translate": "Dịch",
     "translatePrompt": "Start a translation exercise for the content I am practicing now.",
-    "importUrl": "导入链接",
+    "importUrl": "Nhập liên kết",
     "importUrlPrompt": "If I paste an article URL, import it into my library and summarize what to practice first.",
-    "myProgress": "我的进度",
+    "myProgress": "Tiến độ của tôi",
     "myProgressPrompt": "Show my learning progress and give me specific suggestions."
   },
   "errors": {
-    "fallback": "出现错误，请重试。",
+    "fallback": "Đã xảy ra lỗi. Vui lòng thử lại.",
     "tokenLimit": {
-      "title": "Token 额度不足",
-      "descriptionDetailed": "请求 {{requested}} 个 token，但仅有 {{available}} 个可用。请在设置中减少「最大输出 Token 数」或充值。",
-      "descriptionGeneral": "请求超出了 token 限制。请在设置中减少「最大输出 Token 数」或升级方案。"
+      "title": "Vượt quá giới hạn token",
+      "descriptionDetailed": "Yêu cầu {{requested}} token nhưng chỉ còn {{available}} token khả dụng. Hãy giảm \"Số token đầu ra tối đa\" trong Cài đặt hoặc nạp thêm.",
+      "descriptionGeneral": "Yêu cầu vượt quá giới hạn token. Hãy giảm \"Số token đầu ra tối đa\" trong Cài đặt hoặc nâng cấp gói."
     },
     "rateLimit": {
-      "title": "请求过于频繁",
-      "description": "请求次数过多，请稍后再发送消息。"
+      "title": "Bị giới hạn tần suất",
+      "description": "Quá nhiều yêu cầu. Vui lòng đợi một chút trước khi gửi tin nhắn tiếp theo."
     },
     "invalidKey": {
-      "title": "API 密钥无效",
-      "description": "您的 API 密钥可能已过期或不正确，请在设置中检查。"
+      "title": "Khóa API không hợp lệ",
+      "description": "Khóa API của bạn có thể đã hết hạn hoặc không chính xác. Vui lòng kiểm tra lại trong Cài đặt."
     },
     "insufficientBalance": {
-      "title": "余额不足",
-      "description": "账户余额过低，请充值或切换到其他服务商。"
+      "title": "Số dư không đủ",
+      "description": "Số dư tài khoản của bạn quá thấp. Vui lòng nạp thêm hoặc chuyển sang nhà cung cấp khác."
     },
     "modelNotFound": {
-      "title": "模型不可用",
-      "description": "所选模型不可用，请在设置中选择其他模型。"
+      "title": "Mô hình không khả dụng",
+      "description": "Mô hình đã chọn hiện không khả dụng. Vui lòng chọn mô hình khác trong Cài đặt."
     },
     "contextLength": {
-      "title": "消息过长",
-      "description": "对话内容超出模型上下文长度。请开始新对话或使用上下文窗口更大的模型。"
+      "title": "Tin nhắn quá dài",
+      "description": "Cuộc trò chuyện quá dài đối với mô hình này. Hãy bắt đầu cuộc trò chuyện mới hoặc dùng mô hình có cửa sổ ngữ cảnh lớn hơn."
     },
     "timeout": {
-      "title": "请求超时",
-      "description": "AI 服务商响应时间过长，请重试。"
+      "title": "Yêu cầu hết thời gian chờ",
+      "description": "Nhà cung cấp AI phản hồi quá lâu. Vui lòng thử lại."
     },
-    "openSettings": "打开设置"
+    "openSettings": "Mở Cài đặt"
   }
 }
