@@ -22,10 +22,12 @@ export function getSuggestedExamTimeLimitSeconds(bundle: ExamBundle): number {
     speaking: 14,
   };
 
-  return Math.max(
-    1,
-    skills.reduce((total, skill) => total + minutesBySkill[skill], 0),
-  ) * MINUTE;
+  return (
+    Math.max(
+      1,
+      skills.reduce((total, skill) => total + minutesBySkill[skill], 0),
+    ) * MINUTE
+  );
 }
 
 export function formatExamTime(seconds: number): string {
