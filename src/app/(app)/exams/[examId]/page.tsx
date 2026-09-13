@@ -1,6 +1,6 @@
 'use client';
 
-import { ArrowLeft, Play, Plus, Trash2 } from 'lucide-react';
+import { ArrowLeft, Clock3, Play, Plus, Trash2 } from 'lucide-react';
 import Link from 'next/link';
 import { useParams } from 'next/navigation';
 import { type FormEvent, useCallback, useEffect, useMemo, useState } from 'react';
@@ -116,6 +116,15 @@ export default function ExamEditorPage() {
     );
   }
 
+  const practiceLinkClass = `inline-flex items-center justify-center gap-2 rounded-lg px-4 py-2 text-sm font-semibold ${
+    bundle.questions.length > 0
+      ? 'border border-slate-200 bg-white text-slate-700 hover:bg-slate-50'
+      : 'pointer-events-none border border-slate-200 bg-slate-100 text-slate-400'
+  }`;
+  const timedLinkClass = `inline-flex items-center justify-center gap-2 rounded-lg px-4 py-2 text-sm font-semibold text-white ${
+    bundle.questions.length > 0 ? 'bg-emerald-600 hover:bg-emerald-700' : 'pointer-events-none bg-slate-300'
+  }`;
+
   return (
     <div className="mx-auto w-full max-w-7xl space-y-6 p-4 md:p-8">
       <div className="flex flex-col gap-4 lg:flex-row lg:items-start lg:justify-between">
@@ -133,24 +142,31 @@ export default function ExamEditorPage() {
           <h1 className="mt-2 text-2xl font-semibold text-slate-900">{bundle.test.title}</h1>
           <p className="mt-1 text-sm text-slate-500">{bundle.test.sourceFilename || 'Imported exam'}</p>
         </div>
-        <Link
-          href={`/exams/${bundle.test.id}/practice`}
-          aria-disabled={bundle.questions.length === 0}
-          className={`inline-flex items-center justify-center gap-2 rounded-lg px-4 py-2 text-sm font-semibold text-white ${
-            bundle.questions.length > 0 ? 'bg-emerald-600 hover:bg-emerald-700' : 'pointer-events-none bg-slate-300'
-          }`}
-        >
-          <Play className="h-4 w-4" />
-          Start practice ({bundle.questions.length})
-        </Link>
+        <div className="flex flex-col gap-2 sm:flex-row">
+          <Link
+            href={`/exams/${bundle.test.id}/practice`}
+            aria-disabled={bundle.questions.length === 0}
+            className={practiceLinkClass}
+          >
+            <Play className="h-4 w-4" />
+            Practice ({bundle.questions.length})
+          </Link>
+          <Link
+            href={`/exams/${bundle.test.id}/practice?mode=test`}
+            aria-disabled={bundle.questions.length === 0}
+            className={timedLinkClass}
+          >
+            <Clock3 className="h-4 w-4" />
+            Timed test
+          </Link>
+        </div>
       </div>
 
       <div className="grid gap-6 xl:grid-cols-[minmax(0,1.2fr)_minmax(360px,0.8fr)]">
         <section className="rounded-xl border border-slate-200 bg-white p-5 shadow-sm">
           <h2 className="font-semibold text-slate-900">Extracted source</h2>
           <p className="mt-1 text-xs text-slate-500">
-            Phase 1 keeps the original extracted text visible while you verify questions. OCR/AI parsing can populate
-            the editor later.
+            Keep the original extracted text visible while you verify imported questions and answers.
           </p>
           <pre className="mt-4 max-h-[70vh] overflow-auto whitespace-pre-wrap rounded-lg bg-slate-50 p-4 text-sm leading-6 text-slate-700">
             {selectedSection?.sourceText || 'No source text.'}
