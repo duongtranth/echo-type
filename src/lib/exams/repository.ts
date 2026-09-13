@@ -135,11 +135,7 @@ export async function deleteExamTest(testId: string): Promise<void> {
 
   await examDb.transaction(
     'rw',
-    examDb.tests,
-    examDb.sections,
-    examDb.questions,
-    examDb.attempts,
-    examDb.answers,
+    [examDb.tests, examDb.sections, examDb.questions, examDb.attempts, examDb.answers],
     async () => {
       await examDb.tests.delete(testId);
       await examDb.sections.where('testId').equals(testId).delete();
