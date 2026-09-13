@@ -2,7 +2,7 @@
 
 import { BookOpen, ChevronDown, ChevronUp, ExternalLink, Loader2, Sparkles } from 'lucide-react';
 import { useMemo, useState } from 'react';
-import { type WordMeaning, useWordDictionary } from '@/hooks/use-word-dictionary';
+import { useWordDictionary, type WordMeaning } from '@/hooks/use-word-dictionary';
 import { usePracticeTranslationStore } from '@/stores/practice-translation-store';
 import type { PracticeModule } from '@/types/translation';
 
@@ -104,7 +104,11 @@ export function WordDictionaryInfo({ word, targetLang, module, contextText }: Wo
     showTranslation && translation && (!hasMeanings || !meaningContainsTranslation(meanings, translation));
   const hasExplorerData =
     showTranslation &&
-    (meanings.length > 1 || synonyms.length > 0 || antonyms.length > 0 || collocations.length > 0 || wordFamily.length > 0);
+    (meanings.length > 1 ||
+      synonyms.length > 0 ||
+      antonyms.length > 0 ||
+      collocations.length > 0 ||
+      wordFamily.length > 0);
 
   if (isLoading) {
     return (
@@ -141,7 +145,9 @@ export function WordDictionaryInfo({ word, targetLang, module, contextText }: Wo
             {contextMeaning.definition}
           </p>
           <p className="mt-1 text-xs leading-5 text-slate-500">{contextMeaning.definitionEnglish}</p>
-          {contextText?.trim() && <p className="mt-2 text-xs italic leading-5 text-indigo-600">“{contextText.trim()}”</p>}
+          {contextText?.trim() && (
+            <p className="mt-2 text-xs italic leading-5 text-indigo-600">“{contextText.trim()}”</p>
+          )}
         </div>
       )}
 
