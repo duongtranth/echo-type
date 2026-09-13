@@ -6,6 +6,7 @@ export type LearningSection =
   | 'notes'
   | 'conversation'
   | 'pronunciation'
+  | 'exams'
   | 'settings';
 
 export const PRIMARY_LEARNING_LINKS = [
@@ -16,6 +17,7 @@ export const PRIMARY_LEARNING_LINKS = [
   { section: 'notes', href: '/favorites', en: 'My notes', zh: '我的笔记' },
   { section: 'conversation', href: '/speak', en: 'AI conversation', zh: 'AI 对话' },
   { section: 'pronunciation', href: '/pronunciation', en: 'Pronunciation', zh: '发音训练' },
+  { section: 'exams', href: '/exams', en: 'IELTS & TOEIC', zh: '考试练习' },
 ] as const;
 
 export function withinRoute(path: string, root: string): boolean {
