@@ -159,9 +159,7 @@ export default function ExamPracticePage() {
                   ) : (
                     <input
                       value={answers[question.id] ?? ''}
-                      onChange={(event) =>
-                        setAnswers((current) => ({ ...current, [question.id]: event.target.value }))
-                      }
+                      onChange={(event) => setAnswers((current) => ({ ...current, [question.id]: event.target.value }))}
                       placeholder="Your answer"
                       className="mt-4 w-full rounded-lg border border-slate-200 px-3 py-2 text-sm outline-none focus:border-indigo-400"
                     />
