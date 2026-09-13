@@ -29,7 +29,10 @@ function sanitizeDraft(value: ParsedExamDraft): ParsedExamDraft {
     title: typeof value?.title === 'string' ? value.title.trim() : undefined,
     sections: sections.map((section, sectionIndex) => ({
       skill: SKILLS.has(section.skill) ? section.skill : 'reading',
-      title: typeof section.title === 'string' && section.title.trim() ? section.title.trim() : `Section ${sectionIndex + 1}`,
+      title:
+        typeof section.title === 'string' && section.title.trim()
+          ? section.title.trim()
+          : `Section ${sectionIndex + 1}`,
       instructions: typeof section.instructions === 'string' ? section.instructions.trim() : undefined,
       sourceText: typeof section.sourceText === 'string' ? section.sourceText.trim() : undefined,
       questions: (Array.isArray(section.questions) ? section.questions : []).map((question, questionIndex) => ({
@@ -40,7 +43,9 @@ function sanitizeDraft(value: ParsedExamDraft): ParsedExamDraft {
         type: QUESTION_TYPES.has(question.type) ? question.type : 'other',
         prompt: typeof question.prompt === 'string' ? question.prompt.trim() : '',
         options: Array.isArray(question.options)
-          ? question.options.filter((option): option is string => typeof option === 'string').map((option) => option.trim())
+          ? question.options
+              .filter((option): option is string => typeof option === 'string')
+              .map((option) => option.trim())
           : undefined,
         correctAnswers: Array.isArray(question.correctAnswers)
           ? question.correctAnswers
