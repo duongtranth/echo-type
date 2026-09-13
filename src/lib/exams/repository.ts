@@ -2,6 +2,8 @@ import { getExamDb } from '@/lib/exams/db';
 import { isExamAnswerCorrect } from '@/lib/exams/grading';
 import { upsertWeakSpot } from '@/lib/weak-spots';
 import type {
+  ExamAttempt,
+  ExamAttemptProgress,
   ExamBundle,
   ExamQuestion,
   ExamQuestionType,
@@ -20,6 +22,21 @@ function skillToWeakSpotModule(skill: ExamSkill): 'listen' | 'speak' | 'read' | 
   if (skill === 'speaking') return 'speak';
   if (skill === 'writing') return 'write';
   return 'read';
+}
+
+function normalizeAttempt(attempt: ExamAttempt): ExamAttempt {
+  return {
+    ...attempt,
+    status: attempt.status || (attempt.submittedAt ? 'submitted' : 'in-progress'),
+    updatedAt: attempt.updatedAt || attempt.submittedAt || attempt.startedAt,
+    flaggedQuestionIds: attempt.flaggedQuestionIds ?? [],
+  };
+}
+
+async function loadAttemptAnswers(attemptId: string): Promise<Record<string, string>> {
+  const examDb = getExamDb();
+  const rows = await examDb.answers.where('attemptId').equals(attemptId).toArray();
+  return Object.fromEntries(rows.map((row) => [row.questionId, row.answer]));
 }
 
 export async function listExamTests(): Promise<ExamTest[]> {
@@ -148,17 +165,193 @@ export async function deleteExamTest(testId: string): Promise<void> {
   );
 }
 
+export async function getActiveExamAttempt(testId: string): Promise<ExamAttemptProgress | null> {
+  const examDb = getExamDb();
+  const attempts = await examDb.attempts.where('testId').equals(testId).toArray();
+  const attempt = attempts
+    .map(normalizeAttempt)
+    .filter((item) => item.status === 'in-progress' && !item.submittedAt)
+    .sort((a, b) => b.updatedAt - a.updatedAt)[0];
+
+  if (!attempt) return null;
+
+  return {
+    attempt,
+    answers: await loadAttemptAnswers(attempt.id),
+  };
+}
+
+export async function startExamAttempt(
+  testId: string,
+  options: { timeLimitSeconds?: number; forceNew?: boolean } = {},
+): Promise<ExamAttemptProgress> {
+  if (!options.forceNew) {
+    const existing = await getActiveExamAttempt(testId);
+    if (existing) return existing;
+  }
+
+  const bundle = await getExamBundle(testId);
+  if (!bundle) throw new Error('Exam not found');
+  if (bundle.questions.length === 0) throw new Error('This exam has no questions.');
+
+  const examDb = getExamDb();
+  const startedAt = Date.now();
+  const timeLimitSeconds =
+    options.timeLimitSeconds && options.timeLimitSeconds > 0 ? Math.floor(options.timeLimitSeconds) : undefined;
+  const attempt: ExamAttempt = {
+    id: createId('attempt'),
+    testId,
+    status: 'in-progress',
+    startedAt,
+    updatedAt: startedAt,
+    timeLimitSeconds,
+    deadlineAt: timeLimitSeconds ? startedAt + timeLimitSeconds * 1000 : undefined,
+    flaggedQuestionIds: [],
+  };
+
+  await examDb.attempts.add(attempt);
+  return { attempt, answers: {} };
+}
+
+export async function captureTimedExamSnapshot(attemptId: string): Promise<ExamAttempt | null> {
+  const examDb = getExamDb();
+  const rawAttempt = await examDb.attempts.get(attemptId);
+  if (!rawAttempt) return null;
+
+  const attempt = normalizeAttempt(rawAttempt);
+  if (
+    attempt.status !== 'in-progress' ||
+    !attempt.deadlineAt ||
+    attempt.timedOutAt ||
+    Date.now() < attempt.deadlineAt
+  ) {
+    return attempt;
+  }
+
+  const bundle = await getExamBundle(attempt.testId);
+  if (!bundle) return attempt;
+
+  const existingRows = await examDb.answers.where('attemptId').equals(attempt.id).toArray();
+  const existingByQuestionId = new Map(existingRows.map((row) => [row.questionId, row]));
+  const snapshotAnswers = Object.fromEntries(existingRows.map((row) => [row.questionId, row.answer]));
+  const timedScore = bundle.questions.filter((question) =>
+    isExamAnswerCorrect(snapshotAnswers[question.id] ?? '', question.correctAnswers),
+  ).length;
+  const now = Date.now();
+
+  await examDb.transaction('rw', examDb.attempts, examDb.answers, async () => {
+    await examDb.attempts.update(attempt.id, {
+      timedOutAt: attempt.deadlineAt,
+      timedScore,
+      timedTotal: bundle.questions.length,
+      updatedAt: now,
+    });
+
+    const snapshotRows = bundle.questions.map((question) => {
+      const existing = existingByQuestionId.get(question.id);
+      const answer = existing?.answer ?? '';
+      return {
+        id: existing?.id ?? createId('answer'),
+        attemptId: attempt.id,
+        questionId: question.id,
+        answer,
+        correct: existing?.correct,
+        answerAtDeadline: answer,
+        updatedAt: existing?.updatedAt ?? now,
+      };
+    });
+    await examDb.answers.bulkPut(snapshotRows);
+  });
+
+  return normalizeAttempt({
+    ...attempt,
+    timedOutAt: attempt.deadlineAt,
+    timedScore,
+    timedTotal: bundle.questions.length,
+    updatedAt: now,
+  });
+}
+
+export async function saveExamAttemptProgress(
+  attemptId: string,
+  input: {
+    answers: Record<string, string>;
+    currentQuestionId?: string;
+    flaggedQuestionIds: string[];
+  },
+): Promise<ExamAttempt> {
+  const examDb = getExamDb();
+  const rawAttempt = await examDb.attempts.get(attemptId);
+  if (!rawAttempt) throw new Error('Attempt not found');
+
+  let attempt = normalizeAttempt(rawAttempt);
+  if (attempt.status !== 'in-progress') return attempt;
+
+  if (attempt.deadlineAt && !attempt.timedOutAt && Date.now() >= attempt.deadlineAt) {
+    attempt = (await captureTimedExamSnapshot(attempt.id)) ?? attempt;
+  }
+
+  const existingRows = await examDb.answers.where('attemptId').equals(attempt.id).toArray();
+  const existingByQuestionId = new Map(existingRows.map((row) => [row.questionId, row]));
+  const now = Date.now();
+
+  await examDb.transaction('rw', examDb.attempts, examDb.answers, async () => {
+    await examDb.attempts.update(attempt.id, {
+      updatedAt: now,
+      currentQuestionId: input.currentQuestionId,
+      flaggedQuestionIds: input.flaggedQuestionIds,
+    });
+
+    const answerRows = Object.entries(input.answers).map(([questionId, answer]) => {
+      const existing = existingByQuestionId.get(questionId);
+      return {
+        id: existing?.id ?? createId('answer'),
+        attemptId: attempt.id,
+        questionId,
+        answer,
+        correct: existing?.correct,
+        answerAtDeadline: existing?.answerAtDeadline,
+        updatedAt: now,
+      };
+    });
+
+    if (answerRows.length > 0) {
+      await examDb.answers.bulkPut(answerRows);
+    }
+  });
+
+  return normalizeAttempt({
+    ...attempt,
+    updatedAt: now,
+    currentQuestionId: input.currentQuestionId,
+    flaggedQuestionIds: input.flaggedQuestionIds,
+  });
+}
+
 export async function submitExamAttempt(
   testId: string,
   answers: Record<string, string>,
+  options: { attemptId?: string } = {},
 ): Promise<ExamSubmissionResult> {
   const bundle = await getExamBundle(testId);
   if (!bundle) throw new Error('Exam not found');
 
   const examDb = getExamDb();
   const submittedAt = Date.now();
-  const attemptId = createId('attempt');
   const sectionById = new Map(bundle.sections.map((section) => [section.id, section]));
+
+  let attempt: ExamAttempt | undefined;
+  if (options.attemptId) {
+    const existing = await examDb.attempts.get(options.attemptId);
+    if (existing) attempt = normalizeAttempt(existing);
+  }
+  if (!attempt) {
+    attempt = (await getActiveExamAttempt(testId))?.attempt;
+  }
+
+  if (attempt?.deadlineAt && !attempt.timedOutAt && submittedAt >= attempt.deadlineAt) {
+    attempt = (await captureTimedExamSnapshot(attempt.id)) ?? attempt;
+  }
 
   const results = bundle.questions.map((question) => {
     const answer = answers[question.id] ?? '';
@@ -169,27 +362,53 @@ export async function submitExamAttempt(
       correctAnswers: question.correctAnswers,
     };
   });
-
   const score = results.filter((result) => result.correct).length;
 
+  const finalAttempt: ExamAttempt = attempt ?? {
+    id: createId('attempt'),
+    testId,
+    status: 'in-progress',
+    startedAt: submittedAt,
+    updatedAt: submittedAt,
+    flaggedQuestionIds: [],
+  };
+  const submittedWithinLimit = Boolean(finalAttempt.deadlineAt && submittedAt < finalAttempt.deadlineAt);
+  const timedScore = submittedWithinLimit ? score : finalAttempt.timedScore;
+  const timedTotal = submittedWithinLimit ? bundle.questions.length : finalAttempt.timedTotal;
+  const existingRows = await examDb.answers.where('attemptId').equals(finalAttempt.id).toArray();
+  const existingByQuestionId = new Map(existingRows.map((row) => [row.questionId, row]));
+
   await examDb.transaction('rw', examDb.attempts, examDb.answers, async () => {
-    await examDb.attempts.add({
-      id: attemptId,
-      testId,
-      startedAt: submittedAt,
+    const submittedAttempt: ExamAttempt = {
+      ...finalAttempt,
+      status: 'submitted',
       submittedAt,
+      updatedAt: submittedAt,
       score,
       total: bundle.questions.length,
-    });
+      timedScore,
+      timedTotal,
+    };
 
-    await examDb.answers.bulkAdd(
-      results.map((result) => ({
-        id: createId('answer'),
-        attemptId,
-        questionId: result.questionId,
-        answer: result.answer,
-        correct: result.correct,
-      })),
+    if (attempt) {
+      await examDb.attempts.put(submittedAttempt);
+    } else {
+      await examDb.attempts.add(submittedAttempt);
+    }
+
+    await examDb.answers.bulkPut(
+      results.map((result) => {
+        const existing = existingByQuestionId.get(result.questionId);
+        return {
+          id: existing?.id ?? createId('answer'),
+          attemptId: finalAttempt.id,
+          questionId: result.questionId,
+          answer: result.answer,
+          correct: result.correct,
+          answerAtDeadline: existing?.answerAtDeadline,
+          updatedAt: submittedAt,
+        };
+      }),
     );
   });
 
@@ -213,9 +432,14 @@ export async function submitExamAttempt(
   }
 
   return {
-    attemptId,
+    attemptId: finalAttempt.id,
     score,
     total: bundle.questions.length,
+    durationSeconds: Math.max(0, Math.floor((submittedAt - finalAttempt.startedAt) / 1000)),
+    timeLimitSeconds: finalAttempt.timeLimitSeconds,
+    timedScore,
+    timedTotal,
+    timedOutAt: finalAttempt.timedOutAt,
     results,
   };
 }
