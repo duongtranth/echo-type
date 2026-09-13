@@ -4,14 +4,15 @@ export type WeakSpotType =
   | 'pronunciation-phrase'
   | 'reading-phrase'
   | 'typing-word'
-  | 'favorite-item';
+  | 'favorite-item'
+  | 'exam-question';
 
 export interface WeakSpot {
   id: string;
   module: 'listen' | 'speak' | 'read' | 'write';
   weakSpotType: WeakSpotType;
   sourceId: string;
-  sourceType: 'content' | 'session' | 'favorite';
+  sourceType: 'content' | 'session' | 'favorite' | 'exam';
   text: string;
   normalizedText: string;
   reason: string;
