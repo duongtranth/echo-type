@@ -82,9 +82,7 @@ export async function POST(req: Request) {
     }
 
     const pages = payload.result?.layoutParsingResults ?? [];
-    const pageTexts = pages
-      .map((page) => page.markdown?.text?.trim() || '')
-      .filter(Boolean);
+    const pageTexts = pages.map((page) => page.markdown?.text?.trim() || '').filter(Boolean);
     const text = pageTexts.join('\n\n---\n\n');
 
     if (!text) {
