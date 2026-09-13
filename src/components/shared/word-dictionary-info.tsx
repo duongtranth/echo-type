@@ -4,11 +4,7 @@ import { BookOpen, ChevronDown, ChevronUp, ExternalLink, Loader2, Sparkles } fro
 import { useEffect, useMemo, useState } from 'react';
 import { useWordDictionary, type WordMeaning } from '@/hooks/use-word-dictionary';
 import { formatInterval } from '@/lib/fsrs';
-import {
-  createWordSenseId,
-  getWordSenseProgressMap,
-  setWordSenseStatus,
-} from '@/lib/word-sense-progress';
+import { createWordSenseId, getWordSenseProgressMap, setWordSenseStatus } from '@/lib/word-sense-progress';
 import { usePracticeTranslationStore } from '@/stores/practice-translation-store';
 import type { PracticeModule } from '@/types/translation';
 import type { WordSenseProgress, WordSenseStatus } from '@/types/word-sense';
