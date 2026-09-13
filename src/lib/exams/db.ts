@@ -1,4 +1,5 @@
 import Dexie, { type Table } from 'dexie';
+import { db as learningDb } from '@/lib/db';
 import type { ExamAttempt, ExamAttemptAnswer, ExamQuestion, ExamSection, ExamTest } from '@/types/exam';
 
 class EchoTypeExamDB extends Dexie {
@@ -8,8 +9,8 @@ class EchoTypeExamDB extends Dexie {
   attempts!: Table<ExamAttempt>;
   answers!: Table<ExamAttemptAnswer>;
 
-  constructor() {
-    super('echotype:exams');
+  constructor(name: string) {
+    super(name);
 
     this.version(1).stores({
       tests: 'id, examType, status, createdAt, updatedAt',
@@ -21,4 +22,17 @@ class EchoTypeExamDB extends Dexie {
   }
 }
 
-export const examDb = new EchoTypeExamDB();
+function getExamDatabaseName(): string {
+  return `${learningDb.name}:exams`;
+}
+
+let activeExamDb = new EchoTypeExamDB(getExamDatabaseName());
+
+export function getExamDb(): EchoTypeExamDB {
+  const expectedName = getExamDatabaseName();
+  if (activeExamDb.name !== expectedName) {
+    activeExamDb.close();
+    activeExamDb = new EchoTypeExamDB(expectedName);
+  }
+  return activeExamDb;
+}
