@@ -176,7 +176,8 @@ export default function ImportExamPage() {
         <p className="text-sm font-medium text-indigo-600">Import exam</p>
         <h1 className="text-2xl font-semibold text-slate-900">Create an IELTS or TOEIC draft from PDF</h1>
         <p className="mt-1 text-sm text-slate-500">
-          Use fast text extraction for normal PDFs, or PaddleOCR-VL for scanned and layout-heavy tests, then structure the result with your configured AI provider.
+          Use fast text extraction for normal PDFs, or PaddleOCR-VL for scanned and layout-heavy tests, then structure
+          the result with your configured AI provider.
         </p>
       </div>
 
@@ -266,7 +267,9 @@ export default function ImportExamPage() {
               {data.extractionMethod && (
                 <span className="rounded-full bg-indigo-50 px-2 py-1 text-indigo-700">{data.extractionMethod}</span>
               )}
-              {data.metadata.author && <span className="rounded-full bg-slate-100 px-2 py-1">{data.metadata.author}</span>}
+              {data.metadata.author && (
+                <span className="rounded-full bg-slate-100 px-2 py-1">{data.metadata.author}</span>
+              )}
             </div>
 
             <div>
@@ -298,7 +301,8 @@ export default function ImportExamPage() {
             </div>
 
             <p className="text-xs leading-5 text-slate-500">
-              AI only imports questions when an explicit answer can be matched from the source. Unanswered questions are skipped instead of hallucinating an answer; you can add them manually in the editor.
+              AI only imports questions when an explicit answer can be matched from the source. Unanswered questions are
+              skipped instead of hallucinating an answer; you can add them manually in the editor.
             </p>
           </div>
         )}
