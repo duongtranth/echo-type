@@ -13,6 +13,7 @@ export type ExamQuestionType =
   | 'other';
 
 export type ExamStatus = 'draft' | 'ready';
+export type ExamAttemptStatus = 'in-progress' | 'submitted';
 
 export interface ParsedExamQuestion {
   number: number;
@@ -76,10 +77,19 @@ export interface ExamQuestion {
 export interface ExamAttempt {
   id: string;
   testId: string;
+  status: ExamAttemptStatus;
   startedAt: number;
-  submittedAt: number;
-  score: number;
-  total: number;
+  updatedAt: number;
+  submittedAt?: number;
+  score?: number;
+  total?: number;
+  timeLimitSeconds?: number;
+  deadlineAt?: number;
+  timedOutAt?: number;
+  timedScore?: number;
+  timedTotal?: number;
+  currentQuestionId?: string;
+  flaggedQuestionIds: string[];
 }
 
 export interface ExamAttemptAnswer {
@@ -87,7 +97,14 @@ export interface ExamAttemptAnswer {
   attemptId: string;
   questionId: string;
   answer: string;
-  correct: boolean;
+  correct?: boolean;
+  answerAtDeadline?: string;
+  updatedAt: number;
+}
+
+export interface ExamAttemptProgress {
+  attempt: ExamAttempt;
+  answers: Record<string, string>;
 }
 
 export interface ExamBundle {
@@ -107,5 +124,10 @@ export interface ExamSubmissionResult {
   attemptId: string;
   score: number;
   total: number;
+  durationSeconds: number;
+  timeLimitSeconds?: number;
+  timedScore?: number;
+  timedTotal?: number;
+  timedOutAt?: number;
   results: ExamQuestionResult[];
 }
