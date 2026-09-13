@@ -48,6 +48,18 @@ type CanonicalNamespaces = {
 
 export type MessageKey<N extends Namespace> = keyof CanonicalNamespaces[N];
 
+// The upstream app historically used `zh` as its second persisted locale code.
+// This fork keeps that storage value for backward compatibility, but presents it
+// as Vietnamese. Namespaces not translated to Vietnamese yet intentionally fall
+// back to English so the UI never mixes Vietnamese with Chinese.
+const VIETNAMESE_NAMESPACES = new Set<Namespace>(['common', 'sidebar']);
+
+function resolveMessages<N extends Namespace>(language: InterfaceLanguage, namespace: N): CanonicalNamespaces[N] {
+  const localized = messages[namespace] as unknown as Record<string, CanonicalNamespaces[N]>;
+  const locale = language === 'zh' && !VIETNAMESE_NAMESPACES.has(namespace) ? 'en' : language;
+  return localized[locale] ?? localized.en;
+}
+
 function formatMessage(template: string, values?: Record<string, string | number>) {
   if (!values) return template;
 
@@ -62,7 +74,7 @@ export function getMessage<N extends Namespace, K extends MessageKey<N>>(
   namespace: N,
   key: K,
 ): CanonicalNamespaces[N][K] {
-  const localized = messages[namespace][language] as CanonicalNamespaces[N];
+  const localized = resolveMessages(language, namespace);
   const english = messages[namespace].en as CanonicalNamespaces[N];
   return (localized[key] ?? english[key]) as CanonicalNamespaces[N][K];
 }
@@ -88,6 +100,6 @@ export type DictionaryShape = {
 
 export function getLanguageMessages(language: InterfaceLanguage): DictionaryShape {
   return Object.fromEntries(
-    Object.entries(messages).map(([namespace, localized]) => [namespace, localized[language] ?? localized.en]),
+    (Object.keys(messages) as Namespace[]).map((namespace) => [namespace, resolveMessages(language, namespace)]),
   ) as DictionaryShape;
 }
