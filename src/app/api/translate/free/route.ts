@@ -12,6 +12,14 @@ class UpstreamTranslateError extends Error {
   }
 }
 
+function normalizeTargetLanguage(targetLang: string): string {
+  // EchoType upstream persisted Simplified Chinese as the default translation
+  // target. This fork is English-Vietnamese, so keep accepting that legacy
+  // value while routing it to Vietnamese for existing users/settings.
+  if (targetLang.toLowerCase() === 'zh-cn') return 'vi';
+  return targetLang.replace('-', '_').split('_')[0]!;
+}
+
 /**
  * Free translation endpoint using Google Translate (unofficial, no API key needed).
  * Used as the default/fallback for selection translation.
@@ -25,7 +33,7 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: 'Missing text/sentences or targetLang' }, { status: 400 });
     }
 
-    const normalizedTargetLang = targetLang.replace('-', '_').split('_')[0]!;
+    const normalizedTargetLang = normalizeTargetLanguage(targetLang);
 
     async function translateChunk(chunk: string): Promise<string> {
       const params = new URLSearchParams({
