@@ -196,6 +196,21 @@ async function fetchWiktionary(word: string): Promise<ExplorerSense[]> {
   }
 }
 
+function mergeSenses(primary: ExplorerSense[], secondary: ExplorerSense[]): ExplorerSense[] {
+  const merged: ExplorerSense[] = [];
+  const seen = new Set<string>();
+
+  for (const sense of [...primary, ...secondary]) {
+    const key = `${sense.pos.toLowerCase()}::${sense.definition.toLowerCase().replace(/[^a-z0-9]+/g, ' ').trim()}`;
+    if (!sense.definition.trim() || seen.has(key)) continue;
+    seen.add(key);
+    merged.push(sense);
+    if (merged.length >= 20) break;
+  }
+
+  return merged;
+}
+
 async function fetchDatamuse(params: Record<string, string>): Promise<DatamuseWord[]> {
   try {
     const url = new URL(DATAMUSE_BASE);
@@ -301,8 +316,8 @@ export async function GET(request: Request) {
     return Response.json({ error: 'A single English word is required.' }, { status: 400 });
   }
 
-  const dictionary = await fetchFreeDictionary(word);
-  const senses = dictionary.senses.length > 0 ? dictionary.senses : await fetchWiktionary(word);
+  const [dictionary, wiktionarySenses] = await Promise.all([fetchFreeDictionary(word), fetchWiktionary(word)]);
+  const senses = mergeSenses(dictionary.senses, wiktionarySenses);
   const primaryPos = senses[0]?.pos.toLowerCase() ?? '';
   const window = contextWindow(word, context);
   const contextParams: Record<string, string> = { ml: word, md: 'p', max: '16' };
@@ -324,10 +339,18 @@ export async function GET(request: Request) {
 
   const senseSynonyms = senses.flatMap((sense) => sense.synonyms);
   const senseAntonyms = senses.flatMap((sense) => sense.antonyms);
-  const source = dictionary.senses.length > 0 ? 'Free Dictionary API' : senses.length > 0 ? 'Wiktionary' : 'Unknown';
+  const hasDictionary = dictionary.senses.length > 0;
+  const hasWiktionary = wiktionarySenses.length > 0;
+  const source =
+    hasDictionary && hasWiktionary
+      ? 'Free Dictionary API + Wiktionary'
+      : hasDictionary
+        ? 'Free Dictionary API'
+        : hasWiktionary
+          ? 'Wiktionary'
+          : 'Unknown';
   const sourceUrl =
-    dictionary.sourceUrl ||
-    (source === 'Wiktionary' ? `https://en.wiktionary.org/wiki/${encodeURIComponent(word)}` : '');
+    dictionary.sourceUrl || (hasWiktionary ? `https://en.wiktionary.org/wiki/${encodeURIComponent(word)}` : '');
 
   return Response.json(
     {
