@@ -2,9 +2,6 @@ import { create } from 'zustand';
 
 const STORAGE_KEY = 'echotype_language_settings';
 
-// `zh` is retained as the persisted legacy slot for the fork's second locale so
-// existing browser settings do not break. In this fork that slot represents
-// Vietnamese, not Chinese.
 export type InterfaceLanguage = 'en' | 'zh';
 
 interface LanguageSettings {
@@ -25,7 +22,7 @@ function isInterfaceLanguage(value: unknown): value is InterfaceLanguage {
 
 export function detectInterfaceLanguage(browserLanguage?: string | null): InterfaceLanguage {
   if (!browserLanguage) return 'en';
-  return browserLanguage.toLowerCase().startsWith('vi') ? 'zh' : 'en';
+  return browserLanguage.toLowerCase().startsWith('zh') ? 'zh' : 'en';
 }
 
 function loadSettings(): Partial<LanguageSettings> {
