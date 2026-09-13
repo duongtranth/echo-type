@@ -54,6 +54,25 @@ interface WordFamilyItem {
 
 const DATAMUSE_BASE = 'https://api.datamuse.com/words';
 const POS_TAGS = new Set(['n', 'v', 'adj', 'adv']);
+const IRREGULAR_FORMS: Record<string, string[]> = {
+  be: ['am', 'is', 'are', 'was', 'were', 'been', 'being'],
+  come: ['came', 'comes', 'coming'],
+  do: ['did', 'does', 'done', 'doing'],
+  get: ['got', 'gotten', 'gets', 'getting'],
+  give: ['gave', 'given', 'gives', 'giving'],
+  go: ['went', 'gone', 'goes', 'going'],
+  have: ['had', 'has', 'having'],
+  know: ['knew', 'known', 'knows', 'knowing'],
+  make: ['made', 'makes', 'making'],
+  read: ['reads', 'reading'],
+  run: ['ran', 'runs', 'running'],
+  say: ['said', 'says', 'saying'],
+  see: ['saw', 'seen', 'sees', 'seeing'],
+  speak: ['spoke', 'spoken', 'speaks', 'speaking'],
+  take: ['took', 'taken', 'takes', 'taking'],
+  think: ['thought', 'thinks', 'thinking'],
+  write: ['wrote', 'written', 'writes', 'writing'],
+};
 
 function unique(values: Array<string | undefined>, limit = 20): string[] {
   return [...new Set(values.map((value) => value?.trim()).filter((value): value is string => Boolean(value)))].slice(
@@ -190,11 +209,35 @@ async function fetchDatamuse(params: Record<string, string>): Promise<DatamuseWo
   }
 }
 
+function normalizeWordToken(value: string): string {
+  return value.toLowerCase().replace(/[^a-z'-]/g, '');
+}
+
+function regularWordForms(word: string): Set<string> {
+  const forms = new Set([word, `${word}s`, `${word}es`, `${word}ed`, `${word}ing`]);
+  if (word.endsWith('e') && word.length > 2) {
+    forms.add(`${word}d`);
+    forms.add(`${word.slice(0, -1)}ing`);
+  }
+  if (word.endsWith('y') && word.length > 2) {
+    forms.add(`${word.slice(0, -1)}ies`);
+    forms.add(`${word.slice(0, -1)}ied`);
+  }
+  return forms;
+}
+
+function matchesWordForm(word: string, token: string): boolean {
+  const base = normalizeWordToken(word);
+  const candidate = normalizeWordToken(token);
+  if (!base || !candidate) return false;
+  if (regularWordForms(base).has(candidate)) return true;
+  return IRREGULAR_FORMS[base]?.includes(candidate) ?? false;
+}
+
 function contextWindow(word: string, context: string): { left?: string; right?: string } {
   const tokens = context.trim().split(/\s+/).filter(Boolean);
   if (tokens.length === 0) return {};
-  const normalizedWord = word.toLowerCase().replace(/[^a-z'-]/g, '');
-  const index = tokens.findIndex((token) => token.toLowerCase().replace(/[^a-z'-]/g, '') === normalizedWord);
+  const index = tokens.findIndex((token) => matchesWordForm(word, token));
   if (index < 0) return {};
   const left = tokens.slice(Math.max(0, index - 4), index).join(' ');
   const right = tokens.slice(index + 1, index + 5).join(' ');
