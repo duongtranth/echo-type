@@ -254,6 +254,7 @@ export function Sidebar({ open = false, onOpenChange }: SidebarProps = {}) {
           notes: Heart,
           conversation: MessageCircle,
           pronunciation: Volume2,
+          exams: BookOpen,
         }[link.section],
       })),
     },
@@ -262,7 +263,7 @@ export function Sidebar({ open = false, onOpenChange }: SidebarProps = {}) {
       items: PRIMARY_LEARNING_LINKS.slice(5).map((link) => ({
         ...link,
         label: zh ? link.zh : link.en,
-        icon: link.section === 'conversation' ? MessageCircle : Volume2,
+        icon: link.section === 'conversation' ? MessageCircle : link.section === 'exams' ? BookOpen : Volume2,
       })),
     },
   ];
