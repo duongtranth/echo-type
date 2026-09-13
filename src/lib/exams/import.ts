@@ -1,4 +1,4 @@
-import { examDb } from '@/lib/exams/db';
+import { getExamDb } from '@/lib/exams/db';
 import type { ExamType, ParsedExamDraft } from '@/types/exam';
 
 function createId(prefix: string): string {
@@ -12,11 +12,15 @@ export async function createExamFromParsedDraft(input: {
   rawText: string;
   draft: ParsedExamDraft;
 }): Promise<{ testId: string; importedQuestions: number; skippedQuestions: number }> {
+  const examDb = getExamDb();
   const now = Date.now();
   const testId = createId('exam');
   let importedQuestions = 0;
   let skippedQuestions = 0;
-  const sections = input.draft.sections.length > 0 ? input.draft.sections : [{ skill: 'reading' as const, title: 'Imported section', questions: [] }];
+  const sections =
+    input.draft.sections.length > 0
+      ? input.draft.sections
+      : [{ skill: 'reading' as const, title: 'Imported section', questions: [] }];
 
   await examDb.transaction('rw', examDb.tests, examDb.sections, examDb.questions, async () => {
     await examDb.tests.add({
