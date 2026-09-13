@@ -68,7 +68,7 @@ Skipped or incorrectly parsed questions can be added manually in the exam editor
 
 ## Current MVP limitations
 
-- Exam data lives in the local `echotype:exams` Dexie database and is not in cloud sync/backup yet.
+- Exam data lives in a local Dexie database scoped to the active EchoType user/anonymous profile and is not in cloud sync/backup yet.
 - Listening audio attachment and timed full-test mode are not implemented yet.
 - Existing questions can be deleted and recreated, but inline editing is not implemented yet.
 - Complex maps/diagrams/images are not persisted as exam assets yet; OCR currently stores Markdown text only.
