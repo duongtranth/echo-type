@@ -1,10 +1,17 @@
 'use client';
 
 import { BookOpen, ChevronDown, ChevronUp, ExternalLink, Loader2, Sparkles } from 'lucide-react';
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { useWordDictionary, type WordMeaning } from '@/hooks/use-word-dictionary';
+import { formatInterval } from '@/lib/fsrs';
+import {
+  createWordSenseId,
+  getWordSenseProgressMap,
+  setWordSenseStatus,
+} from '@/lib/word-sense-progress';
 import { usePracticeTranslationStore } from '@/stores/practice-translation-store';
 import type { PracticeModule } from '@/types/translation';
+import type { WordSenseProgress, WordSenseStatus } from '@/types/word-sense';
 
 const POS_ABBR: Record<string, string> = {
   noun: 'n.',
@@ -31,6 +38,32 @@ const POS_LABELS: Record<string, string> = {
   determiner: 'Từ hạn định',
 };
 
+const SENSE_STATUS_OPTIONS: Array<{
+  status: WordSenseStatus;
+  label: string;
+  idleClass: string;
+  activeClass: string;
+}> = [
+  {
+    status: 'learning',
+    label: 'Đang học',
+    idleClass: 'border-amber-200 bg-white text-amber-700 hover:bg-amber-50',
+    activeClass: 'border-amber-300 bg-amber-100 text-amber-800',
+  },
+  {
+    status: 'review',
+    label: 'Cần ôn',
+    idleClass: 'border-blue-200 bg-white text-blue-700 hover:bg-blue-50',
+    activeClass: 'border-blue-300 bg-blue-100 text-blue-800',
+  },
+  {
+    status: 'known',
+    label: 'Đã biết',
+    idleClass: 'border-emerald-200 bg-white text-emerald-700 hover:bg-emerald-50',
+    activeClass: 'border-emerald-300 bg-emerald-100 text-emerald-800',
+  },
+];
+
 function abbreviatePos(pos: string): string {
   return POS_ABBR[pos.toLowerCase()] || pos;
 }
@@ -50,6 +83,49 @@ function meaningContainsTranslation(meanings: WordMeaning[], translation: string
   const normalized = translation.trim().toLowerCase();
   if (!normalized) return true;
   return meanings.some((meaning) => meaning.definition.toLowerCase().includes(normalized));
+}
+
+function nextReviewLabel(progress: WordSenseProgress | undefined): string {
+  if (!progress?.nextReview) return '';
+  const remaining = progress.nextReview - Date.now();
+  if (remaining <= 0) return 'Đến hạn ôn';
+  return `Ôn lại sau ${formatInterval(remaining)}`;
+}
+
+function SenseStatusControls({
+  progress,
+  saving,
+  onSelect,
+}: {
+  progress?: WordSenseProgress;
+  saving: boolean;
+  onSelect: (status: WordSenseStatus) => void;
+}) {
+  const reviewLabel = nextReviewLabel(progress);
+
+  return (
+    <div className="mt-2.5 flex flex-wrap items-center gap-1.5">
+      {SENSE_STATUS_OPTIONS.map((option) => {
+        const selected = progress?.status === option.status;
+        return (
+          <button
+            key={option.status}
+            type="button"
+            aria-pressed={selected}
+            disabled={saving || selected}
+            onClick={() => onSelect(option.status)}
+            className={`rounded-full border px-2.5 py-1 text-[11px] font-semibold transition-colors disabled:cursor-default ${
+              selected ? option.activeClass : option.idleClass
+            } ${saving ? 'opacity-60' : ''}`}
+          >
+            {saving && !selected ? <Loader2 className="mr-1 inline h-3 w-3 animate-spin" /> : null}
+            {option.label}
+          </button>
+        );
+      })}
+      {reviewLabel && <span className="ml-1 text-[10px] font-medium text-slate-400">{reviewLabel}</span>}
+    </div>
+  );
 }
 
 function WordChips({ values, tone = 'indigo' }: { values: string[]; tone?: 'indigo' | 'emerald' | 'rose' | 'slate' }) {
@@ -73,6 +149,9 @@ function WordChips({ values, tone = 'indigo' }: { values: string[]; tone?: 'indi
 
 export function WordDictionaryInfo({ word, targetLang, module, contextText }: WordDictionaryInfoProps) {
   const [expanded, setExpanded] = useState(false);
+  const [senseProgress, setSenseProgress] = useState<Map<string, WordSenseProgress>>(new Map());
+  const [savingSenseId, setSavingSenseId] = useState<string | null>(null);
+  const [senseProgressError, setSenseProgressError] = useState('');
   const showTranslation = usePracticeTranslationStore((state) => state.isVisible(module));
   const {
     phonetic,
@@ -88,6 +167,26 @@ export function WordDictionaryInfo({ word, targetLang, module, contextText }: Wo
     isLoading,
   } = useWordDictionary(word, targetLang, true, contextText);
 
+  useEffect(() => {
+    let cancelled = false;
+    setSenseProgressError('');
+
+    void getWordSenseProgressMap(word)
+      .then((progress) => {
+        if (!cancelled) setSenseProgress(progress);
+      })
+      .catch(() => {
+        if (!cancelled) {
+          setSenseProgress(new Map());
+          setSenseProgressError('Không thể tải trạng thái học của từ này.');
+        }
+      });
+
+    return () => {
+      cancelled = true;
+    };
+  }, [word]);
+
   const contextMeaning = meanings.find((meaning) => meaning.contextMatch) ?? meanings[0];
   const meaningsByPos = useMemo(() => {
     const groups = new Map<string, WordMeaning[]>();
@@ -97,6 +196,36 @@ export function WordDictionaryInfo({ word, targetLang, module, contextText }: Wo
     }
     return [...groups.entries()];
   }, [meanings]);
+
+  const handleSenseStatus = async (meaning: WordMeaning, status: WordSenseStatus) => {
+    const senseId = createWordSenseId(word, meaning.pos, meaning.definitionEnglish);
+    if (senseProgress.get(senseId)?.status === status || savingSenseId === senseId) return;
+
+    setSavingSenseId(senseId);
+    setSenseProgressError('');
+    try {
+      const progress = await setWordSenseStatus({
+        word,
+        pos: meaning.pos,
+        definitionEnglish: meaning.definitionEnglish,
+        status,
+      });
+      setSenseProgress((current) => {
+        const next = new Map(current);
+        next.set(progress.id, progress);
+        return next;
+      });
+    } catch {
+      setSenseProgressError('Không thể lưu trạng thái nghĩa này. Hãy thử lại.');
+    } finally {
+      setSavingSenseId(null);
+    }
+  };
+
+  const progressForMeaning = (meaning: WordMeaning) => {
+    const senseId = createWordSenseId(word, meaning.pos, meaning.definitionEnglish);
+    return { senseId, progress: senseProgress.get(senseId) };
+  };
 
   const hasMeanings = showTranslation && meanings.length > 0;
   const hasPhoneticOrPos = phonetic || pos;
@@ -120,6 +249,8 @@ export function WordDictionaryInfo({ word, targetLang, module, contextText }: Wo
 
   if (!hasPhoneticOrPos && !hasMeanings && !hasTranslationSummary) return null;
 
+  const contextProgress = contextMeaning ? progressForMeaning(contextMeaning) : null;
+
   return (
     <div className="space-y-2">
       {hasPhoneticOrPos && (
@@ -134,7 +265,7 @@ export function WordDictionaryInfo({ word, targetLang, module, contextText }: Wo
         <p className="min-h-[1.25rem] text-center text-[15px] font-semibold text-indigo-500/85">{translation}</p>
       )}
 
-      {hasMeanings && contextMeaning && (
+      {hasMeanings && contextMeaning && contextProgress && (
         <div className="mx-auto max-w-2xl rounded-xl border border-indigo-100 bg-indigo-50/55 px-4 py-3 text-left">
           <div className="flex items-center gap-1.5 text-[11px] font-semibold uppercase tracking-wide text-indigo-500">
             <Sparkles className="h-3.5 w-3.5" />
@@ -148,8 +279,15 @@ export function WordDictionaryInfo({ word, targetLang, module, contextText }: Wo
           {contextText?.trim() && (
             <p className="mt-2 text-xs italic leading-5 text-indigo-600">“{contextText.trim()}”</p>
           )}
+          <SenseStatusControls
+            progress={contextProgress.progress}
+            saving={savingSenseId === contextProgress.senseId}
+            onSelect={(status) => void handleSenseStatus(contextMeaning, status)}
+          />
         </div>
       )}
+
+      {senseProgressError && <p className="text-center text-xs text-red-500">{senseProgressError}</p>}
 
       {hasExplorerData && (
         <button
@@ -167,6 +305,9 @@ export function WordDictionaryInfo({ word, targetLang, module, contextText }: Wo
         <div className="mx-auto max-w-3xl space-y-4 rounded-2xl border border-slate-200 bg-white p-4 text-left shadow-sm">
           <section>
             <h3 className="text-xs font-bold uppercase tracking-wide text-slate-500">Các nghĩa khác</h3>
+            <p className="mt-1 text-[11px] leading-4 text-slate-400">
+              Mỗi nghĩa có lịch FSRS riêng. Đánh dấu theo mức độ bạn thực sự nhớ nghĩa đó.
+            </p>
             <div className="mt-2 space-y-4">
               {meaningsByPos.map(([meaningPos, posMeanings]) => (
                 <div key={meaningPos}>
@@ -177,34 +318,44 @@ export function WordDictionaryInfo({ word, targetLang, module, contextText }: Wo
                     <span className="text-xs font-semibold text-slate-600">{posLabel(meaningPos)}</span>
                   </div>
                   <ol className="mt-2 space-y-3">
-                    {posMeanings.map((meaning, index) => (
-                      <li
-                        key={`${meaningPos}-${meaning.definitionEnglish}-${index}`}
-                        className={`rounded-xl border p-3 ${
-                          meaning.contextMatch ? 'border-indigo-200 bg-indigo-50/40' : 'border-slate-100 bg-slate-50/50'
-                        }`}
-                      >
-                        <div className="flex gap-2">
-                          <span className="mt-0.5 text-xs font-bold text-slate-400">{index + 1}.</span>
-                          <div className="min-w-0 flex-1">
-                            <p className="text-sm font-semibold leading-5 text-slate-800">{meaning.definition}</p>
-                            <p className="mt-0.5 text-xs leading-5 text-slate-500">{meaning.definitionEnglish}</p>
-                            {meaning.examples.length > 0 && (
-                              <div className="mt-2 space-y-1.5 border-l-2 border-indigo-100 pl-3">
-                                {meaning.examples.map((example) => (
-                                  <div key={example.text}>
-                                    <p className="text-xs italic leading-5 text-slate-700">{example.text}</p>
-                                    {example.translation && (
-                                      <p className="text-xs leading-5 text-indigo-500">{example.translation}</p>
-                                    )}
-                                  </div>
-                                ))}
-                              </div>
-                            )}
+                    {posMeanings.map((meaning, index) => {
+                      const { senseId, progress } = progressForMeaning(meaning);
+                      return (
+                        <li
+                          key={`${meaningPos}-${meaning.definitionEnglish}-${index}`}
+                          className={`rounded-xl border p-3 ${
+                            meaning.contextMatch
+                              ? 'border-indigo-200 bg-indigo-50/40'
+                              : 'border-slate-100 bg-slate-50/50'
+                          }`}
+                        >
+                          <div className="flex gap-2">
+                            <span className="mt-0.5 text-xs font-bold text-slate-400">{index + 1}.</span>
+                            <div className="min-w-0 flex-1">
+                              <p className="text-sm font-semibold leading-5 text-slate-800">{meaning.definition}</p>
+                              <p className="mt-0.5 text-xs leading-5 text-slate-500">{meaning.definitionEnglish}</p>
+                              {meaning.examples.length > 0 && (
+                                <div className="mt-2 space-y-1.5 border-l-2 border-indigo-100 pl-3">
+                                  {meaning.examples.map((example) => (
+                                    <div key={example.text}>
+                                      <p className="text-xs italic leading-5 text-slate-700">{example.text}</p>
+                                      {example.translation && (
+                                        <p className="text-xs leading-5 text-indigo-500">{example.translation}</p>
+                                      )}
+                                    </div>
+                                  ))}
+                                </div>
+                              )}
+                              <SenseStatusControls
+                                progress={progress}
+                                saving={savingSenseId === senseId}
+                                onSelect={(status) => void handleSenseStatus(meaning, status)}
+                              />
+                            </div>
                           </div>
-                        </div>
-                      </li>
-                    ))}
+                        </li>
+                      );
+                    })}
                   </ol>
                 </div>
               ))}
