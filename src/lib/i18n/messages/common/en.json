@@ -1,11 +1,11 @@
 {
   "languageNames": {
     "en": "English",
-    "zh": "Vietnamese"
+    "zh": "Chinese"
   },
   "nativeLanguageNames": {
     "en": "English",
-    "zh": "Tiếng Việt"
+    "zh": "中文"
   },
   "actions": {
     "settings": "Settings",
