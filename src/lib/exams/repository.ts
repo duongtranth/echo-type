@@ -1,4 +1,4 @@
-import { examDb } from '@/lib/exams/db';
+import { getExamDb } from '@/lib/exams/db';
 import { isExamAnswerCorrect } from '@/lib/exams/grading';
 import { upsertWeakSpot } from '@/lib/weak-spots';
 import type {
@@ -23,10 +23,12 @@ function skillToWeakSpotModule(skill: ExamSkill): 'listen' | 'speak' | 'read' | 
 }
 
 export async function listExamTests(): Promise<ExamTest[]> {
+  const examDb = getExamDb();
   return examDb.tests.orderBy('updatedAt').reverse().toArray();
 }
 
 export async function getExamBundle(testId: string): Promise<ExamBundle | null> {
+  const examDb = getExamDb();
   const test = await examDb.tests.get(testId);
   if (!test) return null;
 
@@ -44,6 +46,7 @@ export async function createExamFromExtractedText(input: {
   sourceFilename?: string;
   text: string;
 }): Promise<string> {
+  const examDb = getExamDb();
   const now = Date.now();
   const testId = createId('exam');
   const sectionId = createId('section');
@@ -85,6 +88,7 @@ export async function addExamQuestion(input: {
   correctAnswers: string[];
   explanation?: string;
 }): Promise<string> {
+  const examDb = getExamDb();
   const now = Date.now();
   const questionId = createId('question');
   const existing = await examDb.questions.where('sectionId').equals(input.sectionId).toArray();
@@ -114,6 +118,7 @@ export async function addExamQuestion(input: {
 }
 
 export async function deleteExamQuestion(questionId: string): Promise<void> {
+  const examDb = getExamDb();
   const question = await examDb.questions.get(questionId);
   if (!question) return;
 
@@ -124,6 +129,7 @@ export async function deleteExamQuestion(questionId: string): Promise<void> {
 }
 
 export async function deleteExamTest(testId: string): Promise<void> {
+  const examDb = getExamDb();
   const attempts = await examDb.attempts.where('testId').equals(testId).toArray();
   const attemptIds = attempts.map((attempt) => attempt.id);
 
@@ -153,6 +159,7 @@ export async function submitExamAttempt(
   const bundle = await getExamBundle(testId);
   if (!bundle) throw new Error('Exam not found');
 
+  const examDb = getExamDb();
   const submittedAt = Date.now();
   const attemptId = createId('attempt');
   const sectionById = new Map(bundle.sections.map((section) => [section.id, section]));
