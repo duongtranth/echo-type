@@ -54,6 +54,18 @@ function sanitizeDraft(value: ParsedExamDraft): ParsedExamDraft {
   };
 }
 
+function selectSourceWindow(text: string): { sourceText: string; truncated: boolean } {
+  const normalized = text.trim();
+  if (normalized.length <= 60000) {
+    return { sourceText: normalized, truncated: false };
+  }
+
+  return {
+    sourceText: `${normalized.slice(0, 45000)}\n\n[... middle of source omitted because the import is very long ...]\n\n${normalized.slice(-15000)}`,
+    truncated: true,
+  };
+}
+
 export async function POST(req: NextRequest) {
   try {
     const {
@@ -104,8 +116,7 @@ export async function POST(req: NextRequest) {
       apiPath: resolution.apiPath,
     });
 
-    const sourceText = text.trim().slice(0, 60000);
-    const truncated = text.trim().length > sourceText.length;
+    const { sourceText, truncated } = selectSourceWindow(text);
 
     const { text: modelText } = await generateText({
       model,
@@ -118,7 +129,7 @@ Use only these question types: multiple-choice, true-false-not-given, yes-no-not
 Keep passage/source material in sourceText and instructions separately from individual question prompts.
 Return ONLY valid JSON with this shape and no markdown:
 {"title":"optional test title","sections":[{"skill":"reading","title":"section title","instructions":"optional instructions","sourceText":"passage/transcript if present","questions":[{"number":1,"type":"multiple-choice","prompt":"question text","options":["A. ...","B. ..."],"correctAnswers":["A. ..."],"explanation":"optional only when explicitly supported by source"}]}]}`,
-      prompt: `Parse this ${examType} test. The extracted text may contain layout noise. Map any explicit answer key back to the corresponding questions, but never guess missing answers.\n\nSOURCE TEXT:\n${sourceText}`,
+      prompt: `Parse this ${examType} test. The extracted text may contain layout noise. Map any explicit answer key back to the corresponding questions, but never guess missing answers. If the source contains an omission marker, the final block is intentionally preserved because answer keys often appear near the end.\n\nSOURCE TEXT:\n${sourceText}`,
     });
 
     const parsed = parseAIJson<ParsedExamDraft>(modelText);
