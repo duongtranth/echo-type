@@ -89,9 +89,7 @@ export function VocabWordCard({
         </div>
       )}
 
-      {showMeaning && (
-        <WordDictionaryInfo word={word} targetLang={targetLang} module={module} sourceDefinition={example} />
-      )}
+      {showMeaning && <WordDictionaryInfo word={word} targetLang={targetLang} module={module} contextText={example} />}
 
       <div className="flex items-center justify-center gap-2 flex-wrap">
         {difficulty && (
