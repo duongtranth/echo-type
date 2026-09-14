@@ -219,10 +219,10 @@ function StudioWorkspace() {
   return (
     <main className="mx-auto w-full max-w-6xl space-y-7 px-4 py-7 text-slate-800 sm:px-8">
       <header className="space-y-3">
-        <p className="text-xs font-semibold uppercase tracking-widest text-indigo-600">
+        <p className="font-mono text-xs font-semibold uppercase tracking-widest text-indigo-600">
           {t('Pronunciation studio', 'Phòng luyện phát âm')}
         </p>
-        <h1 className="font-[family-name:var(--font-poppins)] text-3xl font-semibold tracking-tight sm:text-4xl">
+        <h1 className="font-heading text-3xl font-extrabold tracking-tight sm:text-4xl">
           {t('Hear the difference. Find your voice.', 'Nghe rõ sự khác biệt. Tìm ra giọng nói của bạn.')}
         </h1>
         <p className="max-w-3xl text-sm leading-6 text-slate-600">

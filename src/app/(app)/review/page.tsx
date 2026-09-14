@@ -70,11 +70,13 @@ export default function ReviewCenterPage() {
               href={queue.href}
               className="group flex items-center gap-4 py-6 focus-visible:outline-2 focus-visible:outline-indigo-600"
             >
-              <queue.icon className="h-6 w-6 shrink-0 text-indigo-500" />
+              <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-indigo-50 shadow-sm">
+                <queue.icon className="h-5 w-5 text-indigo-600" />
+              </div>
               <div className="min-w-0 flex-1">
-                <h2 className="font-semibold text-slate-900">{queue.title}</h2>
+                <h2 className="font-heading font-bold text-indigo-950">{queue.title}</h2>
                 <p className="mt-1 text-sm text-slate-500">{queue.description}</p>
-                <p className="mt-2 text-sm font-medium text-indigo-600">
+                <p className="mt-2 font-mono text-xs font-semibold uppercase tracking-wide text-indigo-600">
                   {queue.count
                     ? t(`${queue.count} ready to review`, `${queue.count} mục sẵn sàng ôn tập`)
                     : t('Nothing due. View this section', 'Chưa có gì đến hạn. Xem mục này')}

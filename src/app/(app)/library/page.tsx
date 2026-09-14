@@ -998,10 +998,10 @@ export default function LibraryPage() {
           />
         ) : (
           <div>
-            <h1 className="text-2xl md:text-3xl font-bold font-[var(--font-poppins)] text-indigo-900">
+            <h1 className="font-heading text-2xl md:text-3xl font-extrabold tracking-tight text-indigo-950">
               {messages.page.title}
             </h1>
-            <p className="text-indigo-600 mt-1 text-sm md:text-base">
+            <p className="text-slate-500 mt-1 text-sm md:text-base">
               {messages.itemCount.replace('{{count}}', String(totalCount))}
             </p>
           </div>

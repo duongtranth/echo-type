@@ -2146,10 +2146,10 @@ function SettingsContent() {
         />
       ) : (
         <div>
-          <h1 className="font-[var(--font-poppins)] text-2xl font-bold text-slate-900">
+          <h1 className="font-heading text-3xl font-extrabold tracking-tight text-slate-950">
             {settingsMessages.page.title}
           </h1>
-          <p className="mt-0.5 text-sm text-slate-400">{settingsMessages.page.subtitle}</p>
+          <p className="mt-0.5 text-sm text-slate-500">{settingsMessages.page.subtitle}</p>
         </div>
       )}
 

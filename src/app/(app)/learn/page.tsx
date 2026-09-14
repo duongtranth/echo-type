@@ -24,7 +24,7 @@ export default function LearnPage() {
           <Link href="/dashboard" className="text-sm text-indigo-600">
             {t('Today', 'Hôm nay')}
           </Link>
-          <h1 className="mt-2 font-[var(--font-poppins)] text-3xl font-semibold text-indigo-950">
+          <h1 className="mt-2 font-heading text-3xl font-extrabold tracking-tight text-indigo-950">
             {t('Your learning shelf', 'Kệ học tập của bạn')}
           </h1>
           <p className="mt-2 text-sm text-slate-600">
