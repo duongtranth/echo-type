@@ -3,6 +3,7 @@
 import { BarChart2, BookMarked, ChevronRight, Layers, Search, Upload } from 'lucide-react';
 import Link from 'next/link';
 import { useEffect, useMemo, useRef, useState } from 'react';
+import { NumberTicker } from '@/components/magicui/number-ticker';
 import {
   IOS_INPUT_CLASS,
   IOS_LIST_CARD_CLASS,
@@ -191,7 +192,7 @@ function WordBookCard({
             </p>
             <div className="flex items-center gap-1.5 mt-0.5">
               <Badge variant="outline" className="border-indigo-200 text-indigo-400 text-[10px]">
-                {itemCount} {clMessages.items}
+                <NumberTicker value={itemCount} className="text-[10px]" /> {clMessages.items}
               </Badge>
               <Badge variant="outline" className="border-indigo-200 text-indigo-400 text-[10px]">
                 {book.filterTag}
@@ -541,7 +542,9 @@ export function ContentList({ title, description, module, icon: Icon, iconBg, ic
               {key === 'wordbook' && <BookMarked className="w-3.5 h-3.5 mr-1" />}
               {key === 'scenario' && <Layers className="w-3.5 h-3.5 mr-1" />}
               {clMessages.tabs[key]}
-              <span className="ml-1 text-xs opacity-70">({tabCounts[key]})</span>
+              <span className="ml-1 text-xs opacity-70">
+                (<NumberTicker value={tabCounts[key]} className="text-xs" />)
+              </span>
             </Button>
           ))}
         </div>

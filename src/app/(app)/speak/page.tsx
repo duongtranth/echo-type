@@ -3,6 +3,7 @@
 import { MessageCircle, Mic } from 'lucide-react';
 import Link from 'next/link';
 import { useEffect } from 'react';
+import { BorderBeam } from '@/components/magicui/border-beam';
 import {
   IOS_PAGE_CONTAINER_CLASS,
   IOS_PILL_CLASS,
@@ -59,6 +60,7 @@ export default function SpeakPage() {
         >
           <div className="absolute top-0 right-0 w-32 h-32 bg-white/5 rounded-full -translate-y-8 translate-x-8" />
           <div className="absolute bottom-0 left-0 w-24 h-24 bg-white/5 rounded-full translate-y-6 -translate-x-6" />
+          {!isIOSNativeHost && <BorderBeam size={140} duration={9} colorFrom="#a5b4fc" colorTo="#ffffff" />}
           <div className="relative flex items-center gap-5">
             <div
               className={
