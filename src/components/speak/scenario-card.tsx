@@ -91,7 +91,7 @@ export function ScenarioCard({ scenario, onClick, isRecommended = false }: Scena
                 className={
                   isIOSNativeHost
                     ? 'text-sm font-semibold leading-6 text-slate-900'
-                    : 'font-semibold text-indigo-900 text-sm leading-tight'
+                    : 'font-heading font-bold text-indigo-950 text-sm leading-tight'
                 }
               >
                 {scenario.title}
@@ -115,19 +115,19 @@ export function ScenarioCard({ scenario, onClick, isRecommended = false }: Scena
             <div className="mt-2 flex items-center gap-1.5 flex-wrap">
               <Badge
                 variant="outline"
-                className={`${isIOSNativeHost ? 'rounded-full px-2 py-0.5 text-[10px]' : 'text-[10px] px-1.5 py-0'} ${categoryColors[scenario.category]}`}
+                className={`font-mono uppercase tracking-wide ${isIOSNativeHost ? 'rounded-full px-2 py-0.5 text-[9px]' : 'text-[9px] px-1.5 py-0'} ${categoryColors[scenario.category]}`}
               >
                 {scenario.category}
               </Badge>
               <Badge
                 variant="outline"
-                className={`${isIOSNativeHost ? 'rounded-full px-2 py-0.5 text-[10px]' : 'text-[10px] px-1.5 py-0'} ${difficultyColors[scenario.difficulty]}`}
+                className={`font-mono uppercase tracking-wide ${isIOSNativeHost ? 'rounded-full px-2 py-0.5 text-[9px]' : 'text-[9px] px-1.5 py-0'} ${difficultyColors[scenario.difficulty]}`}
               >
                 {scenario.difficulty}
               </Badge>
               {isRecommended && (
                 <Badge
-                  className={`${isIOSNativeHost ? 'rounded-full bg-indigo-100 px-2 py-0.5 text-[10px] text-indigo-600' : 'bg-indigo-100 text-indigo-600 text-[10px] px-1.5 py-0'}`}
+                  className={`font-mono uppercase tracking-wide ${isIOSNativeHost ? 'rounded-full bg-indigo-100 px-2 py-0.5 text-[9px] text-indigo-600' : 'bg-indigo-100 text-indigo-600 text-[9px] px-1.5 py-0'}`}
                 >
                   {t.scenarios.recommended}
                 </Badge>

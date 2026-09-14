@@ -81,7 +81,7 @@ function NavLink({
             'flex items-center gap-2.5 rounded-lg text-sm transition-colors duration-150 cursor-pointer select-none',
             collapsed ? 'justify-center px-2 py-2' : 'px-3 py-2',
             active
-              ? 'bg-indigo-600 text-white font-medium'
+              ? 'bg-gradient-to-r from-indigo-600 to-violet-600 text-white font-medium shadow-sm'
               : 'text-slate-600 hover:bg-slate-100 hover:text-slate-900 font-normal',
           )}
         >
@@ -111,7 +111,7 @@ function NavLink({
           className={cn(
             'flex items-center justify-center px-2 py-2 rounded-lg text-sm transition-colors duration-150 cursor-pointer select-none',
             active
-              ? 'bg-indigo-600 text-white font-medium'
+              ? 'bg-gradient-to-r from-indigo-600 to-violet-600 text-white font-medium shadow-sm'
               : 'text-slate-600 hover:bg-slate-100 hover:text-slate-900 font-normal',
           )}
         >
@@ -136,7 +136,7 @@ function NavLink({
           className={cn(
             'flex items-center gap-2.5 px-3 py-2 rounded-lg text-sm transition-colors duration-150 cursor-pointer select-none w-full',
             active
-              ? 'bg-indigo-600 text-white font-medium'
+              ? 'bg-gradient-to-r from-indigo-600 to-violet-600 text-white font-medium shadow-sm'
               : 'text-slate-600 hover:bg-slate-100 hover:text-slate-900 font-normal',
           )}
           onClick={() => setExpanded(!expanded)}
@@ -307,7 +307,7 @@ export function Sidebar({ open = false, onOpenChange }: SidebarProps = {}) {
         {navGroups.map((group) => (
           <div key={group.label}>
             {!collapsed && (
-              <p className="px-3 mb-1 text-[10px] font-semibold uppercase tracking-widest text-slate-400">
+              <p className="px-3 mb-1 font-mono text-[10px] font-semibold uppercase tracking-widest text-slate-400">
                 {group.label}
               </p>
             )}

@@ -43,8 +43,10 @@ export default function SpeakPage() {
               <MessageCircle className="w-5 h-5" />
             </div>
             <div>
-              <h1 className="font-[var(--font-poppins)] text-2xl font-bold text-indigo-900">{messages.page.title}</h1>
-              <p className="text-sm text-indigo-400">{messages.page.subtitle}</p>
+              <h1 className="font-heading text-2xl font-extrabold tracking-tight text-indigo-950">
+                {messages.page.title}
+              </h1>
+              <p className="text-sm text-slate-500">{messages.page.subtitle}</p>
             </div>
           </div>
         </div>
@@ -100,9 +102,9 @@ export default function SpeakPage() {
           </div>
         ) : null}
         <div className="flex items-center gap-2 mb-4">
-          <div className="w-1 h-5 rounded-full bg-indigo-400" />
-          <h2 className="text-lg font-semibold text-indigo-900">{messages.scenarios.sectionTitle}</h2>
-          <p className="text-sm text-indigo-400 ml-1">{messages.scenarios.sectionSubtitle}</p>
+          <div className="w-1 h-5 rounded-full bg-gradient-to-b from-indigo-500 to-violet-600" />
+          <h2 className="font-heading text-lg font-bold text-indigo-950">{messages.scenarios.sectionTitle}</h2>
+          <p className="text-sm text-slate-500 ml-1">{messages.scenarios.sectionSubtitle}</p>
         </div>
         <ScenarioGrid getHref={(scenario) => `/speak/${scenario.id}`} />
       </div>

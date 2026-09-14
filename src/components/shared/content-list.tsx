@@ -155,7 +155,7 @@ function WordBookCard({
           'transition-all duration-200 cursor-pointer group',
           isIOSNativeHost
             ? `${IOS_LIST_CARD_CLASS} hover:-translate-y-0.5`
-            : 'bg-white border-indigo-100 shadow-sm hover:shadow-md hover:border-indigo-200',
+            : 'bg-white border-slate-200 shadow-sm hover:-translate-y-0.5 hover:shadow-md hover:border-indigo-200',
         )}
       >
         <CardContent className="flex items-center gap-3 p-2.5 md:p-3">
@@ -164,7 +164,7 @@ function WordBookCard({
               'flex items-center justify-center text-lg md:text-xl shrink-0 transition-colors',
               isIOSNativeHost
                 ? 'h-11 w-11 rounded-[18px] bg-[linear-gradient(135deg,rgba(99,102,241,0.16)_0%,rgba(79,70,229,0.08)_100%)]'
-                : 'w-8 h-8 md:w-9 md:h-9 rounded-lg bg-indigo-50 group-hover:bg-indigo-100',
+                : 'w-9 h-9 md:w-10 md:h-10 rounded-xl bg-indigo-50 shadow-sm group-hover:bg-indigo-100',
             )}
           >
             {book.emoji}
@@ -174,27 +174,33 @@ function WordBookCard({
               <h3
                 className={cn(
                   'truncate font-semibold',
-                  isIOSNativeHost ? 'text-[15px] text-slate-900' : 'text-sm text-indigo-900',
+                  isIOSNativeHost ? 'text-[15px] text-slate-900' : 'font-heading text-sm text-indigo-950',
                 )}
               >
                 {book.nameEn}
               </h3>
               {diff && (
-                <Badge className={cn(diff, 'text-[10px]')} variant="secondary">
+                <Badge className={cn(diff, 'font-mono text-[9px] uppercase tracking-wide')} variant="secondary">
                   {book.difficulty}
                 </Badge>
               )}
             </div>
             <p
-              className={cn('line-clamp-1', isIOSNativeHost ? 'text-[13px] text-slate-500' : 'text-xs text-indigo-500')}
+              className={cn('line-clamp-1', isIOSNativeHost ? 'text-[13px] text-slate-500' : 'text-xs text-slate-500')}
             >
               {book.description}
             </p>
             <div className="flex items-center gap-1.5 mt-0.5">
-              <Badge variant="outline" className="border-indigo-200 text-indigo-400 text-[10px]">
-                <NumberTicker value={itemCount} className="text-[10px]" /> {clMessages.items}
+              <Badge
+                variant="outline"
+                className="border-indigo-200 font-mono text-[9px] uppercase tracking-wide text-indigo-400"
+              >
+                <NumberTicker value={itemCount} /> {clMessages.items}
               </Badge>
-              <Badge variant="outline" className="border-indigo-200 text-indigo-400 text-[10px]">
+              <Badge
+                variant="outline"
+                className="border-indigo-200 font-mono text-[9px] uppercase tracking-wide text-indigo-400"
+              >
                 {book.filterTag}
               </Badge>
             </div>
@@ -253,32 +259,35 @@ function ContentRow({
           </div>
           <div className="flex-1 min-w-0">
             <div className="flex items-center gap-1.5 md:gap-2 mb-0.5 flex-wrap">
-              <h3 className="font-medium text-indigo-900 truncate text-sm md:text-base">{item.title}</h3>
-              <Badge className={cn(typeColors[item.type], 'text-[10px] md:text-xs')} variant="secondary">
+              <h3 className="font-heading font-semibold text-indigo-950 truncate text-sm md:text-base">{item.title}</h3>
+              <Badge
+                className={cn(typeColors[item.type], 'font-mono text-[9px] uppercase tracking-wide md:text-[10px]')}
+                variant="secondary"
+              >
                 {item.type}
               </Badge>
               {item.category && (
                 <Badge
                   variant="outline"
-                  className="border-indigo-200 text-indigo-400 text-[10px] md:text-xs hidden sm:inline-flex"
+                  className="hidden border-indigo-200 font-mono text-[9px] uppercase tracking-wide text-indigo-400 sm:inline-flex md:text-[10px]"
                 >
                   {item.category}
                 </Badge>
               )}
               {isActive && (
-                <Badge className="bg-indigo-100 text-indigo-600 text-[10px] md:text-xs">
+                <Badge className="bg-indigo-100 font-mono text-[9px] uppercase tracking-wide text-indigo-600 md:text-[10px]">
                   {srMessages.contentList.practicing}
                 </Badge>
               )}
             </div>
-            <p className="text-xs md:text-sm text-indigo-500 line-clamp-1">{item.text}</p>
+            <p className="text-xs md:text-sm text-slate-500 line-clamp-1">{item.text}</p>
             {item.tags.length > 0 && (
               <div className="flex items-center gap-1 mt-1">
                 {item.tags.slice(0, 3).map((tag) => (
                   <Badge
                     key={tag}
                     variant="outline"
-                    className="border-slate-200 text-slate-500 text-[10px] md:text-xs py-0 h-4 md:h-5"
+                    className="border-slate-200 font-mono text-[9px] uppercase tracking-wide text-slate-500 py-0 h-4 md:h-5"
                   >
                     {tag}
                   </Badge>
@@ -486,11 +495,11 @@ export function ContentList({ title, description, module, icon: Icon, iconBg, ic
         <IOSPageHeader icon={Icon} title={title} description={description} tone="indigo" />
       ) : (
         <div className="space-y-2">
-          <div className={cn('inline-flex h-11 w-11 items-center justify-center rounded-2xl', iconBg)}>
+          <div className={cn('inline-flex h-12 w-12 items-center justify-center rounded-2xl shadow-md', iconBg)}>
             <Icon className="h-5 w-5" />
           </div>
-          <h1 className="text-2xl font-bold text-indigo-900 font-[var(--font-poppins)] md:text-3xl">{title}</h1>
-          <p className="text-sm text-indigo-600 md:text-base">{description}</p>
+          <h1 className="font-heading text-2xl font-extrabold tracking-tight text-indigo-950 md:text-3xl">{title}</h1>
+          <p className="text-sm text-slate-500 md:text-base">{description}</p>
         </div>
       )}
 
@@ -529,21 +538,21 @@ export function ContentList({ title, description, module, icon: Icon, iconBg, ic
               onClick={() => setActiveTab(key)}
               data-testid={`${module}-content-tab-${key}`}
               className={cn(
-                'cursor-pointer rounded-full',
+                'cursor-pointer rounded-full font-mono text-xs font-semibold uppercase tracking-wide',
                 isIOSNativeHost
                   ? activeTab === key
                     ? IOS_SEGMENTED_ACTIVE_CLASS
                     : IOS_SEGMENTED_INACTIVE_CLASS
                   : activeTab === key
-                    ? 'bg-indigo-600'
+                    ? 'bg-gradient-to-r from-indigo-600 to-violet-600 shadow-sm'
                     : 'border-indigo-200 text-indigo-600',
               )}
             >
               {key === 'wordbook' && <BookMarked className="w-3.5 h-3.5 mr-1" />}
               {key === 'scenario' && <Layers className="w-3.5 h-3.5 mr-1" />}
               {clMessages.tabs[key]}
-              <span className="ml-1 text-xs opacity-70">
-                (<NumberTicker value={tabCounts[key]} className="text-xs" />)
+              <span className="ml-1 opacity-70">
+                (<NumberTicker value={tabCounts[key]} />)
               </span>
             </Button>
           ))}
