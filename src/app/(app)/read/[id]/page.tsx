@@ -1119,16 +1119,11 @@ export default function ReadDetailPage() {
         </div>
       )}
 
-      <div data-testid="read-practice-workspace" className="flex h-[calc(100dvh-9.5rem)] min-h-0 flex-col gap-3">
-        <Card
-          className={cn(
-            isIOSNativeHost ? IOS_SECTION_CARD_CLASS : 'bg-white border-slate-100 shadow-sm',
-            'min-h-0 flex-1 overflow-hidden',
-          )}
-        >
-          <CardContent className="flex h-full min-h-0 flex-col p-4 md:p-6">
+      <div data-testid="read-practice-workspace" className="flex flex-col gap-3">
+        <Card className={cn(isIOSNativeHost ? IOS_SECTION_CARD_CLASS : 'bg-white border-slate-100 shadow-sm')}>
+          <CardContent className="flex flex-col p-4 md:p-6">
             <div className="flex items-center justify-between mb-4 shrink-0 gap-2">
-              <h3 className="font-semibold text-indigo-900 shrink-0">{t.content.referenceText}</h3>
+              <h3 className="text-xs font-semibold text-indigo-400 shrink-0">{t.content.referenceText}</h3>
               <div className="flex items-center gap-1 md:gap-2">
                 {!isIOSNativeHost && <TranslationBar module="read" />}
                 <div className="w-px h-6 bg-indigo-200 mx-0.5 md:mx-1 hidden sm:block" />
@@ -1149,7 +1144,7 @@ export default function ReadDetailPage() {
               data-testid="read-reference-scroll"
               data-selection-scope
               className={cn(
-                'min-h-0 flex-1 overflow-y-auto pr-2',
+                'max-h-[65dvh] overflow-y-auto pr-2',
                 isIOSNativeHost && `${IOS_LIST_CARD_CLASS} px-4 py-4`,
               )}
             >

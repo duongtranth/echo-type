@@ -1253,7 +1253,7 @@ export default function ListenDetailPage() {
             <div
               data-testid="listen-content-text"
               className={cn(
-                'max-h-[52dvh] min-h-64 overflow-y-auto overscroll-contain rounded-xl border border-slate-100 bg-white p-4 md:p-5',
+                'max-h-[65dvh] min-h-72 overflow-y-auto overscroll-contain rounded-xl border border-slate-100 bg-white p-4 md:p-5',
                 isIOSNativeHost && `${IOS_LIST_CARD_CLASS} px-4 py-4`,
               )}
             >
