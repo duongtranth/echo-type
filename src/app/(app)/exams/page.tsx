@@ -36,8 +36,10 @@ export default function ExamsPage() {
     <div className="mx-auto w-full max-w-6xl space-y-6 p-4 md:p-8">
       <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
         <div>
-          <p className="text-sm font-medium text-primary">Exam practice</p>
-          <h1 className="font-heading text-2xl font-semibold text-foreground">IELTS & TOEIC Test Library</h1>
+          <p className="font-mono text-xs font-semibold uppercase tracking-[0.14em] text-primary">Exam practice</p>
+          <h1 className="font-heading text-3xl font-extrabold tracking-tight text-foreground">
+            IELTS & TOEIC Test Library
+          </h1>
           <p className="mt-1 text-sm text-muted-foreground">
             Import a test, add or review its questions, then practise and send mistakes to Weak Spots.
           </p>
@@ -64,14 +66,21 @@ export default function ExamsPage() {
       ) : (
         <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
           {tests.map((test) => (
-            <Card key={test.id} className="p-5">
+            <Card
+              key={test.id}
+              className="p-5 shadow-sm transition-all duration-200 hover:-translate-y-0.5 hover:shadow-md"
+            >
               <div className="flex items-start justify-between gap-3">
                 <div className="min-w-0">
                   <div className="flex items-center gap-2">
-                    <Badge className="bg-primary/10 text-primary">{test.examType}</Badge>
-                    <Badge variant="secondary">{test.status}</Badge>
+                    <Badge className="bg-primary/10 font-mono text-[10px] uppercase tracking-wide text-primary">
+                      {test.examType}
+                    </Badge>
+                    <Badge variant="secondary" className="font-mono text-[10px] uppercase tracking-wide">
+                      {test.status}
+                    </Badge>
                   </div>
-                  <h2 className="mt-3 truncate font-semibold text-foreground">{test.title}</h2>
+                  <h2 className="mt-3 truncate font-heading font-bold text-foreground">{test.title}</h2>
                   <p className="mt-1 truncate text-xs text-muted-foreground">
                     {test.sourceFilename || 'Manual import'}
                   </p>
@@ -88,7 +97,7 @@ export default function ExamsPage() {
               </div>
 
               <div className="mt-5 flex items-center justify-between">
-                <span className="text-xs text-muted-foreground">
+                <span className="font-mono text-[10px] text-muted-foreground">
                   Updated {new Date(test.updatedAt).toLocaleDateString()}
                 </span>
                 <Link href={`/exams/${test.id}`} className="text-sm font-medium text-primary hover:text-primary/80">

@@ -232,10 +232,10 @@ export default function ExamPracticePage() {
             <ArrowLeft className="h-4 w-4" />
             Edit exam
           </Link>
-          <p className="mt-3 text-sm font-semibold text-primary">
+          <p className="mt-3 font-mono text-xs font-semibold uppercase tracking-wide text-primary">
             {bundle.test.examType} {timeLimitSeconds ? 'timed test' : 'practice'}
           </p>
-          <h1 className="font-heading text-2xl font-semibold text-foreground">{bundle.test.title}</h1>
+          <h1 className="font-heading text-3xl font-extrabold tracking-tight text-foreground">{bundle.test.title}</h1>
           <p className="mt-1 text-sm text-muted-foreground">
             {bundle.questions.length} questions · {answeredCount} answered
           </p>
@@ -253,29 +253,29 @@ export default function ExamPracticePage() {
                     : 'text-foreground',
               )}
             >
-              <p className="flex items-center justify-center gap-1 text-xs font-semibold uppercase tracking-wide">
+              <p className="flex items-center justify-center gap-1 font-mono text-[10px] font-semibold uppercase tracking-widest">
                 <Clock3 className="h-3.5 w-3.5" /> Time
               </p>
-              <p className="mt-1 text-xl font-bold">{formatExamTime(remainingSeconds)}</p>
+              <p className="mt-1 font-mono text-2xl font-extrabold">{formatExamTime(remainingSeconds)}</p>
             </Card>
           )}
 
           {result && (
             <Card className="border-success/30 bg-success/10 p-0 px-5 py-3 text-center">
-              <p className="text-xs font-semibold uppercase tracking-wide text-success">Final score</p>
-              <p className="text-2xl font-bold text-success">
+              <p className="font-mono text-[10px] font-semibold uppercase tracking-widest text-success">Final score</p>
+              <p className="font-mono text-3xl font-extrabold text-success">
                 {result.score}/{result.total}
               </p>
-              <p className="mt-1 text-xs text-success">{formatExamTime(result.durationSeconds)}</p>
+              <p className="mt-1 font-mono text-[10px] text-success">{formatExamTime(result.durationSeconds)}</p>
             </Card>
           )}
 
           {result?.timeLimitSeconds && result.timedScore !== undefined && result.timedTotal !== undefined && (
             <Card className="border-primary/30 bg-primary/10 p-0 px-5 py-3 text-center">
-              <p className="text-xs font-semibold uppercase tracking-wide text-primary">
+              <p className="font-mono text-[10px] font-semibold uppercase tracking-widest text-primary">
                 {result.timedOutAt ? 'At time limit' : 'Within time'}
               </p>
-              <p className="text-2xl font-bold text-primary">
+              <p className="font-mono text-3xl font-extrabold text-primary">
                 {result.timedScore}/{result.timedTotal}
               </p>
             </Card>
