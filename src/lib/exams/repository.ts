@@ -1,8 +1,10 @@
 import { getExamDb } from '@/lib/exams/db';
-import { isExamAnswerCorrect } from '@/lib/exams/grading';
+import { isAutoGradableQuestionType, isExamAnswerCorrect } from '@/lib/exams/grading';
 import { upsertWeakSpot } from '@/lib/weak-spots';
 import type {
+  EssayGrading,
   ExamAttempt,
+  ExamAttemptAnswer,
   ExamAttemptProgress,
   ExamBundle,
   ExamQuestion,
@@ -104,6 +106,7 @@ export async function addExamQuestion(input: {
   options?: string[];
   correctAnswers: string[];
   explanation?: string;
+  wordCountTarget?: number;
 }): Promise<string> {
   const examDb = getExamDb();
   const now = Date.now();
@@ -121,6 +124,7 @@ export async function addExamQuestion(input: {
     options: input.options?.map((value) => value.trim()).filter(Boolean),
     correctAnswers: input.correctAnswers.map((value) => value.trim()).filter(Boolean),
     explanation: input.explanation?.trim() || undefined,
+    wordCountTarget: input.wordCountTarget,
     order: nextOrder,
     createdAt: now,
     updatedAt: now,
@@ -234,7 +238,8 @@ export async function captureTimedExamSnapshot(attemptId: string): Promise<ExamA
   const existingRows = await examDb.answers.where('attemptId').equals(attempt.id).toArray();
   const existingByQuestionId = new Map(existingRows.map((row) => [row.questionId, row]));
   const snapshotAnswers = Object.fromEntries(existingRows.map((row) => [row.questionId, row.answer]));
-  const timedScore = bundle.questions.filter((question) =>
+  const gradableQuestions = bundle.questions.filter((question) => isAutoGradableQuestionType(question.type));
+  const timedScore = gradableQuestions.filter((question) =>
     isExamAnswerCorrect(snapshotAnswers[question.id] ?? '', question.correctAnswers),
   ).length;
   const now = Date.now();
@@ -243,7 +248,7 @@ export async function captureTimedExamSnapshot(attemptId: string): Promise<ExamA
     await examDb.attempts.update(attempt.id, {
       timedOutAt: attempt.deadlineAt,
       timedScore,
-      timedTotal: bundle.questions.length,
+      timedTotal: gradableQuestions.length,
       updatedAt: now,
     });
 
@@ -267,7 +272,7 @@ export async function captureTimedExamSnapshot(attemptId: string): Promise<ExamA
     ...attempt,
     timedOutAt: attempt.deadlineAt,
     timedScore,
-    timedTotal: bundle.questions.length,
+    timedTotal: gradableQuestions.length,
     updatedAt: now,
   });
 }
@@ -355,14 +360,17 @@ export async function submitExamAttempt(
 
   const results = bundle.questions.map((question) => {
     const answer = answers[question.id] ?? '';
+    const autoGradable = isAutoGradableQuestionType(question.type);
     return {
       questionId: question.id,
       answer,
-      correct: isExamAnswerCorrect(answer, question.correctAnswers),
+      correct: autoGradable ? isExamAnswerCorrect(answer, question.correctAnswers) : null,
       correctAnswers: question.correctAnswers,
     };
   });
-  const score = results.filter((result) => result.correct).length;
+  const gradableResults = results.filter((result) => result.correct !== null);
+  const score = gradableResults.filter((result) => result.correct).length;
+  const total = gradableResults.length;
 
   const finalAttempt: ExamAttempt = attempt ?? {
     id: createId('attempt'),
@@ -374,7 +382,7 @@ export async function submitExamAttempt(
   };
   const submittedWithinLimit = Boolean(finalAttempt.deadlineAt && submittedAt < finalAttempt.deadlineAt);
   const timedScore = submittedWithinLimit ? score : finalAttempt.timedScore;
-  const timedTotal = submittedWithinLimit ? bundle.questions.length : finalAttempt.timedTotal;
+  const timedTotal = submittedWithinLimit ? total : finalAttempt.timedTotal;
   const existingRows = await examDb.answers.where('attemptId').equals(finalAttempt.id).toArray();
   const existingByQuestionId = new Map(existingRows.map((row) => [row.questionId, row]));
 
@@ -385,7 +393,7 @@ export async function submitExamAttempt(
       submittedAt,
       updatedAt: submittedAt,
       score,
-      total: bundle.questions.length,
+      total,
       timedScore,
       timedTotal,
     };
@@ -413,7 +421,7 @@ export async function submitExamAttempt(
   });
 
   for (const result of results) {
-    if (result.correct) continue;
+    if (result.correct !== false) continue;
     const question = bundle.questions.find((item) => item.id === result.questionId);
     if (!question) continue;
     const section = sectionById.get(question.sectionId);
@@ -434,7 +442,7 @@ export async function submitExamAttempt(
   return {
     attemptId: finalAttempt.id,
     score,
-    total: bundle.questions.length,
+    total,
     durationSeconds: Math.max(0, Math.floor((submittedAt - finalAttempt.startedAt) / 1000)),
     timeLimitSeconds: finalAttempt.timeLimitSeconds,
     timedScore,
@@ -442,4 +450,17 @@ export async function submitExamAttempt(
     timedOutAt: finalAttempt.timedOutAt,
     results,
   };
+}
+
+export async function getAttemptAnswers(attemptId: string): Promise<ExamAttemptAnswer[]> {
+  const examDb = getExamDb();
+  return examDb.answers.where('attemptId').equals(attemptId).toArray();
+}
+
+export async function saveEssayGrading(attemptId: string, questionId: string, grading: EssayGrading): Promise<void> {
+  const examDb = getExamDb();
+  const existing = await examDb.answers.where('[attemptId+questionId]').equals([attemptId, questionId]).first();
+  if (!existing) throw new Error('Answer not found for this question');
+
+  await examDb.answers.update(existing.id, { aiGrading: grading, updatedAt: Date.now() });
 }

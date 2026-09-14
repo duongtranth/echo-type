@@ -10,6 +10,7 @@ export type ExamQuestionType =
   | 'summary-completion'
   | 'short-answer'
   | 'matching'
+  | 'essay'
   | 'other';
 
 export type ExamStatus = 'draft' | 'ready';
@@ -22,6 +23,8 @@ export interface ParsedExamQuestion {
   options?: string[];
   correctAnswers?: string[];
   explanation?: string;
+  /** Target minimum word count for essay/writing tasks (e.g. IELTS Writing Task 2 = 250). */
+  wordCountTarget?: number;
 }
 
 export interface ParsedExamSection {
@@ -69,9 +72,28 @@ export interface ExamQuestion {
   options?: string[];
   correctAnswers: string[];
   explanation?: string;
+  /** Target minimum word count for essay/writing tasks (e.g. IELTS Writing Task 2 = 250). */
+  wordCountTarget?: number;
   order: number;
   createdAt: number;
   updatedAt: number;
+}
+
+/** Per-criterion breakdown from an AI grading pass on an essay/speaking response. */
+export interface EssayGradingCriterion {
+  criterion: string;
+  score: number;
+  feedback: string;
+}
+
+/** AI-generated band-style grading for an essay (writing) or speaking-transcript response. */
+export interface EssayGrading {
+  bandScore: number;
+  criteria: EssayGradingCriterion[];
+  strengths: string[];
+  improvements: string[];
+  overallFeedback: string;
+  gradedAt: number;
 }
 
 export interface ExamAttempt {
@@ -97,8 +119,11 @@ export interface ExamAttemptAnswer {
   attemptId: string;
   questionId: string;
   answer: string;
-  correct?: boolean;
+  /** null means this question type (e.g. essay) has no automatic correctness check. */
+  correct?: boolean | null;
   answerAtDeadline?: string;
+  /** Present once an essay/speaking response has been graded by AI. */
+  aiGrading?: EssayGrading;
   updatedAt: number;
 }
 
@@ -116,7 +141,8 @@ export interface ExamBundle {
 export interface ExamQuestionResult {
   questionId: string;
   answer: string;
-  correct: boolean;
+  /** null means this question type (e.g. essay) has no automatic correctness check. */
+  correct: boolean | null;
   correctAnswers: string[];
 }
 

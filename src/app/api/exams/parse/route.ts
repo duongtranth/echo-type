@@ -19,6 +19,7 @@ const QUESTION_TYPES = new Set<ExamQuestionType>([
   'summary-completion',
   'short-answer',
   'matching',
+  'essay',
   'other',
 ]);
 
@@ -54,6 +55,10 @@ function sanitizeDraft(value: ParsedExamDraft): ParsedExamDraft {
               .filter(Boolean)
           : [],
         explanation: typeof question.explanation === 'string' ? question.explanation.trim() : undefined,
+        wordCountTarget:
+          typeof question.wordCountTarget === 'number' && Number.isFinite(question.wordCountTarget)
+            ? question.wordCountTarget
+            : undefined,
       })),
     })),
   };
@@ -130,10 +135,12 @@ Preserve the original question wording as closely as possible.
 Do not invent answers. Only populate correctAnswers when an answer key or explicit answer is present in the supplied text and can be matched confidently.
 If an answer is not explicit, use an empty correctAnswers array.
 Use only these skills: reading, listening, writing, speaking.
-Use only these question types: multiple-choice, true-false-not-given, yes-no-not-given, sentence-completion, summary-completion, short-answer, matching, other.
+Use only these question types: multiple-choice, true-false-not-given, yes-no-not-given, sentence-completion, summary-completion, short-answer, matching, essay, other.
+Writing and speaking tasks (e.g. an essay prompt, a "describe/discuss..." task, or a speaking cue card) have no fixed correct answer — classify these as type "essay" with an empty correctAnswers array. These are graded separately by AI after the test, not by exact match.
+When an essay/writing task states a minimum or target word count (e.g. "write at least 250 words"), extract it as a numeric wordCountTarget on that question. Omit wordCountTarget when not stated.
 Keep passage/source material in sourceText and instructions separately from individual question prompts.
 Return ONLY valid JSON with this shape and no markdown:
-{"title":"optional test title","sections":[{"skill":"reading","title":"section title","instructions":"optional instructions","sourceText":"passage/transcript if present","questions":[{"number":1,"type":"multiple-choice","prompt":"question text","options":["A. ...","B. ..."],"correctAnswers":["A. ..."],"explanation":"optional only when explicitly supported by source"}]}]}`,
+{"title":"optional test title","sections":[{"skill":"reading","title":"section title","instructions":"optional instructions","sourceText":"passage/transcript if present","questions":[{"number":1,"type":"multiple-choice","prompt":"question text","options":["A. ...","B. ..."],"correctAnswers":["A. ..."],"explanation":"optional only when explicitly supported by source","wordCountTarget":250}]}]}`,
       prompt: `Parse this ${examType} test. The extracted text may contain layout noise. Map any explicit answer key back to the corresponding questions, but never guess missing answers. If the source contains an omission marker, the final block is intentionally preserved because answer keys often appear near the end.\n\nSOURCE TEXT:\n${sourceText}`,
     });
 

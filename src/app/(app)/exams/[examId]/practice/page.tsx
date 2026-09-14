@@ -4,11 +4,14 @@ import { ArrowLeft, CheckCircle2, Clock3, Flag, RotateCcw, Save, XCircle } from 
 import Link from 'next/link';
 import { useParams } from 'next/navigation';
 import { type FormEvent, useCallback, useEffect, useMemo, useState } from 'react';
+import { EssayAnswerField } from '@/components/exams/essay-answer-field';
+import { EssayGradingPanel } from '@/components/exams/essay-grading-panel';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import {
   captureTimedExamSnapshot,
+  getAttemptAnswers,
   getExamBundle,
   saveExamAttemptProgress,
   startExamAttempt,
@@ -16,7 +19,7 @@ import {
 } from '@/lib/exams/repository';
 import { formatExamTime, getSuggestedExamTimeLimitSeconds } from '@/lib/exams/timing';
 import { cn } from '@/lib/utils';
-import type { ExamAttemptProgress, ExamBundle, ExamSubmissionResult } from '@/types/exam';
+import type { EssayGrading, ExamAttemptProgress, ExamBundle, ExamSubmissionResult } from '@/types/exam';
 
 type SaveState = 'idle' | 'saving' | 'saved' | 'error';
 
@@ -38,6 +41,7 @@ export default function ExamPracticePage() {
   const [currentQuestionId, setCurrentQuestionId] = useState<string | undefined>();
   const [saveState, setSaveState] = useState<SaveState>('idle');
   const [now, setNow] = useState(Date.now());
+  const [aiGradings, setAiGradings] = useState<Record<string, EssayGrading>>({});
 
   const loadBundle = useCallback(async () => {
     setLoading(true);
@@ -176,6 +180,14 @@ export default function ExamPracticePage() {
         flaggedQuestionIds,
       });
       setResult(await submitExamAttempt(bundle.test.id, answers, { attemptId }));
+      const savedAnswers = await getAttemptAnswers(attemptId);
+      setAiGradings(
+        Object.fromEntries(
+          savedAnswers
+            .filter((row): row is typeof row & { aiGrading: EssayGrading } => Boolean(row.aiGrading))
+            .map((row) => [row.questionId, row.aiGrading]),
+        ),
+      );
       setSaveState('saved');
     } catch (cause) {
       setError(cause instanceof Error ? cause.message : 'Could not submit this attempt.');
@@ -187,6 +199,7 @@ export default function ExamPracticePage() {
   const resetAttempt = async () => {
     if (!bundle) return;
     setResult(null);
+    setAiGradings({});
     setError('');
     setAttemptReady(false);
     try {
@@ -220,6 +233,7 @@ export default function ExamPracticePage() {
   }
 
   const sourceText = bundle.sections.find((section) => section.sourceText)?.sourceText;
+  const sectionById = new Map(bundle.sections.map((section) => [section.id, section]));
 
   return (
     <div className="mx-auto w-full max-w-7xl space-y-6 p-4 md:p-8">
@@ -325,9 +339,12 @@ export default function ExamPracticePage() {
 
                   let className = 'border-border bg-card text-muted-foreground hover:border-primary/40';
                   if (questionResult) {
-                    className = questionResult.correct
-                      ? 'border-success/40 bg-success/10 text-success'
-                      : 'border-destructive/40 bg-destructive/10 text-destructive';
+                    className =
+                      questionResult.correct === true
+                        ? 'border-success/40 bg-success/10 text-success'
+                        : questionResult.correct === false
+                          ? 'border-destructive/40 bg-destructive/10 text-destructive'
+                          : 'border-primary/40 bg-primary/10 text-primary';
                   } else if (flagged) {
                     className = 'border-amber-300 bg-amber-50 text-amber-800';
                   } else if (answered) {
@@ -358,8 +375,10 @@ export default function ExamPracticePage() {
           ) : (
             bundle.questions.map((question) => {
               const questionResult = resultByQuestionId.get(question.id);
+              const isEssay = question.type === 'essay';
               const isMultipleChoice = question.type === 'multiple-choice' && (question.options?.length ?? 0) > 0;
               const flagged = flaggedQuestionIds.includes(question.id);
+              const section = sectionById.get(question.sectionId);
 
               return (
                 <fieldset
@@ -370,9 +389,11 @@ export default function ExamPracticePage() {
                   className={cn(
                     'scroll-mt-40 rounded-xl border bg-card p-5 shadow-sm',
                     questionResult
-                      ? questionResult.correct
+                      ? questionResult.correct === true
                         ? 'border-success/40'
-                        : 'border-destructive/40'
+                        : questionResult.correct === false
+                          ? 'border-destructive/40'
+                          : 'border-primary/40'
                       : flagged
                         ? 'border-amber-300'
                         : 'border-border',
@@ -401,12 +422,22 @@ export default function ExamPracticePage() {
                           <Flag className="h-4 w-4" fill={flagged ? 'currentColor' : 'none'} />
                         </button>
                       )}
-                      {questionResult?.correct && <CheckCircle2 className="h-5 w-5 text-success" />}
-                      {questionResult && !questionResult.correct && <XCircle className="h-5 w-5 text-destructive" />}
+                      {questionResult?.correct === true && <CheckCircle2 className="h-5 w-5 text-success" />}
+                      {questionResult?.correct === false && <XCircle className="h-5 w-5 text-destructive" />}
                     </div>
                   </div>
 
-                  {isMultipleChoice ? (
+                  {isEssay ? (
+                    <div className="mt-4">
+                      <EssayAnswerField
+                        value={answers[question.id] ?? ''}
+                        onChange={(value) => updateAnswer(question.id, value)}
+                        wordCountTarget={question.wordCountTarget}
+                        allowVoice={section?.skill === 'speaking'}
+                        disabled={Boolean(result)}
+                      />
+                    </div>
+                  ) : isMultipleChoice ? (
                     <div className="mt-4 space-y-2">
                       {question.options?.map((option) => (
                         <label
@@ -434,7 +465,7 @@ export default function ExamPracticePage() {
                     />
                   )}
 
-                  {questionResult && !questionResult.correct && (
+                  {questionResult && questionResult.correct === false && (
                     <div className="mt-4 rounded-lg bg-destructive/10 p-3 text-sm text-destructive">
                       <p>
                         Correct answer: <strong>{questionResult.correctAnswers.join(' / ')}</strong>
@@ -444,8 +475,24 @@ export default function ExamPracticePage() {
                     </div>
                   )}
 
-                  {questionResult?.correct && question.explanation && (
+                  {questionResult?.correct === true && question.explanation && (
                     <p className="mt-4 rounded-lg bg-success/10 p-3 text-sm text-success">{question.explanation}</p>
+                  )}
+
+                  {isEssay && questionResult && questionResult.correct === null && (
+                    <div className="mt-4">
+                      <EssayGradingPanel
+                        attemptId={attemptId}
+                        questionId={question.id}
+                        examType={bundle.test.examType}
+                        skill={section?.skill ?? 'writing'}
+                        prompt={question.prompt}
+                        answer={questionResult.answer}
+                        wordCountTarget={question.wordCountTarget}
+                        grading={aiGradings[question.id]}
+                        onGraded={(grading) => setAiGradings((current) => ({ ...current, [question.id]: grading }))}
+                      />
+                    </div>
                   )}
                 </fieldset>
               );

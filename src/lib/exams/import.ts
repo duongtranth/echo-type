@@ -50,7 +50,8 @@ export async function createExamFromParsedDraft(input: {
       let questionOrder = 0;
       for (const question of section.questions ?? []) {
         const correctAnswers = (question.correctAnswers ?? []).map((value) => value.trim()).filter(Boolean);
-        if (!question.prompt?.trim() || correctAnswers.length === 0) {
+        const isEssay = question.type === 'essay';
+        if (!question.prompt?.trim() || (!isEssay && correctAnswers.length === 0)) {
           skippedQuestions += 1;
           continue;
         }
@@ -65,6 +66,7 @@ export async function createExamFromParsedDraft(input: {
           options: question.options?.map((value) => value.trim()).filter(Boolean),
           correctAnswers,
           explanation: question.explanation?.trim() || undefined,
+          wordCountTarget: question.wordCountTarget,
           order: questionOrder,
           createdAt: now,
           updatedAt: now,

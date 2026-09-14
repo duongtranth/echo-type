@@ -22,6 +22,7 @@ const QUESTION_TYPES: { value: ExamQuestionType; label: string }[] = [
   { value: 'summary-completion', label: 'Summary completion' },
   { value: 'short-answer', label: 'Short answer' },
   { value: 'matching', label: 'Matching' },
+  { value: 'essay', label: 'Essay / speaking (AI-graded)' },
   { value: 'other', label: 'Other' },
 ];
 
@@ -38,7 +39,9 @@ export default function ExamEditorPage() {
   const [options, setOptions] = useState('');
   const [answers, setAnswers] = useState('');
   const [explanation, setExplanation] = useState('');
+  const [wordCountTarget, setWordCountTarget] = useState('');
   const [error, setError] = useState('');
+  const isEssay = type === 'essay';
 
   const loadBundle = useCallback(async () => {
     setLoading(true);
@@ -70,10 +73,21 @@ export default function ExamEditorPage() {
       .map((value) => value.trim())
       .filter(Boolean);
 
-    if (!Number.isFinite(parsedNumber) || parsedNumber <= 0 || !prompt.trim() || acceptedAnswers.length === 0) {
-      setError('Question number, prompt, and at least one correct answer are required.');
+    if (
+      !Number.isFinite(parsedNumber) ||
+      parsedNumber <= 0 ||
+      !prompt.trim() ||
+      (!isEssay && acceptedAnswers.length === 0)
+    ) {
+      setError(
+        isEssay
+          ? 'Question number and prompt are required.'
+          : 'Question number, prompt, and at least one correct answer are required.',
+      );
       return;
     }
+
+    const parsedWordCountTarget = Number(wordCountTarget);
 
     setSaving(true);
     setError('');
@@ -90,11 +104,16 @@ export default function ExamEditorPage() {
           .filter(Boolean),
         correctAnswers: acceptedAnswers,
         explanation,
+        wordCountTarget:
+          isEssay && Number.isFinite(parsedWordCountTarget) && parsedWordCountTarget > 0
+            ? parsedWordCountTarget
+            : undefined,
       });
       setPrompt('');
       setOptions('');
       setAnswers('');
       setExplanation('');
+      setWordCountTarget('');
       await loadBundle();
     } catch (cause) {
       setError(cause instanceof Error ? cause.message : 'Could not add the question.');
@@ -249,30 +268,52 @@ export default function ExamEditorPage() {
                 />
               </div>
 
-              <div className="space-y-1">
-                <label htmlFor="question-options" className="text-sm font-medium text-foreground">
-                  Options
-                </label>
-                <Textarea
-                  id="question-options"
-                  rows={4}
-                  value={options}
-                  onChange={(event) => setOptions(event.target.value)}
-                  placeholder={'One option per line\nA. First option\nB. Second option'}
-                />
-              </div>
+              {isEssay ? (
+                <div className="space-y-1">
+                  <label htmlFor="question-word-target" className="text-sm font-medium text-foreground">
+                    Target word count (optional)
+                  </label>
+                  <Input
+                    id="question-word-target"
+                    type="number"
+                    min="1"
+                    value={wordCountTarget}
+                    onChange={(event) => setWordCountTarget(event.target.value)}
+                    placeholder="e.g. 250"
+                  />
+                  <p className="text-xs text-muted-foreground">
+                    Essay and speaking answers have no fixed correct answer — they&apos;re graded by AI after submission
+                    instead.
+                  </p>
+                </div>
+              ) : (
+                <>
+                  <div className="space-y-1">
+                    <label htmlFor="question-options" className="text-sm font-medium text-foreground">
+                      Options
+                    </label>
+                    <Textarea
+                      id="question-options"
+                      rows={4}
+                      value={options}
+                      onChange={(event) => setOptions(event.target.value)}
+                      placeholder={'One option per line\nA. First option\nB. Second option'}
+                    />
+                  </div>
 
-              <div className="space-y-1">
-                <label htmlFor="question-answers" className="text-sm font-medium text-foreground">
-                  Correct answer(s)
-                </label>
-                <Input
-                  id="question-answers"
-                  value={answers}
-                  onChange={(event) => setAnswers(event.target.value)}
-                  placeholder="TRUE | T (use | for accepted alternatives)"
-                />
-              </div>
+                  <div className="space-y-1">
+                    <label htmlFor="question-answers" className="text-sm font-medium text-foreground">
+                      Correct answer(s)
+                    </label>
+                    <Input
+                      id="question-answers"
+                      value={answers}
+                      onChange={(event) => setAnswers(event.target.value)}
+                      placeholder="TRUE | T (use | for accepted alternatives)"
+                    />
+                  </div>
+                </>
+              )}
 
               <div className="space-y-1">
                 <label htmlFor="question-explanation" className="text-sm font-medium text-foreground">
@@ -310,7 +351,13 @@ export default function ExamEditorPage() {
                           Q{question.number} · {question.type}
                         </p>
                         <p className="mt-1 text-sm text-foreground">{question.prompt}</p>
-                        <p className="mt-2 text-xs text-success">Answer: {question.correctAnswers.join(' / ')}</p>
+                        {question.type === 'essay' ? (
+                          <p className="mt-2 text-xs text-primary">
+                            AI-graded{question.wordCountTarget ? ` · target ${question.wordCountTarget} words` : ''}
+                          </p>
+                        ) : (
+                          <p className="mt-2 text-xs text-success">Answer: {question.correctAnswers.join(' / ')}</p>
+                        )}
                       </div>
                       <Button
                         variant="ghost"

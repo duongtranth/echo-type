@@ -71,7 +71,7 @@ const FALLBACK_CHAINS: Record<ProviderCapability, ProviderId[]> = {
   translateText: ['groq', 'openai'],
   transcribe: ['groq', 'openai'],
   translateAudio: ['groq', 'openai'],
-  evaluate: ['openai'],
+  evaluate: ['groq', 'openai'],
 };
 
 function getStoredCredential(auth?: ProviderAuthState): string {
