@@ -330,8 +330,10 @@ export default function WordBooksPage() {
       ) : (
         <div className="flex items-start justify-between gap-4">
           <div>
-            <h1 className="text-3xl font-bold font-[var(--font-poppins)] text-indigo-900">{messages.page.title}</h1>
-            <p className="text-indigo-500 mt-1 text-sm">{messages.page.subtitle}</p>
+            <h1 className="font-heading text-3xl font-extrabold tracking-tight text-indigo-950">
+              {messages.page.title}
+            </h1>
+            <p className="text-slate-500 mt-1 text-sm">{messages.page.subtitle}</p>
           </div>
           <div className="flex items-center gap-3 shrink-0">
             {importedCount > 0 && (

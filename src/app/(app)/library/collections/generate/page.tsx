@@ -256,11 +256,11 @@ export default function GenerateCollectionPage() {
         />
       ) : (
         <div>
-          <h1 className="text-2xl font-bold font-[var(--font-poppins)] text-indigo-900 flex items-center gap-2">
+          <h1 className="font-heading text-2xl font-extrabold tracking-tight text-indigo-950 flex items-center gap-2">
             <Sparkles className="w-6 h-6 text-indigo-500" />
             AI Generate Collection
           </h1>
-          <p className="text-indigo-500 mt-1 text-sm">
+          <p className="text-slate-500 mt-1 text-sm">
             Enter a scenario keyword to generate a collection of phrases and sentences for practice.
           </p>
         </div>

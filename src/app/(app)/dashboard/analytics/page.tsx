@@ -154,8 +154,10 @@ export default function AnalyticsPage() {
             <ArrowLeft className="w-5 h-5" />
           </Link>
           <div>
-            <h1 className="text-2xl font-bold text-indigo-900">{messages.page.title}</h1>
-            <p className="text-sm text-indigo-500">{messages.page.subtitle}</p>
+            <h1 className="font-heading text-2xl font-extrabold tracking-tight text-indigo-950">
+              {messages.page.title}
+            </h1>
+            <p className="text-sm text-slate-500">{messages.page.subtitle}</p>
           </div>
         </div>
       )}

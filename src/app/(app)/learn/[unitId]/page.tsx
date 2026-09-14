@@ -118,7 +118,7 @@ export default function CoursePage() {
           <ArrowLeft className="h-4 w-4" />
           {t('My courses', 'Khóa học của tôi')}
         </Link>
-        <h1 className="break-words font-[var(--font-poppins)] text-3xl font-semibold tracking-tight text-indigo-950">
+        <h1 className="break-words font-heading text-3xl font-extrabold tracking-tight text-indigo-950">
           {unit.title}
         </h1>
         <p className="mt-2 text-sm text-slate-600">

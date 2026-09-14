@@ -89,10 +89,10 @@ export default function FreeConversationPage() {
               <MessageCircle className="w-4 h-4 text-indigo-600" />
             </div>
             <div>
-              <h1 className="text-lg font-bold font-[var(--font-poppins)] text-indigo-900">
+              <h1 className="font-heading text-lg font-bold text-indigo-950">
                 {speakMessages.freeConversation.pageTitle}
               </h1>
-              <p className="text-xs text-indigo-400">{speakMessages.freeConversation.pageSubtitle}</p>
+              <p className="text-xs text-slate-500">{speakMessages.freeConversation.pageSubtitle}</p>
             </div>
           </div>
           <TranslationBar module="speak" />
