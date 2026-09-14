@@ -450,24 +450,22 @@ export default function WriteDetailPage() {
         </Card>
       )}
       {!isIOSNativeHost && (
-        <div className="flex items-center gap-4">
+        <div className="flex items-center gap-2 opacity-80">
           <Link href="/write" prefetch={false}>
-            <Button variant="ghost" size="icon" className="text-indigo-600 cursor-pointer">
-              <ArrowLeft className="w-5 h-5" />
+            <Button variant="ghost" size="icon-sm" className="text-indigo-500 cursor-pointer">
+              <ArrowLeft className="w-4 h-4" />
             </Button>
           </Link>
           <div className="flex-1 min-w-0">
             <div className="flex items-center gap-2">
-              <h1 className="text-2xl font-bold font-[var(--font-poppins)] text-indigo-900 truncate">
-                {content.title}
-              </h1>
+              <h1 className="text-xs font-semibold text-indigo-700 truncate">{content.title}</h1>
               {isReviewMode && (
-                <span className="shrink-0 inline-flex items-center gap-1 rounded-full bg-orange-100 px-2 py-0.5 text-xs font-semibold text-orange-700">
+                <span className="shrink-0 inline-flex items-center gap-1 rounded-full bg-orange-100 px-2 py-0.5 text-[10px] font-semibold text-orange-700">
                   <Target className="w-3 h-3" /> {t.header.errorReview}
                 </span>
               )}
             </div>
-            <p className="text-sm text-indigo-500">
+            <p className="text-[11px] text-indigo-400">
               {content.type} · {t.header.subtitle}
             </p>
           </div>
@@ -584,7 +582,7 @@ export default function WriteDetailPage() {
                 </div>
               )}
               <div
-                className={`text-lg md:text-2xl leading-relaxed font-mono tracking-wide select-none ${
+                className={`text-xl md:text-3xl leading-relaxed font-mono tracking-wide select-none ${
                   state.isShaking ? 'animate-shake' : ''
                 }`}
               >

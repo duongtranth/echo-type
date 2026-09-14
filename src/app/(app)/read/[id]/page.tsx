@@ -1099,17 +1099,15 @@ export default function ReadDetailPage() {
         </Card>
       )}
       {!isIOSNativeHost && (
-        <div className="flex items-center gap-3 md:gap-4 py-3 md:py-4 shrink-0">
+        <div className="flex items-center gap-2 py-2 shrink-0 opacity-80">
           <Link href="/read" prefetch={false}>
-            <Button variant="ghost" size="icon" className="text-indigo-600 cursor-pointer">
-              <ArrowLeft className="w-5 h-5" />
+            <Button variant="ghost" size="icon-sm" className="text-indigo-500 cursor-pointer">
+              <ArrowLeft className="w-4 h-4" />
             </Button>
           </Link>
           <div className="min-w-0 flex-1">
-            <h1 className="text-xl md:text-2xl font-bold font-[var(--font-poppins)] text-indigo-900 truncate">
-              {content.title}
-            </h1>
-            <p className="text-sm text-indigo-500">
+            <h1 className="text-xs font-semibold text-indigo-700 truncate">{content.title}</h1>
+            <p className="text-[11px] text-indigo-400">
               {content.type} · {t.header.subtitle}
             </p>
           </div>

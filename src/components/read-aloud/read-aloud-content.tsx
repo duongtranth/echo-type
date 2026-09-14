@@ -99,12 +99,12 @@ function SentenceBlock({
       <div
         className={
           block.kind === 'title'
-            ? 'text-xl font-semibold text-slate-900 leading-tight'
+            ? 'font-heading text-2xl font-bold text-slate-900 leading-tight md:text-3xl'
             : block.kind === 'label'
-              ? 'text-xs font-semibold tracking-[0.2em] text-slate-400'
+              ? 'text-[11px] font-semibold tracking-[0.2em] text-slate-300'
               : block.kind === 'quote'
-                ? 'border-l-2 border-slate-200 pl-4 italic text-slate-600'
-                : 'text-[17px] leading-8 text-slate-700'
+                ? 'border-l-2 border-slate-200 pl-4 italic text-slate-600 text-lg leading-9'
+                : 'text-[19px] leading-9 text-slate-700 md:text-[21px] md:leading-10'
         }
       >
         <div className="select-text">
