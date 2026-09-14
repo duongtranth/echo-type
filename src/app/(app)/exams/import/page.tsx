@@ -189,10 +189,12 @@ export default function ImportExamPage() {
 
       <Card className="space-y-5 p-5">
         <div className="grid gap-4 sm:grid-cols-2">
-          <label className="space-y-1 text-sm font-medium text-foreground">
-            Exam
+          <div className="space-y-1">
+            <label htmlFor="exam-type" className="text-sm font-medium text-foreground">
+              Exam
+            </label>
             <Select value={examType} onValueChange={(value) => setExamType(value as ExamType)}>
-              <SelectTrigger className="w-full">
+              <SelectTrigger id="exam-type" className="w-full">
                 <SelectValue />
               </SelectTrigger>
               <SelectContent>
@@ -200,16 +202,19 @@ export default function ImportExamPage() {
                 <SelectItem value="TOEIC">TOEIC</SelectItem>
               </SelectContent>
             </Select>
-          </label>
+          </div>
 
-          <label className="space-y-1 text-sm font-medium text-foreground">
-            Title
+          <div className="space-y-1">
+            <label htmlFor="exam-title" className="text-sm font-medium text-foreground">
+              Title
+            </label>
             <Input
+              id="exam-title"
               value={title}
               onChange={(event) => setTitle(event.target.value)}
               placeholder="e.g. Cambridge IELTS 19 - Test 1"
             />
-          </label>
+          </div>
         </div>
 
         <label className="flex cursor-pointer flex-col items-center justify-center rounded-xl border-2 border-dashed border-border px-4 py-8 text-center hover:border-primary/40 hover:bg-primary/5">

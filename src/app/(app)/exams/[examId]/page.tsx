@@ -185,10 +185,12 @@ export default function ExamEditorPage() {
               </div>
 
               {bundle.sections.length > 1 && (
-                <label className="block space-y-1 text-sm font-medium text-foreground">
-                  Section
+                <div className="space-y-1">
+                  <label htmlFor="question-section" className="text-sm font-medium text-foreground">
+                    Section
+                  </label>
                   <Select value={sectionId} onValueChange={setSectionId}>
-                    <SelectTrigger className="w-full">
+                    <SelectTrigger id="question-section" className="w-full">
                       <SelectValue />
                     </SelectTrigger>
                     <SelectContent>
@@ -199,18 +201,28 @@ export default function ExamEditorPage() {
                       ))}
                     </SelectContent>
                   </Select>
-                </label>
+                </div>
               )}
 
               <div className="grid grid-cols-[100px_1fr] gap-3">
-                <label className="space-y-1 text-sm font-medium text-foreground">
-                  Number
-                  <Input type="number" min="1" value={number} onChange={(event) => setNumber(event.target.value)} />
-                </label>
-                <label className="space-y-1 text-sm font-medium text-foreground">
-                  Type
+                <div className="space-y-1">
+                  <label htmlFor="question-number" className="text-sm font-medium text-foreground">
+                    Number
+                  </label>
+                  <Input
+                    id="question-number"
+                    type="number"
+                    min="1"
+                    value={number}
+                    onChange={(event) => setNumber(event.target.value)}
+                  />
+                </div>
+                <div className="space-y-1">
+                  <label htmlFor="question-type" className="text-sm font-medium text-foreground">
+                    Type
+                  </label>
                   <Select value={type} onValueChange={(value) => setType(value as ExamQuestionType)}>
-                    <SelectTrigger className="w-full">
+                    <SelectTrigger id="question-type" className="w-full">
                       <SelectValue />
                     </SelectTrigger>
                     <SelectContent>
@@ -221,42 +233,58 @@ export default function ExamEditorPage() {
                       ))}
                     </SelectContent>
                   </Select>
-                </label>
+                </div>
               </div>
 
-              <label className="block space-y-1 text-sm font-medium text-foreground">
-                Prompt
+              <div className="space-y-1">
+                <label htmlFor="question-prompt" className="text-sm font-medium text-foreground">
+                  Prompt
+                </label>
                 <Textarea
+                  id="question-prompt"
                   rows={3}
                   value={prompt}
                   onChange={(event) => setPrompt(event.target.value)}
                   placeholder="Question text"
                 />
-              </label>
+              </div>
 
-              <label className="block space-y-1 text-sm font-medium text-foreground">
-                Options
+              <div className="space-y-1">
+                <label htmlFor="question-options" className="text-sm font-medium text-foreground">
+                  Options
+                </label>
                 <Textarea
+                  id="question-options"
                   rows={4}
                   value={options}
                   onChange={(event) => setOptions(event.target.value)}
                   placeholder={'One option per line\nA. First option\nB. Second option'}
                 />
-              </label>
+              </div>
 
-              <label className="block space-y-1 text-sm font-medium text-foreground">
-                Correct answer(s)
+              <div className="space-y-1">
+                <label htmlFor="question-answers" className="text-sm font-medium text-foreground">
+                  Correct answer(s)
+                </label>
                 <Input
+                  id="question-answers"
                   value={answers}
                   onChange={(event) => setAnswers(event.target.value)}
                   placeholder="TRUE | T (use | for accepted alternatives)"
                 />
-              </label>
+              </div>
 
-              <label className="block space-y-1 text-sm font-medium text-foreground">
-                Explanation (optional)
-                <Textarea rows={2} value={explanation} onChange={(event) => setExplanation(event.target.value)} />
-              </label>
+              <div className="space-y-1">
+                <label htmlFor="question-explanation" className="text-sm font-medium text-foreground">
+                  Explanation (optional)
+                </label>
+                <Textarea
+                  id="question-explanation"
+                  rows={2}
+                  value={explanation}
+                  onChange={(event) => setExplanation(event.target.value)}
+                />
+              </div>
 
               {error && <p className="text-sm text-destructive">{error}</p>}
 

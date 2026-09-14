@@ -367,40 +367,42 @@ export default function ExamPracticePage() {
                   key={question.id}
                   disabled={Boolean(result)}
                   onFocusCapture={() => setCurrentQuestionId(question.id)}
-                  className={`scroll-mt-40 rounded-xl border bg-white p-5 shadow-sm ${
+                  className={cn(
+                    'scroll-mt-40 rounded-xl border bg-card p-5 shadow-sm',
                     questionResult
                       ? questionResult.correct
-                        ? 'border-emerald-200'
-                        : 'border-red-200'
+                        ? 'border-success/40'
+                        : 'border-destructive/40'
                       : flagged
                         ? 'border-amber-300'
-                        : 'border-slate-200'
-                  }`}
+                        : 'border-border',
+                  )}
                 >
                   <div className="flex items-start justify-between gap-3">
                     <div>
-                      <p className="text-xs font-semibold uppercase tracking-wide text-indigo-600">
+                      <p className="text-xs font-semibold uppercase tracking-wide text-primary">
                         Question {question.number} · {question.type}
                       </p>
-                      <p className="mt-2 text-sm font-medium leading-6 text-slate-900">{question.prompt}</p>
+                      <p className="mt-2 text-sm font-medium leading-6 text-foreground">{question.prompt}</p>
                     </div>
                     <div className="flex shrink-0 items-center gap-2">
                       {!result && (
                         <button
                           type="button"
                           onClick={() => toggleFlag(question.id)}
-                          className={`rounded-md border p-1.5 ${
+                          className={cn(
+                            'rounded-md border p-1.5',
                             flagged
                               ? 'border-amber-300 bg-amber-50 text-amber-600'
-                              : 'border-slate-200 text-slate-400 hover:text-amber-600'
-                          }`}
+                              : 'border-border text-muted-foreground hover:text-amber-600',
+                          )}
                           aria-label={`${flagged ? 'Unflag' : 'Flag'} question ${question.number}`}
                         >
                           <Flag className="h-4 w-4" fill={flagged ? 'currentColor' : 'none'} />
                         </button>
                       )}
-                      {questionResult?.correct && <CheckCircle2 className="h-5 w-5 text-emerald-500" />}
-                      {questionResult && !questionResult.correct && <XCircle className="h-5 w-5 text-red-500" />}
+                      {questionResult?.correct && <CheckCircle2 className="h-5 w-5 text-success" />}
+                      {questionResult && !questionResult.correct && <XCircle className="h-5 w-5 text-destructive" />}
                     </div>
                   </div>
 
@@ -409,7 +411,7 @@ export default function ExamPracticePage() {
                       {question.options?.map((option) => (
                         <label
                           key={option}
-                          className="flex cursor-pointer items-start gap-2 rounded-lg border border-slate-200 p-3 text-sm text-slate-700 hover:bg-slate-50"
+                          className="flex cursor-pointer items-start gap-2 rounded-lg border border-border p-3 text-sm text-foreground hover:bg-accent/50"
                         >
                           <input
                             type="radio"
@@ -417,62 +419,54 @@ export default function ExamPracticePage() {
                             value={option}
                             checked={answers[question.id] === option}
                             onChange={(event) => updateAnswer(question.id, event.target.value)}
-                            className="mt-0.5"
+                            className="mt-0.5 accent-primary"
                           />
                           <span>{option}</span>
                         </label>
                       ))}
                     </div>
                   ) : (
-                    <input
+                    <Input
                       value={answers[question.id] ?? ''}
                       onChange={(event) => updateAnswer(question.id, event.target.value)}
                       placeholder="Your answer"
-                      className="mt-4 w-full rounded-lg border border-slate-200 px-3 py-2 text-sm outline-none focus:border-indigo-400"
+                      className="mt-4"
                     />
                   )}
 
                   {questionResult && !questionResult.correct && (
-                    <div className="mt-4 rounded-lg bg-red-50 p-3 text-sm text-red-800">
+                    <div className="mt-4 rounded-lg bg-destructive/10 p-3 text-sm text-destructive">
                       <p>
                         Correct answer: <strong>{questionResult.correctAnswers.join(' / ')}</strong>
                       </p>
-                      {question.explanation && <p className="mt-1 text-red-700">{question.explanation}</p>}
-                      <p className="mt-2 text-xs text-red-600">This question was added to Weak Spots for review.</p>
+                      {question.explanation && <p className="mt-1">{question.explanation}</p>}
+                      <p className="mt-2 text-xs">This question was added to Weak Spots for review.</p>
                     </div>
                   )}
 
                   {questionResult?.correct && question.explanation && (
-                    <p className="mt-4 rounded-lg bg-emerald-50 p-3 text-sm text-emerald-800">{question.explanation}</p>
+                    <p className="mt-4 rounded-lg bg-success/10 p-3 text-sm text-success">{question.explanation}</p>
                   )}
                 </fieldset>
               );
             })
           )}
 
-          {error && <p className="rounded-lg bg-red-50 p-3 text-sm text-red-700">{error}</p>}
+          {error && <p className="rounded-lg bg-destructive/10 p-3 text-sm text-destructive">{error}</p>}
 
           {bundle.questions.length > 0 && !result && (
-            <button
-              type="submit"
-              disabled={submitting || !attemptId}
-              className="w-full rounded-lg bg-indigo-600 px-4 py-3 text-sm font-semibold text-white hover:bg-indigo-700 disabled:opacity-50"
-            >
+            <Button type="submit" disabled={submitting || !attemptId} className="w-full" size="lg">
               {submitting
                 ? 'Submitting…'
                 : `Submit answers${unansweredCount > 0 ? ` (${unansweredCount} unanswered)` : ''}`}
-            </button>
+            </Button>
           )}
 
           {result && (
-            <button
-              type="button"
-              onClick={() => void resetAttempt()}
-              className="inline-flex w-full items-center justify-center gap-2 rounded-lg border border-slate-200 bg-white px-4 py-3 text-sm font-semibold text-slate-700 hover:bg-slate-50"
-            >
+            <Button type="button" variant="outline" onClick={() => void resetAttempt()} className="w-full" size="lg">
               <RotateCcw className="h-4 w-4" />
               Try again
-            </button>
+            </Button>
           )}
         </form>
       </div>
