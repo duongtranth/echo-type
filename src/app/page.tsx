@@ -108,21 +108,24 @@ export default function LandingPage() {
               glow
               className="opacity-60 [mask-image:radial-gradient(480px_circle_at_center,white,transparent)]"
             />
-            <div className="mb-4 inline-flex items-center gap-2 rounded-full border border-indigo-100 bg-white/70 px-3 py-1 text-xs font-semibold uppercase tracking-[0.14em] text-indigo-500 backdrop-blur">
+            <div className="mb-4 inline-flex items-center gap-2 rounded-full border border-indigo-100 bg-white/70 px-3 py-1 font-mono text-[11px] font-semibold uppercase tracking-[0.18em] text-indigo-500 backdrop-blur">
               <Sparkles className="h-3.5 w-3.5" />
               English Practice Hub
             </div>
-            <h1 className="text-5xl md:text-6xl font-bold text-indigo-900 font-[var(--font-poppins)] leading-tight">
+            <h1 className="font-heading text-5xl md:text-6xl font-extrabold text-indigo-950 leading-tight tracking-tight">
               Master English Through
               <br />
-              <AnimatedGradientText className="font-bold">Immersive Practice</AnimatedGradientText>
+              <AnimatedGradientText className="font-extrabold">Immersive Practice</AnimatedGradientText>
             </h1>
-            <p className="mt-6 text-lg text-indigo-600 max-w-2xl mx-auto">
+            <p className="mt-6 text-lg text-slate-500 max-w-2xl mx-auto">
               Listen, speak, read, and write — with AI-powered feedback at every step. Import your own content and
               master English through immersive practice.
             </p>
             <div className="mt-10 flex items-center justify-center gap-4">
-              <ShimmerButton onClick={() => router.push('/dashboard')} className="font-semibold">
+              <ShimmerButton
+                onClick={() => router.push('/dashboard')}
+                className="font-mono font-semibold uppercase tracking-wide"
+              >
                 Get Started Free
                 <ArrowRight className="w-5 h-5" />
               </ShimmerButton>
@@ -151,7 +154,7 @@ export default function LandingPage() {
               >
                 {isLastOdd && <BorderBeam size={120} duration={8} />}
                 <div
-                  className={`${isIOSNativeHost ? 'mb-4 flex h-12 w-12 items-center justify-center rounded-2xl shadow-[inset_0_1px_0_rgba(255,255,255,0.28)]' : 'w-12 h-12 rounded-xl flex items-center justify-center mb-4'} ${feature.color}`}
+                  className={`${isIOSNativeHost ? 'mb-4 flex h-12 w-12 items-center justify-center rounded-2xl shadow-[inset_0_1px_0_rgba(255,255,255,0.28)]' : 'w-12 h-12 rounded-xl flex items-center justify-center mb-4 shadow-md'} ${feature.color}`}
                 >
                   <feature.icon className="w-6 h-6 text-white" />
                 </div>
@@ -159,12 +162,12 @@ export default function LandingPage() {
                   className={
                     isIOSNativeHost
                       ? 'mb-2 text-lg font-semibold tracking-[-0.02em] text-slate-950 font-[var(--font-poppins)]'
-                      : 'text-xl font-semibold text-indigo-900 font-[var(--font-poppins)] mb-2'
+                      : 'font-heading text-xl font-bold text-indigo-950 mb-2'
                   }
                 >
                   {feature.title}
                 </h3>
-                <p className={isIOSNativeHost ? 'text-sm leading-6 text-slate-500' : 'text-indigo-600'}>
+                <p className={isIOSNativeHost ? 'text-sm leading-6 text-slate-500' : 'text-slate-500'}>
                   {feature.desc}
                 </p>
               </Link>

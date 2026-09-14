@@ -21,10 +21,10 @@ export function LandingNav() {
   return (
     <nav className="mx-auto flex max-w-7xl items-center justify-between px-4 pt-[calc(env(safe-area-inset-top,0px)+1rem)] pb-4 sm:px-8">
       <div className="flex items-center gap-2">
-        <div className="w-8 h-8 rounded-lg bg-indigo-600 flex items-center justify-center">
+        <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-indigo-600 to-violet-600 shadow-sm flex items-center justify-center">
           <span className="text-white font-bold text-sm">E</span>
         </div>
-        <span className="text-xl font-bold text-indigo-900 font-[var(--font-poppins)]">EchoType</span>
+        <span className="font-heading text-xl font-extrabold text-indigo-950">EchoType</span>
       </div>
       <div className="flex items-center gap-2 sm:gap-3">
         {isLoading ? (
@@ -54,7 +54,7 @@ export function LandingNav() {
         )}
         <Link
           href="/dashboard"
-          className="px-4 sm:px-6 py-2 sm:py-2.5 bg-indigo-600 text-white rounded-xl font-medium hover:bg-indigo-700 transition-colors duration-200 cursor-pointer text-sm sm:text-base"
+          className="px-4 sm:px-6 py-2 sm:py-2.5 bg-gradient-to-r from-indigo-600 to-violet-600 text-white rounded-xl font-medium shadow-sm hover:shadow-md transition-all duration-200 cursor-pointer text-sm sm:text-base"
         >
           Start Learning
         </Link>
