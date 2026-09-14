@@ -403,7 +403,7 @@ export default function DashboardPage() {
               <Flame className="w-5 h-5 text-orange-500" />
               <div className="text-right">
                 <p className="text-2xl font-bold leading-none text-orange-600">{stats.streak}</p>
-                <p className="text-[10px] font-medium uppercase tracking-wide text-orange-400">
+                <p className="font-mono text-[10px] font-semibold uppercase tracking-wide text-orange-400">
                   {dashboard.stats.streak ?? 'Streak'}
                 </p>
               </div>

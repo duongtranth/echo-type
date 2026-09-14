@@ -38,7 +38,7 @@ export function DashboardModuleGrid({ title, modules }: DashboardModuleGridProps
         className={
           isIOSNativeHost
             ? 'text-lg font-semibold tracking-[-0.02em] text-slate-900'
-            : 'text-xl font-semibold text-indigo-900'
+            : 'font-heading text-xl font-bold text-indigo-950'
         }
       >
         {title}
@@ -54,7 +54,7 @@ export function DashboardModuleGrid({ title, modules }: DashboardModuleGridProps
                 className={
                   isIOSNativeHost
                     ? `${IOS_SECTION_CARD_CLASS} group gap-0 border-white/75 bg-white/82 py-0 transition-all duration-200 hover:-translate-y-0.5 hover:shadow-[0_20px_44px_rgba(15,23,42,0.10)]`
-                    : 'group cursor-pointer bg-white border-slate-100 shadow-sm transition-all duration-200 hover:shadow-lg'
+                    : 'group cursor-pointer border-slate-200 bg-white shadow-sm transition-all duration-200 hover:-translate-y-0.5 hover:shadow-lg'
                 }
               >
                 <CardContent className="flex items-center gap-4 p-5">
@@ -62,7 +62,7 @@ export function DashboardModuleGrid({ title, modules }: DashboardModuleGridProps
                     className={
                       isIOSNativeHost
                         ? `flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl ${mod.color} shadow-[inset_0_1px_0_rgba(255,255,255,0.35)]`
-                        : `flex h-11 w-11 shrink-0 items-center justify-center rounded-xl ${mod.color}`
+                        : `flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl ${mod.color} shadow-md transition-transform duration-200 group-hover:scale-105`
                     }
                   >
                     <Icon className="h-5 w-5 text-white" />
@@ -72,12 +72,12 @@ export function DashboardModuleGrid({ title, modules }: DashboardModuleGridProps
                       className={
                         isIOSNativeHost
                           ? 'font-semibold text-slate-900 transition-colors group-hover:text-slate-700'
-                          : 'font-semibold text-indigo-900 transition-colors group-hover:text-indigo-700'
+                          : 'font-heading font-bold text-indigo-950 transition-colors group-hover:text-indigo-700'
                       }
                     >
                       {mod.label}
                     </h3>
-                    <p className={cn(isIOSNativeHost ? 'text-xs leading-5 text-slate-500' : 'text-xs text-indigo-500')}>
+                    <p className={cn(isIOSNativeHost ? 'text-xs leading-5 text-slate-500' : 'text-xs text-slate-500')}>
                       {mod.desc}
                     </p>
                   </div>

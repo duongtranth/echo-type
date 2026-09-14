@@ -73,13 +73,13 @@ export function NoticeBanner({ icon: Icon, title, description, tone = 'indigo', 
   }
 
   return (
-    <div className={cn('flex items-center gap-3 rounded-xl border px-4 py-3', style.border, style.bg)}>
-      <div className={cn('flex h-9 w-9 shrink-0 items-center justify-center rounded-lg', style.icon)}>
-        <Icon className="h-4.5 w-4.5 text-white" />
+    <div className={cn('flex items-center gap-4 rounded-2xl border-2 px-5 py-4 shadow-sm', style.border, style.bg)}>
+      <div className={cn('flex h-11 w-11 shrink-0 items-center justify-center rounded-xl shadow-sm', style.icon)}>
+        <Icon className="h-5 w-5 text-white" />
       </div>
       <div className="min-w-0 flex-1">
-        <p className={cn('text-sm font-semibold', style.title)}>{title}</p>
-        <p className={cn('text-xs', style.text)}>{description}</p>
+        <p className={cn('text-base font-bold', style.title)}>{title}</p>
+        <p className={cn('mt-0.5 text-sm', style.text)}>{description}</p>
       </div>
       {actions && <div className="flex shrink-0 gap-2">{actions}</div>}
     </div>

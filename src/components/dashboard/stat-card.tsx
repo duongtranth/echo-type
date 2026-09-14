@@ -10,10 +10,10 @@ export interface StatCardProps {
   tone?: 'default' | 'success' | 'primary';
 }
 
-const ACCENT_BORDER: Record<NonNullable<StatCardProps['tone']>, string> = {
-  default: 'border-l-slate-200',
-  success: 'border-l-success',
-  primary: 'border-l-primary/60',
+const ACCENT: Record<NonNullable<StatCardProps['tone']>, { icon: string; value: string; hover: string }> = {
+  default: { icon: 'bg-slate-100 text-slate-500', value: 'text-slate-900', hover: 'hover:border-slate-300' },
+  success: { icon: 'bg-emerald-100 text-emerald-600', value: 'text-emerald-600', hover: 'hover:border-emerald-300' },
+  primary: { icon: 'bg-indigo-100 text-indigo-600', value: 'text-indigo-600', hover: 'hover:border-indigo-300' },
 };
 
 function StatValue({ value, className }: { value: string | number; className?: string }) {
@@ -41,13 +41,15 @@ export function StatCard({ icon: Icon, label, value, tone = 'default' }: StatCar
 
   return (
     <div
-      className={cn('rounded-lg border border-l-3 border-slate-100 bg-card px-3 py-2.5 shadow-sm', ACCENT_BORDER[tone])}
+      className={cn('rounded-2xl border border-slate-200 bg-white p-4 shadow-sm transition-colors', ACCENT[tone].hover)}
     >
-      <div className="mb-1 flex items-center justify-between">
-        <span className="text-xs font-medium text-primary">{label}</span>
-        <Icon className="h-3.5 w-3.5 text-primary/60" />
+      <div className="mb-3 flex items-center justify-between">
+        <span className="font-mono text-[10px] font-semibold uppercase tracking-[0.14em] text-slate-400">{label}</span>
+        <div className={cn('flex h-7 w-7 shrink-0 items-center justify-center rounded-lg', ACCENT[tone].icon)}>
+          <Icon className="h-3.5 w-3.5" />
+        </div>
       </div>
-      <StatValue value={value} className="text-xl font-bold text-foreground" />
+      <StatValue value={value} className={cn('text-3xl font-extrabold tracking-tight', ACCENT[tone].value)} />
     </div>
   );
 }
