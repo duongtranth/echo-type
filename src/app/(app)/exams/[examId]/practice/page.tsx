@@ -6,6 +6,7 @@ import { useParams } from 'next/navigation';
 import { type FormEvent, useCallback, useEffect, useMemo, useState } from 'react';
 import { EssayAnswerField } from '@/components/exams/essay-answer-field';
 import { EssayGradingPanel } from '@/components/exams/essay-grading-panel';
+import { NumberTicker } from '@/components/magicui/number-ticker';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
@@ -278,7 +279,7 @@ export default function ExamPracticePage() {
             <Card className="border-success/30 bg-success/10 p-0 px-5 py-3 text-center">
               <p className="font-mono text-[10px] font-semibold uppercase tracking-widest text-success">Final score</p>
               <p className="font-mono text-3xl font-extrabold text-success">
-                {result.score}/{result.total}
+                <NumberTicker value={result.score} />/{result.total}
               </p>
               <p className="mt-1 font-mono text-[10px] text-success">{formatExamTime(result.durationSeconds)}</p>
             </Card>
@@ -290,7 +291,7 @@ export default function ExamPracticePage() {
                 {result.timedOutAt ? 'At time limit' : 'Within time'}
               </p>
               <p className="font-mono text-3xl font-extrabold text-primary">
-                {result.timedScore}/{result.timedTotal}
+                <NumberTicker value={result.timedScore} />/{result.timedTotal}
               </p>
             </Card>
           )}

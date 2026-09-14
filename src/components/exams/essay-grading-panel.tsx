@@ -2,6 +2,8 @@
 
 import { AlertCircle, Loader2, Sparkles } from 'lucide-react';
 import { useState } from 'react';
+import { TextHighlighter } from '@/components/fancy/text-highlighter';
+import { NumberTicker } from '@/components/magicui/number-ticker';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
@@ -107,7 +109,7 @@ export function EssayGradingPanel({
           <span className="text-sm font-medium text-foreground">AI band estimate</span>
         </div>
         <span className={cn('font-heading text-2xl font-bold', bandColorClass(grading.bandScore))}>
-          {grading.bandScore.toFixed(1)}
+          <NumberTicker value={grading.bandScore} decimalPlaces={1} />
         </span>
       </div>
 
@@ -127,7 +129,11 @@ export function EssayGradingPanel({
         </div>
       )}
 
-      <p className="text-sm text-foreground">{grading.overallFeedback}</p>
+      <p className="text-sm text-foreground">
+        <TextHighlighter highlightColor="hsl(255, 90%, 92%)" transition={{ type: 'spring', duration: 0.8, bounce: 0 }}>
+          {grading.overallFeedback}
+        </TextHighlighter>
+      </p>
 
       {grading.strengths.length > 0 && (
         <div>
