@@ -294,7 +294,7 @@ export function DurableImport() {
       aria-label={t('Resumable import', 'Nhập liệu có thể tiếp tục')}
     >
       <div>
-        <h2 className="font-[var(--font-poppins)] text-xl font-semibold">
+        <h2 className="font-heading text-xl font-bold text-slate-950">
           {t('Prepare your material', 'Chuẩn bị tài liệu học tập')}
         </h2>
         <p className="mt-1 text-sm text-slate-600">

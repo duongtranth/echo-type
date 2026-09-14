@@ -292,7 +292,7 @@ export function Sidebar({ open = false, onOpenChange }: SidebarProps = {}) {
           </div>
           {!collapsed && (
             <div>
-              <span className="text-[15px] font-bold text-slate-900 font-[var(--font-poppins)] leading-none block">
+              <span className="font-heading text-[15px] font-extrabold text-slate-950 leading-none block">
                 EchoType
               </span>
               <span className="text-[10px] text-slate-400 leading-none block mt-0.5 tracking-wide">
