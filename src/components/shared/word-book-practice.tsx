@@ -24,7 +24,6 @@ import { PageSpinner } from '@/components/shared/page-spinner';
 import { PracticeCompleteBanner } from '@/components/shared/practice-complete-banner';
 import { VocabWordCard } from '@/components/shared/vocab-word-card';
 import { TranslationBar } from '@/components/translation/translation-bar';
-import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { useFallbackSTT } from '@/hooks/use-fallback-stt';
@@ -1364,29 +1363,28 @@ export function WordBookPractice({ module }: WordBookPracticeProps) {
     <div className="max-w-2xl mx-auto space-y-4">
       {/* Header */}
       {!IS_IOS_NATIVE_HOST && (
-        <div className="flex items-center gap-3">
+        <div className="flex items-center gap-2 opacity-80">
           <Link href={`/${module}`}>
-            <Button variant="ghost" size="icon" className={cn('cursor-pointer shrink-0', config.backColor)}>
-              <ArrowLeft className="w-5 h-5" />
+            <Button variant="ghost" size="icon-sm" className={cn('cursor-pointer shrink-0', config.backColor)}>
+              <ArrowLeft className="w-4 h-4" />
             </Button>
           </Link>
           <div className="flex-1 min-w-0">
-            <h1 className="text-lg font-bold text-indigo-900 truncate">
+            <h1 className="text-xs font-semibold text-indigo-700 truncate">
               {book ? `${book.emoji} ${book.nameEn}` : bookInfo ? `${bookInfo.emoji} ${bookInfo.name}` : bookId}
             </h1>
-            <p className="text-xs text-indigo-500">{t.nav.mode.replace('{{label}}', moduleLabel)}</p>
           </div>
           <TranslationBar module={module} />
-          <Badge className="bg-indigo-100 text-indigo-600 shrink-0 font-mono">
-            {currentIndex + 1} / {total}
-          </Badge>
+          <span className="shrink-0 font-mono text-[11px] text-indigo-400">
+            {currentIndex + 1}/{total}
+          </span>
         </div>
       )}
 
       {/* Progress bar */}
-      <div className="w-full bg-indigo-100 rounded-full h-1.5">
+      <div className="w-full bg-indigo-100 rounded-full h-1">
         <div
-          className="bg-indigo-500 h-1.5 rounded-full transition-all duration-300 ease-out"
+          className="bg-indigo-500 h-1 rounded-full transition-all duration-300 ease-out"
           style={{ width: `${((currentIndex + 1) / total) * 100}%` }}
         />
       </div>
