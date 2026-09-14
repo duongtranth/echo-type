@@ -22,7 +22,11 @@ import { useLanguageStore } from '@/stores/language-store';
 import type { DailyTask } from '@/types/daily-task';
 
 const control =
-  'min-h-11 rounded-xl px-3 py-2 text-sm font-medium focus-visible:ring-2 focus-visible:ring-indigo-500 disabled:opacity-50';
+  'min-h-11 rounded-full px-3.5 py-2 font-mono text-xs font-semibold uppercase tracking-wide transition-colors focus-visible:ring-2 focus-visible:ring-emerald-400 disabled:opacity-40';
+const pillIdle = `${control} bg-white/8 text-white/70 hover:bg-white/15`;
+const pillActive = `${control} bg-emerald-400 text-indigo-950`;
+const primaryAction = `${control} bg-emerald-400 text-indigo-950 hover:bg-emerald-300`;
+const ghostAction = `${control} bg-white/8 text-white/70 hover:bg-white/15`;
 const allDays = [0, 1, 2, 3, 4, 5, 6];
 
 export function DailyTaskQueue({ reviewOnly = false }: { reviewOnly?: boolean }) {
@@ -245,14 +249,19 @@ export function DailyTaskQueue({ reviewOnly = false }: { reviewOnly?: boolean })
 
   if (error)
     return (
-      <div role="alert">
+      <div role="alert" className="rounded-3xl bg-red-50 p-5 text-sm text-red-700">
         {error}
-        <button className={control} type="button" onClick={retry}>
+        <button className={`${control} mt-3 bg-red-600 text-white hover:bg-red-500`} type="button" onClick={retry}>
           {t('Retry', 'Thử lại')}
         </button>
       </div>
     );
-  if (!data || !state) return <output>{t('Preparing your daily queue…', 'Đang chuẩn bị nhiệm vụ hằng ngày…')}</output>;
+  if (!data || !state)
+    return (
+      <output className="block rounded-3xl bg-indigo-950 p-6 font-mono text-sm text-white/60">
+        {t('Preparing your daily queue…', 'Đang chuẩn bị nhiệm vụ hằng ngày…')}
+      </output>
+    );
   const eligible = state.tasks.filter(
     (task) => task.kind !== 'settings' && (!reviewOnly || ['review', 'favorite', 'weak-spot'].includes(task.kind)),
   );
@@ -279,166 +288,196 @@ export function DailyTaskQueue({ reviewOnly = false }: { reviewOnly?: boolean })
       deferred: t('Deferred', 'Đã hoãn'),
     })[status];
   return (
-    <section
-      data-testid="daily-task-queue"
-      className="min-w-0 overflow-hidden rounded-3xl bg-white text-slate-800 shadow-sm"
-    >
-      <div className="space-y-5 p-5 sm:p-7">
-        <div>
-          <h2 className="font-[var(--font-poppins)] text-2xl font-semibold text-indigo-950">
-            {reviewOnly
-              ? t('Your review plan', 'Kế hoạch ôn tập hôm nay')
-              : t('What to practice today', 'Hôm nay luyện gì')}
-          </h2>
-          <p className="mt-2 text-sm leading-6 text-slate-600">
-            {t(
-              'Choose your time. Saved practice updates this queue when you return.',
-              'Chọn thời gian bạn có. Khi quay lại, hàng đợi sẽ cập nhật dựa trên tiến độ đã lưu.',
-            )}
-          </p>
-          <p className="mt-1 text-sm text-slate-500">
-            {t(
-              `Estimated time remaining: ${remaining} of ${minutes} min`,
-              `Thời gian ước tính còn lại: ${remaining} / ${minutes} phút`,
-            )}
-          </p>
-        </div>
+    <div className="space-y-3">
+      <section
+        data-testid="daily-task-queue"
+        className="relative min-w-0 overflow-hidden rounded-3xl bg-gradient-to-br from-indigo-950 via-indigo-900 to-violet-950 text-white shadow-xl"
+      >
         <div
-          role="group"
-          className="flex flex-wrap items-center gap-2"
-          aria-label={t('Daily time budget', 'Ngân sách thời gian hằng ngày')}
-        >
-          {[5, 10, 20, 30, 45].map((value) => (
-            <button
-              key={value}
-              type="button"
-              disabled={busy}
-              aria-pressed={minutes === value}
-              onClick={() => void changeSettings({ minutes: value })}
-              className={`${control} ${minutes === value ? 'bg-indigo-600 text-white' : 'bg-slate-100 text-slate-700'}`}
-            >
-              {value} min
-            </button>
-          ))}
-        </div>
-        <p className="text-sm text-slate-600">
-          <span data-testid="daily-budget">{minutes}</span> {t('min budget', 'phút ngân sách')} ·{' '}
-          {visible.reduce((sum, task) => sum + task.minutes, 0)} {t('min planned', 'phút đã lên kế hoạch')}
-        </p>
-        <details>
-          <summary className="min-h-11 cursor-pointer py-2 text-sm text-indigo-700">
-            {t('Learning days', 'Ngày học')}
-          </summary>
-          <div className="flex flex-wrap gap-2">
-            {allDays.map((day) => (
+          aria-hidden="true"
+          className="pointer-events-none absolute -top-24 -right-24 h-72 w-72 rounded-full bg-fuchsia-500/30 blur-3xl"
+        />
+        <div
+          aria-hidden="true"
+          className="pointer-events-none absolute -bottom-32 -left-16 h-72 w-72 rounded-full bg-emerald-400/20 blur-3xl"
+        />
+        <div className="relative space-y-5 p-5 sm:p-8">
+          <div>
+            <span className="inline-flex items-center rounded-full bg-white/10 px-3 py-1 font-mono text-[11px] font-semibold uppercase tracking-[0.2em] text-emerald-300">
+              {t('Today', 'Hôm nay')}
+            </span>
+            <h2 className="font-heading mt-3 text-3xl font-extrabold tracking-tight text-white sm:text-4xl">
+              {reviewOnly
+                ? t('Your review plan', 'Kế hoạch ôn tập hôm nay')
+                : t('What to practice today', 'Hôm nay luyện gì')}
+            </h2>
+            <p className="mt-2 max-w-lg text-sm leading-6 text-white/60">
+              {t(
+                'Choose your time. Saved practice updates this queue when you return.',
+                'Chọn thời gian bạn có. Khi quay lại, hàng đợi sẽ cập nhật dựa trên tiến độ đã lưu.',
+              )}
+            </p>
+            <div className="mt-4 inline-flex items-baseline gap-2 rounded-2xl bg-white/8 px-4 py-2">
+              <span className="font-mono text-2xl font-bold text-emerald-300">{remaining}</span>
+              <span className="font-mono text-sm text-white/50">
+                / {minutes} {t('min left', 'phút còn lại')}
+              </span>
+            </div>
+          </div>
+          <div
+            role="group"
+            className="flex flex-wrap items-center gap-2"
+            aria-label={t('Daily time budget', 'Ngân sách thời gian hằng ngày')}
+          >
+            {[5, 10, 20, 30, 45].map((value) => (
               <button
-                key={day}
+                key={value}
                 type="button"
                 disabled={busy}
-                aria-pressed={learningDays.includes(day)}
-                className={`${control} ${learningDays.includes(day) ? 'bg-indigo-50 text-indigo-800' : 'bg-slate-50 text-slate-500'}`}
-                onClick={() =>
-                  void changeSettings({
-                    learningDays: learningDays.includes(day)
-                      ? learningDays.filter((value) => value !== day)
-                      : [...learningDays, day],
-                  })
-                }
+                aria-pressed={minutes === value}
+                onClick={() => void changeSettings({ minutes: value })}
+                className={minutes === value ? pillActive : pillIdle}
               >
-                {zh
-                  ? ['CN', 'T2', 'T3', 'T4', 'T5', 'T6', 'T7'][day]
-                  : ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'][day]}
+                {value} {t('min', 'phút')}
               </button>
             ))}
           </div>
-        </details>
-        {failure && (
-          <p role="alert" className="text-sm text-red-700">
-            {failure}
+          <p className="font-mono text-xs text-white/50">
+            <span data-testid="daily-budget">{minutes}</span> {t('min budget', 'phút ngân sách')} ·{' '}
+            {visible.reduce((sum, task) => sum + task.minutes, 0)} {t('min planned', 'phút đã lên kế hoạch')}
           </p>
-        )}
-        {!visible.length && (
-          <p className="rounded-xl bg-slate-50 p-4 text-sm">
-            {isLearningDay
-              ? t(
-                  'No tasks ready in this queue. You can still open your courses.',
-                  'Hiện chưa có nhiệm vụ nào sẵn sàng trong hàng đợi này. Bạn vẫn có thể mở khóa học để học.',
-                )
-              : t(
-                  'A rest day. Your unfinished work is retained.',
-                  'Hôm nay là ngày nghỉ. Công việc dang dở của bạn vẫn được giữ lại.',
-                )}
-          </p>
-        )}
-        <ol className="divide-y divide-slate-100">
-          {visible.map((task) => (
-            <li key={task.id} data-testid="daily-task-row" className="space-y-3 py-4">
-              <div className="flex items-start justify-between gap-3">
-                <div className="min-w-0">
-                  <h3 className="break-words font-semibold text-slate-900">{zh ? task.titleZh : task.title}</h3>
-                  <p className="mt-1 text-sm leading-6 text-slate-600">{zh ? task.reasonZh : task.reason}</p>
-                </div>
-                <span className="shrink-0 text-xs text-slate-500">{task.minutes} min</span>
-              </div>
-              <p className="text-xs text-slate-500">{statusLabel(task.status)}</p>
-              <div className="flex flex-wrap gap-1">
+          <details>
+            <summary className="min-h-11 cursor-pointer py-2 font-mono text-xs font-semibold uppercase tracking-wide text-white/60">
+              {t('Learning days', 'Ngày học')}
+            </summary>
+            <div className="flex flex-wrap gap-2 pt-1">
+              {allDays.map((day) => (
                 <button
+                  key={day}
                   type="button"
                   disabled={busy}
-                  className={`${control} bg-indigo-600 text-white`}
-                  onClick={() => void act(task, 'start')}
+                  aria-pressed={learningDays.includes(day)}
+                  className={learningDays.includes(day) ? pillActive : pillIdle}
+                  onClick={() =>
+                    void changeSettings({
+                      learningDays: learningDays.includes(day)
+                        ? learningDays.filter((value) => value !== day)
+                        : [...learningDays, day],
+                    })
+                  }
                 >
-                  {task.status === 'pending' ? t('Start', 'Bắt đầu') : t('Continue', 'Tiếp tục')}
+                  {zh
+                    ? ['CN', 'T2', 'T3', 'T4', 'T5', 'T6', 'T7'][day]
+                    : ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'][day]}
                 </button>
-                <button type="button" disabled={busy} className={control} onClick={() => void act(task, 'pause')}>
-                  {t('Pause', 'Tạm dừng')}
-                </button>
-                <button type="button" disabled={busy} className={control} onClick={() => void act(task, 'defer')}>
-                  {t('Tomorrow', 'Ngày mai')}
-                </button>
-                <button type="button" disabled={busy} className={control} onClick={() => void act(task, 'skip')}>
-                  {t('Skip', 'Bỏ qua')}
-                </button>
-              </div>
-            </li>
-          ))}
-        </ol>
-        {!!history.length && (
-          <div className="space-y-3 rounded-xl bg-slate-50 p-4">
-            <h3 className="text-sm font-semibold">{t('Saved task status', 'Trạng thái nhiệm vụ đã lưu')}</h3>
-            {history.map((task) => (
-              <div key={task.id} className="flex items-start justify-between gap-2 text-sm">
-                <div className="min-w-0">
-                  <p className="break-words">{zh ? task.titleZh : task.title}</p>
-                  <p className="mt-1 text-xs text-slate-500">
-                    <span>{statusLabel(task.status)}</span> · {task.dateKey}
-                  </p>
+              ))}
+            </div>
+          </details>
+          {failure && (
+            <p role="alert" className="text-sm text-rose-300">
+              {failure}
+            </p>
+          )}
+          {!visible.length && (
+            <p className="rounded-2xl bg-white/8 p-4 text-sm text-white/70">
+              {isLearningDay
+                ? t(
+                    'No tasks ready in this queue. You can still open your courses.',
+                    'Hiện chưa có nhiệm vụ nào sẵn sàng trong hàng đợi này. Bạn vẫn có thể mở khóa học để học.',
+                  )
+                : t(
+                    'A rest day. Your unfinished work is retained.',
+                    'Hôm nay là ngày nghỉ. Công việc dang dở của bạn vẫn được giữ lại.',
+                  )}
+            </p>
+          )}
+          <ol className="space-y-3">
+            {visible.map((task) => (
+              <li
+                key={task.id}
+                data-testid="daily-task-row"
+                className="space-y-3 rounded-2xl border border-white/10 bg-white/5 p-4 backdrop-blur-sm"
+              >
+                <div className="flex items-start justify-between gap-3">
+                  <div className="min-w-0">
+                    <h3 className="break-words font-semibold text-white">{zh ? task.titleZh : task.title}</h3>
+                    <p className="mt-1 text-sm leading-6 text-white/60">{zh ? task.reasonZh : task.reason}</p>
+                  </div>
+                  <span className="shrink-0 font-mono text-xs text-white/50">
+                    {task.minutes} {t('min', 'phút')}
+                  </span>
                 </div>
-                {task.status === 'skipped' && (
+                <span className="inline-flex rounded-full bg-white/10 px-2.5 py-0.5 font-mono text-[10px] font-semibold uppercase tracking-wide text-emerald-300">
+                  {statusLabel(task.status)}
+                </span>
+                <div className="flex flex-wrap gap-1.5">
                   <button
                     type="button"
                     disabled={busy}
-                    className={`${control} text-indigo-700`}
-                    onClick={() => void act(task, 'restore')}
+                    className={primaryAction}
+                    onClick={() => void act(task, 'start')}
                   >
-                    {t('Restore', 'Khôi phục')}
+                    {task.status === 'pending' ? t('Start', 'Bắt đầu') : t('Continue', 'Tiếp tục')}
                   </button>
-                )}
-              </div>
+                  <button type="button" disabled={busy} className={ghostAction} onClick={() => void act(task, 'pause')}>
+                    {t('Pause', 'Tạm dừng')}
+                  </button>
+                  <button type="button" disabled={busy} className={ghostAction} onClick={() => void act(task, 'defer')}>
+                    {t('Tomorrow', 'Ngày mai')}
+                  </button>
+                  <button type="button" disabled={busy} className={ghostAction} onClick={() => void act(task, 'skip')}>
+                    {t('Skip', 'Bỏ qua')}
+                  </button>
+                </div>
+              </li>
             ))}
-          </div>
-        )}
-        <Link href="/learn" className="inline-flex min-h-11 items-center text-sm font-medium text-indigo-700">
-          {t('All courses', 'Tất cả khóa học')}
-        </Link>
-        <p className="text-xs leading-5 text-slate-500">
-          {t(
-            'Times are estimates for a short practice block. Opening a task never marks it complete.',
-            'Thời gian chỉ là ước tính cho một bài luyện tập ngắn. Chỉ mở nhiệm vụ sẽ không đánh dấu hoàn thành.',
+          </ol>
+          {!!history.length && (
+            <div className="space-y-3 rounded-2xl border border-white/10 bg-white/5 p-4">
+              <h3 className="font-mono text-xs font-semibold uppercase tracking-wide text-white/60">
+                {t('Saved task status', 'Trạng thái nhiệm vụ đã lưu')}
+              </h3>
+              {history.map((task) => (
+                <div key={task.id} className="flex items-start justify-between gap-2 text-sm">
+                  <div className="min-w-0">
+                    <p className="break-words text-white/80">{zh ? task.titleZh : task.title}</p>
+                    <p className="mt-1 font-mono text-xs text-white/40">
+                      <span>{statusLabel(task.status)}</span> · {task.dateKey}
+                    </p>
+                  </div>
+                  {task.status === 'skipped' && (
+                    <button
+                      type="button"
+                      disabled={busy}
+                      className={ghostAction}
+                      onClick={() => void act(task, 'restore')}
+                    >
+                      {t('Restore', 'Khôi phục')}
+                    </button>
+                  )}
+                </div>
+              ))}
+            </div>
           )}
-        </p>
-      </div>
-      {!reviewOnly && <LearningSettings practices={progress.practices} words={progress.words} />}
-    </section>
+          <Link
+            href="/learn"
+            className="inline-flex min-h-11 items-center text-sm font-medium text-emerald-300 hover:text-emerald-200"
+          >
+            {t('All courses', 'Tất cả khóa học')} →
+          </Link>
+          <p className="text-xs leading-5 text-white/40">
+            {t(
+              'Times are estimates for a short practice block. Opening a task never marks it complete.',
+              'Thời gian chỉ là ước tính cho một bài luyện tập ngắn. Chỉ mở nhiệm vụ sẽ không đánh dấu hoàn thành.',
+            )}
+          </p>
+        </div>
+      </section>
+      {!reviewOnly && (
+        <div className="overflow-hidden rounded-3xl">
+          <LearningSettings practices={progress.practices} words={progress.words} />
+        </div>
+      )}
+    </div>
   );
 }

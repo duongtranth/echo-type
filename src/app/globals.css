@@ -57,8 +57,6 @@
 }
 
 :root {
-  --font-poppins: "Poppins", "Avenir Next", "Segoe UI", sans-serif;
-  --font-open-sans: "Open Sans", "Avenir Next", "Segoe UI", "Helvetica Neue", Arial, sans-serif;
   --radius: 0.75rem;
   /* EchoType brand: Indigo primary, Green CTA/success, tinted indigo app background. */
   --background: #eef2ff;
