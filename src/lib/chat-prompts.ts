@@ -31,7 +31,7 @@ Text: "${text}"
 
 Create 2-3 translation exercises. For each, output a :::translation block:
 :::translation
-{"source": "English sentence", "sourceLang": "English", "target": "中文翻译", "targetLang": "Chinese"}
+{"source": "English sentence", "sourceLang": "English", "target": "Vietnamese translation", "targetLang": "Vietnamese"}
 :::
 
 After the exercises, provide a brief explanation of key vocabulary or grammar points.`;
@@ -97,7 +97,7 @@ Text: "${text}"
 
 Output a reading block with the text split into segments:
 :::reading
-{"title": "${title || 'Reading Practice'}", "segments": [{"id": "seg1", "text": "First paragraph or section...", "translation": "中文翻译..."}, {"id": "seg2", "text": "Second paragraph...", "translation": "中文翻译..."}]}
+{"title": "${title || 'Reading Practice'}", "segments": [{"id": "seg1", "text": "First paragraph or section...", "translation": "Vietnamese translation..."}, {"id": "seg2", "text": "Second paragraph...", "translation": "Vietnamese translation..."}]}
 :::
 
 After the reading block, provide a brief introduction and then ask a comprehension question using a quiz block.`;

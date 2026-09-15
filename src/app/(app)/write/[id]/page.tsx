@@ -5,6 +5,8 @@ import { nanoid } from 'nanoid';
 import Link from 'next/link';
 import { useParams, useRouter } from 'next/navigation';
 import { useCallback, useEffect, useMemo, useReducer, useRef, useState } from 'react';
+import { BorderBeam } from '@/components/magicui/border-beam';
+import { NumberTicker } from '@/components/magicui/number-ticker';
 import { CrossModuleNav } from '@/components/shared/cross-module-nav';
 import { FormattedContentText } from '@/components/shared/formatted-content-text';
 import { IOS_SECTION_CARD_CLASS } from '@/components/shared/ios-native-ui';
@@ -448,24 +450,22 @@ export default function WriteDetailPage() {
         </Card>
       )}
       {!isIOSNativeHost && (
-        <div className="flex items-center gap-4">
+        <div className="flex items-center gap-2 opacity-80">
           <Link href="/write" prefetch={false}>
-            <Button variant="ghost" size="icon" className="text-indigo-600 cursor-pointer">
-              <ArrowLeft className="w-5 h-5" />
+            <Button variant="ghost" size="icon-sm" className="text-indigo-500 cursor-pointer">
+              <ArrowLeft className="w-4 h-4" />
             </Button>
           </Link>
           <div className="flex-1 min-w-0">
             <div className="flex items-center gap-2">
-              <h1 className="text-2xl font-bold font-[var(--font-poppins)] text-indigo-900 truncate">
-                {content.title}
-              </h1>
+              <h1 className="text-xs font-semibold text-indigo-700 truncate">{content.title}</h1>
               {isReviewMode && (
-                <span className="shrink-0 inline-flex items-center gap-1 rounded-full bg-orange-100 px-2 py-0.5 text-xs font-semibold text-orange-700">
+                <span className="shrink-0 inline-flex items-center gap-1 rounded-full bg-orange-100 px-2 py-0.5 text-[10px] font-semibold text-orange-700">
                   <Target className="w-3 h-3" /> {t.header.errorReview}
                 </span>
               )}
             </div>
-            <p className="text-sm text-indigo-500">
+            <p className="text-[11px] text-indigo-400">
               {content.type} · {t.header.subtitle}
             </p>
           </div>
@@ -582,7 +582,7 @@ export default function WriteDetailPage() {
                 </div>
               )}
               <div
-                className={`text-lg md:text-2xl leading-relaxed font-mono tracking-wide select-none ${
+                className={`text-xl md:text-3xl leading-relaxed font-mono tracking-wide select-none ${
                   state.isShaking ? 'animate-shake' : ''
                 }`}
               >
@@ -678,11 +678,13 @@ export default function WriteDetailPage() {
       ) : (
         <Card
           className={cn(
+            'relative overflow-hidden',
             isIOSNativeHost
               ? `${IOS_SECTION_CARD_CLASS} border-green-200 bg-[linear-gradient(145deg,rgba(240,253,244,0.94)_0%,rgba(255,255,255,0.92)_52%,rgba(238,242,255,0.92)_100%)]`
               : 'bg-gradient-to-br from-green-50 via-white to-indigo-50 border-green-200 shadow-lg',
           )}
         >
+          {!isIOSNativeHost && <BorderBeam size={100} duration={7} colorFrom="#22c55e" colorTo="#4f46e5" />}
           <CardContent className="p-8 text-center space-y-6">
             <div className="w-16 h-16 rounded-full bg-green-100 flex items-center justify-center mx-auto">
               <Trophy className="w-8 h-8 text-green-600" />
@@ -699,15 +701,21 @@ export default function WriteDetailPage() {
               </div>
               <div className="bg-indigo-50 rounded-xl p-4">
                 <p className="text-sm text-indigo-500">{t.stats.wpm}</p>
-                <p className="text-2xl font-bold text-indigo-900">{state.wpm}</p>
+                <p className="text-2xl font-bold text-indigo-900">
+                  <NumberTicker value={state.wpm} />
+                </p>
               </div>
               <div className="bg-indigo-50 rounded-xl p-4">
                 <p className="text-sm text-indigo-500">{t.completion.accuracy}</p>
-                <p className={`text-2xl font-bold ${accuracyColor(state.accuracy)}`}>{state.accuracy}%</p>
+                <p className={`text-2xl font-bold ${accuracyColor(state.accuracy)}`}>
+                  <NumberTicker value={state.accuracy} />%
+                </p>
               </div>
               <div className="bg-indigo-50 rounded-xl p-4">
                 <p className="text-sm text-indigo-500">{t.completion.errors}</p>
-                <p className="text-2xl font-bold text-indigo-900">{state.errorCount}</p>
+                <p className="text-2xl font-bold text-indigo-900">
+                  <NumberTicker value={state.errorCount} />
+                </p>
               </div>
             </div>
 

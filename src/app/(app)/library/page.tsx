@@ -534,7 +534,7 @@ function ScenarioCollectionsGroup({ collections }: { collections: CollectionItem
           <div className="w-8 h-8 rounded-lg bg-indigo-100 flex items-center justify-center shrink-0">
             <Layers className="w-4 h-4 text-indigo-700" />
           </div>
-          <h2 className="font-semibold text-indigo-900 text-lg truncate">Scenario Collections</h2>
+          <h2 className="font-semibold text-indigo-900 text-lg truncate">{messages.page.scenarioCollections}</h2>
           <Badge variant="secondary" className="bg-indigo-100 text-indigo-600 shrink-0">
             {collections.length}
           </Badge>
@@ -998,10 +998,10 @@ export default function LibraryPage() {
           />
         ) : (
           <div>
-            <h1 className="text-2xl md:text-3xl font-bold font-[var(--font-poppins)] text-indigo-900">
+            <h1 className="font-heading text-2xl md:text-3xl font-extrabold tracking-tight text-indigo-950">
               {messages.page.title}
             </h1>
-            <p className="text-indigo-600 mt-1 text-sm md:text-base">
+            <p className="text-slate-500 mt-1 text-sm md:text-base">
               {messages.itemCount.replace('{{count}}', String(totalCount))}
             </p>
           </div>

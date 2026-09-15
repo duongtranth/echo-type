@@ -1,39 +1,39 @@
 {
   "completeBanner": {
     "listen": {
-      "title": "听力练习完成！",
-      "subtitle": "你的听力越来越好了——明天继续加油！"
+      "title": "Hoàn thành luyện nghe!",
+      "subtitle": "Khả năng nghe của bạn đang tiến bộ — quay lại vào ngày mai nhé!"
     },
     "speak": {
-      "title": "口语练习完成！",
-      "subtitle": "发音练得不错——明天继续保持！"
+      "title": "Hoàn thành luyện nói!",
+      "subtitle": "Phát âm rất tốt — hãy duy trì chuỗi luyện tập vào ngày mai!"
     },
     "read": {
-      "title": "朗读练习完成！",
-      "subtitle": "很棒的阅读——明天再来！"
+      "title": "Hoàn thành đọc to!",
+      "subtitle": "Buổi đọc tuyệt vời — hẹn gặp lại vào ngày mai!"
     },
     "write": {
-      "title": "打字练习完成！",
-      "subtitle": "打字能力正在提升——明天继续进步！"
+      "title": "Hoàn thành luyện gõ chữ!",
+      "subtitle": "Kỹ năng gõ chữ của bạn đang tiến bộ — quay lại vào ngày mai để tiếp tục nhé!"
     },
-    "backToDashboard": "返回仪表盘"
+    "backToDashboard": "Về Bảng điều khiển"
   },
   "crossModuleNav": {
-    "listen": "听力",
-    "read": "朗读",
-    "speak": "口语",
-    "write": "打字",
-    "practiceIn": "在{{label}}模式练习"
+    "listen": "Nghe",
+    "read": "Đọc",
+    "speak": "Nói",
+    "write": "Viết",
+    "practiceIn": "Luyện tập ở chế độ {{label}}"
   },
   "readAloud": {
-    "previousSentence": "上一句",
-    "nextSentence": "下一句",
-    "play": "播放",
-    "pause": "暂停",
-    "speedUp": "加速",
-    "speedDown": "减速",
-    "immersiveMode": "沉浸模式",
-    "exitImmersive": "退出沉浸模式",
-    "progress": "进度"
+    "previousSentence": "Câu trước",
+    "nextSentence": "Câu tiếp theo",
+    "play": "Phát",
+    "pause": "Tạm dừng",
+    "speedUp": "Tăng tốc",
+    "speedDown": "Giảm tốc",
+    "immersiveMode": "Chế độ toàn màn hình",
+    "exitImmersive": "Thoát chế độ toàn màn hình",
+    "progress": "Tiến độ"
   }
 }

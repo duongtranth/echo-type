@@ -178,7 +178,7 @@ export default function TodayReviewPage() {
             </Button>
           </Link>
           <div className="min-w-0">
-            <h1 className="font-[var(--font-poppins)] text-xl font-bold text-slate-900">{messages.page.title}</h1>
+            <h1 className="font-heading text-xl font-extrabold tracking-tight text-slate-950">{messages.page.title}</h1>
             <p className="text-sm text-slate-500">{messages.page.description}</p>
           </div>
         </div>

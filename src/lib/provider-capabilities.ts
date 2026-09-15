@@ -19,7 +19,7 @@ interface ProviderCapabilityProfile {
   recommendedModels: Partial<Record<ProviderCapability, CapabilityRecommendation>>;
 }
 
-const TEXT_CAPABILITIES: ProviderCapability[] = ['chat', 'generate', 'classify', 'translateText'];
+const TEXT_CAPABILITIES: ProviderCapability[] = ['chat', 'generate', 'classify', 'translateText', 'evaluate'];
 const AUDIO_CAPABILITIES: ProviderCapability[] = ['transcribe', 'translateAudio'];
 
 export const CAPABILITY_LABELS: Record<ProviderCapability, string> = {
@@ -57,6 +57,10 @@ function createTextProfile(
         modelId: defaultModelId,
         rationale: 'Recommended default for text translation',
       },
+      evaluate: {
+        modelId: defaultModelId,
+        rationale: 'Recommended default for evaluation',
+      },
       ...overrides,
     },
   } satisfies ProviderCapabilityProfile;
@@ -67,15 +71,11 @@ const PROFILES = Object.fromEntries(
 ) as Record<ProviderId, ProviderCapabilityProfile>;
 
 PROFILES.openai = {
-  capabilities: [...TEXT_CAPABILITIES, ...AUDIO_CAPABILITIES, 'evaluate'],
+  capabilities: [...TEXT_CAPABILITIES, ...AUDIO_CAPABILITIES],
   recommendedModels: {
     ...createTextProfile('openai').recommendedModels,
     transcribe: { modelId: 'whisper-1', rationale: 'Recommended for transcription accuracy' },
     translateAudio: { modelId: 'whisper-1', rationale: 'Recommended for audio translation flows' },
-    evaluate: {
-      modelId: getDefaultModelId('openai'),
-      rationale: 'Recommended default for evaluation',
-    },
   },
 };
 

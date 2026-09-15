@@ -4,6 +4,7 @@ import confetti from 'canvas-confetti';
 import { PartyPopper } from 'lucide-react';
 import Link from 'next/link';
 import { useEffect, useRef } from 'react';
+import { BorderBeam } from '@/components/magicui/border-beam';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import enPracticeUi from '@/lib/i18n/messages/practice-ui/en.json';
@@ -61,7 +62,8 @@ export function PracticeCompleteBanner({ module, stats }: PracticeCompleteBanner
   const msg = t[module] ?? t.write;
 
   return (
-    <Card className="bg-gradient-to-r from-green-50 to-emerald-50 border-green-200 shadow-md animate-in fade-in slide-in-from-bottom-4 duration-500">
+    <Card className="relative overflow-hidden bg-gradient-to-r from-green-50 to-emerald-50 border-green-200 shadow-md animate-in fade-in slide-in-from-bottom-4 duration-500">
+      <BorderBeam size={80} duration={7} colorFrom="#22c55e" colorTo="#4f46e5" />
       <CardContent className="p-5">
         <div className="flex items-center gap-4">
           <div className="w-12 h-12 rounded-full bg-green-100 flex items-center justify-center shrink-0">

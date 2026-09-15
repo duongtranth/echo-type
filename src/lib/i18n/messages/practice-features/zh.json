@@ -1,15 +1,15 @@
 {
   "translationDisplay": {
-    "translating": "翻译中...",
-    "goToSettings": "前往设置",
-    "retry": "重试"
+    "translating": "Đang dịch...",
+    "goToSettings": "Đi tới Cài đặt",
+    "retry": "Thử lại"
   },
   "recommendations": {
-    "title": "推荐内容",
-    "generating": "正在生成推荐内容...",
-    "empty": "暂无推荐内容。",
-    "tryAgain": "再试一次",
-    "goToSettings": "前往设置",
-    "retry": "重试"
+    "title": "Nội dung đề xuất",
+    "generating": "Đang tạo nội dung đề xuất...",
+    "empty": "Chưa có nội dung đề xuất.",
+    "tryAgain": "Thử lại",
+    "goToSettings": "Đi tới Cài đặt",
+    "retry": "Thử lại"
   }
 }

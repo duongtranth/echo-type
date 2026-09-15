@@ -1,38 +1,38 @@
 {
   "header": {
-    "errorReview": "错词复习",
-    "subtitle": "打字模式"
+    "errorReview": "Ôn lại từ sai",
+    "subtitle": "Chế độ gõ chữ"
   },
   "stats": {
     "wpm": "WPM",
-    "words": "词"
+    "words": "từ"
   },
   "toolbar": {
-    "listen": "朗读",
-    "listenTitle": "朗读文本",
-    "reset": "重置"
+    "listen": "Nghe",
+    "listenTitle": "Nghe văn bản",
+    "reset": "Đặt lại"
   },
   "content": {
-    "referenceText": "参考文本",
-    "referenceHint": "打字时原始段落结构保持不变。"
+    "referenceText": "Văn bản tham chiếu",
+    "referenceHint": "Cấu trúc đoạn văn gốc được giữ nguyên trong khi bạn gõ."
   },
   "typing": {
-    "inputLabel": "打字输入",
-    "startHint": "点击此处开始输入...",
-    "paused": "已暂停",
-    "resume": "继续",
-    "resumeHint": "或按回车键"
+    "inputLabel": "Ô nhập gõ chữ",
+    "startHint": "Nhấp vào đây và bắt đầu gõ...",
+    "paused": "Đã tạm dừng",
+    "resume": "Tiếp tục",
+    "resumeHint": "hoặc nhấn Enter"
   },
   "completion": {
-    "title": "练习完成！",
-    "encouragement": "打字能力正在提升——明天再来继续进步吧！",
-    "time": "用时",
-    "accuracy": "准确率",
-    "errors": "错误数",
-    "errorWords": "错词",
-    "reviewErrors": "复习错词",
-    "fullTextAgain": "重做全文",
-    "tryAgain": "再试一次",
-    "backToDashboard": "返回仪表盘"
+    "title": "Hoàn thành buổi luyện tập!",
+    "encouragement": "Kỹ năng gõ chữ của bạn đang tiến bộ — quay lại vào ngày mai để tiếp tục nhé!",
+    "time": "Thời gian",
+    "accuracy": "Độ chính xác",
+    "errors": "Số lỗi",
+    "errorWords": "Từ sai",
+    "reviewErrors": "Ôn lại từ sai",
+    "fullTextAgain": "Làm lại toàn bộ",
+    "tryAgain": "Thử lại",
+    "backToDashboard": "Về Bảng điều khiển"
   }
 }

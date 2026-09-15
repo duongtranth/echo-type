@@ -3,7 +3,7 @@ import type { WordBook } from '@/types/wordbook';
 export const scenarioBooks: WordBook[] = [
   {
     id: 'airport',
-    name: '机场 / 飞机',
+    name: 'Sân bay / Máy bay',
     nameEn: 'Airport & Flights',
     description: 'Complete airport phrases from check-in to arrival — never get lost or confused at the airport again.',
     kind: 'scenario',
@@ -178,7 +178,7 @@ export const scenarioBooks: WordBook[] = [
   },
   {
     id: 'restaurant',
-    name: '餐厅 / 点餐',
+    name: 'Nhà hàng / Gọi món',
     nameEn: 'Restaurant & Dining',
     description: 'From making reservations to paying the bill — dine out with complete confidence in English.',
     kind: 'scenario',
@@ -353,7 +353,7 @@ export const scenarioBooks: WordBook[] = [
   },
   {
     id: 'hotel',
-    name: '酒店 / 住宿',
+    name: 'Khách sạn / Lưu trú',
     nameEn: 'Hotel & Accommodation',
     description: 'Everything you need for hotel check-in, room service, complaints, and check-out in English.',
     kind: 'scenario',
@@ -510,7 +510,7 @@ export const scenarioBooks: WordBook[] = [
   },
   {
     id: 'shopping',
-    name: '购物 / 商场',
+    name: 'Mua sắm / Trung tâm thương mại',
     nameEn: 'Shopping & Malls',
     description: 'Browse, try on, bargain, and return items — master the full shopping experience in English.',
     kind: 'scenario',
@@ -658,7 +658,7 @@ export const scenarioBooks: WordBook[] = [
   },
   {
     id: 'directions',
-    name: '问路 / 交通',
+    name: 'Hỏi đường / Giao thông',
     nameEn: 'Directions & Transport',
     description: 'Ask for and understand directions, navigate public transport, and hail a taxi with ease.',
     kind: 'scenario',
@@ -806,7 +806,7 @@ export const scenarioBooks: WordBook[] = [
   },
   {
     id: 'interview',
-    name: '面试 / 求职',
+    name: 'Phỏng vấn / Xin việc',
     nameEn: 'Job Interview',
     description: 'From self-introduction to salary negotiation — ace your next English-language job interview.',
     kind: 'scenario',
@@ -954,7 +954,7 @@ export const scenarioBooks: WordBook[] = [
   },
   {
     id: 'hospital',
-    name: '医院 / 看病',
+    name: 'Bệnh viện / Khám bệnh',
     nameEn: 'Hospital & Medical',
     description:
       'Describe symptoms, talk to doctors, and understand prescriptions — stay safe in any English-speaking country.',
@@ -1103,7 +1103,7 @@ export const scenarioBooks: WordBook[] = [
   },
   {
     id: 'social',
-    name: '社交 / 聚会',
+    name: 'Xã giao / Tiệc tùng',
     nameEn: 'Social & Gatherings',
     description: 'Make friends, attend parties, and navigate social situations with natural, confident English.',
     kind: 'scenario',
@@ -1251,7 +1251,7 @@ export const scenarioBooks: WordBook[] = [
   },
   {
     id: 'coffee-shop',
-    name: '咖啡馆',
+    name: 'Quán cà phê',
     nameEn: 'Coffee Shop',
     description: 'Order your perfect coffee, customize your drink, and chat with baristas like a local.',
     kind: 'scenario',
@@ -1399,7 +1399,7 @@ export const scenarioBooks: WordBook[] = [
   },
   {
     id: 'campus',
-    name: '校园生活',
+    name: 'Đời sống học đường',
     nameEn: 'Campus Life',
     description: 'Classroom discussions, study groups, dorm life — thrive in any English-speaking campus environment.',
     kind: 'scenario',
@@ -1547,7 +1547,7 @@ export const scenarioBooks: WordBook[] = [
   },
   {
     id: 'phone-call',
-    name: '电话通话',
+    name: 'Gọi điện thoại',
     nameEn: 'Phone Calls',
     description: 'Answer calls, transfer calls, leave voicemails, and run conference calls — all in fluent English.',
     kind: 'scenario',
@@ -1695,7 +1695,7 @@ export const scenarioBooks: WordBook[] = [
   },
   {
     id: 'bank-post',
-    name: '银行 / 邮局',
+    name: 'Ngân hàng / Bưu điện',
     nameEn: 'Bank & Post Office',
     description: 'Open bank accounts, send parcels, exchange currency, and handle everyday financial tasks in English.',
     kind: 'scenario',
@@ -1844,7 +1844,7 @@ export const scenarioBooks: WordBook[] = [
   // ── TRAVEL ──────────────────────────────────────────────────────────────────
   {
     id: 'train-station',
-    name: '火车站 / 客运',
+    name: 'Nhà ga / Xe khách',
     nameEn: 'Train & Bus Station',
     description: 'Buy tickets, find platforms, handle delays, and navigate train and bus stations like a local.',
     kind: 'scenario',
@@ -1992,7 +1992,7 @@ export const scenarioBooks: WordBook[] = [
   },
   {
     id: 'car-rental',
-    name: '租车 / 自驾',
+    name: 'Thuê xe / Tự lái',
     nameEn: 'Car Rental',
     description: 'Pick up, insure, drive, and return a rental car — handle the whole process confidently in English.',
     kind: 'scenario',
@@ -2141,7 +2141,7 @@ export const scenarioBooks: WordBook[] = [
   // ── FOOD & DRINK ─────────────────────────────────────────────────────────────
   {
     id: 'bar-pub',
-    name: '酒吧 / 夜生活',
+    name: 'Quán bar / Cuộc sống về đêm',
     nameEn: 'Bar & Pub',
     description: 'Order drinks, toast with friends, and navigate bar culture — from cocktails to craft beers.',
     kind: 'scenario',
@@ -2280,7 +2280,7 @@ export const scenarioBooks: WordBook[] = [
   },
   {
     id: 'supermarket',
-    name: '超市 / 购物',
+    name: 'Siêu thị / Mua sắm',
     nameEn: 'Supermarket & Grocery',
     description:
       'Navigate the aisles, ask for help, use self-checkout, and handle everyday grocery shopping in English.',
@@ -2421,7 +2421,7 @@ export const scenarioBooks: WordBook[] = [
   // ── DAILY LIFE ───────────────────────────────────────────────────────────────
   {
     id: 'hair-salon',
-    name: '理发 / 美容',
+    name: 'Cắt tóc / Làm đẹp',
     nameEn: 'Hair Salon & Beauty',
     description: 'Describe the haircut you want, book appointments, and chat with stylists in natural English.',
     kind: 'scenario',
@@ -2560,7 +2560,7 @@ export const scenarioBooks: WordBook[] = [
   },
   {
     id: 'apartment',
-    name: '租房 / 搬家',
+    name: 'Thuê nhà / Chuyển nhà',
     nameEn: 'Renting an Apartment',
     description:
       'View flats, negotiate rent, sign leases, and communicate with landlords — essential for living abroad.',
@@ -2700,7 +2700,7 @@ export const scenarioBooks: WordBook[] = [
   },
   {
     id: 'pharmacy',
-    name: '药房 / 诊所',
+    name: 'Nhà thuốc / Phòng khám',
     nameEn: 'Pharmacy & Drugstore',
     description: 'Fill prescriptions, ask about over-the-counter medicine, and get health advice from pharmacists.',
     kind: 'scenario',
@@ -2840,7 +2840,7 @@ export const scenarioBooks: WordBook[] = [
   // ── BUSINESS ─────────────────────────────────────────────────────────────────
   {
     id: 'office-meeting',
-    name: '办公室 / 会议',
+    name: 'Văn phòng / Họp hành',
     nameEn: 'Office & Meetings',
     description: 'Run and join meetings, give presentations, set agendas, and follow up on action items in English.',
     kind: 'scenario',
@@ -2979,7 +2979,7 @@ export const scenarioBooks: WordBook[] = [
   },
   {
     id: 'networking',
-    name: '商务社交 / 拓展人脉',
+    name: 'Giao lưu công việc / Mở rộng quan hệ',
     nameEn: 'Networking Events',
     description: 'Introduce yourself, pitch your work, exchange business cards, and build professional relationships.',
     kind: 'scenario',
@@ -3119,7 +3119,7 @@ export const scenarioBooks: WordBook[] = [
   // ── HEALTH ───────────────────────────────────────────────────────────────────
   {
     id: 'dentist',
-    name: '牙医 / 口腔诊所',
+    name: 'Nha sĩ / Phòng khám răng',
     nameEn: 'Dentist & Dental Clinic',
     description: 'Book dental appointments, describe tooth pain, and understand dental procedures in English.',
     kind: 'scenario',
@@ -3259,7 +3259,7 @@ export const scenarioBooks: WordBook[] = [
   // ── SOCIAL ───────────────────────────────────────────────────────────────────
   {
     id: 'small-talk',
-    name: '日常闲聊',
+    name: 'Trò chuyện hằng ngày',
     nameEn: 'Small Talk & Chit-chat',
     description: 'Master the art of casual conversation — weather, weekends, hobbies, and everything in between.',
     kind: 'scenario',
@@ -3398,7 +3398,7 @@ export const scenarioBooks: WordBook[] = [
   },
   {
     id: 'dating',
-    name: '约会 / 恋爱',
+    name: 'Hẹn hò / Yêu đương',
     nameEn: 'Dating & Romance',
     description: 'Ask someone out, go on a first date, give compliments, and express feelings naturally in English.',
     kind: 'scenario',
@@ -3537,7 +3537,7 @@ export const scenarioBooks: WordBook[] = [
   },
   {
     id: 'entertainment',
-    name: '电影 / 娱乐',
+    name: 'Phim ảnh / Giải trí',
     nameEn: 'Cinema & Entertainment',
     description: 'Buy tickets, discuss movies, attend concerts, and enjoy all kinds of entertainment in English.',
     kind: 'scenario',
@@ -3677,7 +3677,7 @@ export const scenarioBooks: WordBook[] = [
   // ── EMERGENCY ────────────────────────────────────────────────────────────────
   {
     id: 'emergency',
-    name: '紧急情况 / 求助',
+    name: 'Tình huống khẩn cấp / Kêu gọi giúp đỡ',
     nameEn: 'Emergency & Safety',
     description: 'Call for help, report accidents, describe injuries, and stay calm in any English-language emergency.',
     kind: 'scenario',
@@ -3816,7 +3816,7 @@ export const scenarioBooks: WordBook[] = [
   },
   {
     id: 'police-station',
-    name: '警察局 / 法律',
+    name: 'Đồn công an / Pháp luật',
     nameEn: 'Police & Legal',
     description:
       'File police reports, deal with fines, understand your rights, and handle legal situations in English.',
@@ -3957,7 +3957,7 @@ export const scenarioBooks: WordBook[] = [
   // ── HEALTH (continued) ───────────────────────────────────────────────────────
   {
     id: 'gym-fitness',
-    name: '健身房 / 运动',
+    name: 'Phòng gym / Thể thao',
     nameEn: 'Gym & Fitness',
     description: 'Sign up for memberships, use equipment, ask for guidance, and discuss workouts in English.',
     kind: 'scenario',
@@ -4106,7 +4106,7 @@ export const scenarioBooks: WordBook[] = [
   // ── DAILY LIFE (continued) ───────────────────────────────────────────────────
   {
     id: 'laundry',
-    name: '洗衣店 / 干洗',
+    name: 'Tiệm giặt là / Giặt khô',
     nameEn: 'Laundry & Dry Cleaning',
     description: 'Use the laundromat, drop off dry cleaning, and handle garment care instructions in English.',
     kind: 'scenario',
@@ -4245,7 +4245,7 @@ export const scenarioBooks: WordBook[] = [
   },
   {
     id: 'customer-service',
-    name: '客服 / 投诉',
+    name: 'Chăm sóc khách hàng / Khiếu nại',
     nameEn: 'Customer Service',
     description: 'Report issues, request refunds, track orders, and resolve complaints confidently in English.',
     kind: 'scenario',
@@ -4385,7 +4385,7 @@ export const scenarioBooks: WordBook[] = [
   // ── TRAVEL (continued) ───────────────────────────────────────────────────────
   {
     id: 'visa-immigration',
-    name: '签证 / 入境',
+    name: 'Thị thực / Nhập cảnh',
     nameEn: 'Visa & Immigration',
     description: 'Apply for visas, attend consulate interviews, and navigate immigration procedures in English.',
     kind: 'scenario',

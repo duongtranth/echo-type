@@ -1,27 +1,53 @@
 import { useEffect, useRef, useState } from 'react';
 import { getIOSNativeQAMockTranslation, getIOSNativeQAMode } from '@/lib/ios-native-qa';
 
-interface DictionaryDefinition {
+interface ExplorerSense {
+  pos: string;
   definition: string;
-  example?: string;
+  examples: string[];
+  synonyms: string[];
+  antonyms: string[];
 }
 
-interface DictionaryMeaning {
-  partOfSpeech?: string;
-  definitions?: DictionaryDefinition[];
+interface ExplorerWordFamilyItem {
+  word: string;
+  pos: string[];
 }
 
-interface DictionaryEntry {
+interface ExplorerApiResponse {
   word: string;
   phonetic?: string;
-  phonetics?: Array<{ text?: string; audio?: string }>;
-  meanings?: DictionaryMeaning[];
+  audioUrl?: string;
+  senses?: ExplorerSense[];
+  synonyms?: string[];
+  antonyms?: string[];
+  collocations?: string[];
+  wordFamily?: ExplorerWordFamilyItem[];
+  contextualTerms?: string[];
+  source?: string;
+  sourceUrl?: string;
+}
+
+export interface WordExample {
+  text: string;
+  translation?: string;
 }
 
 export interface WordMeaning {
   pos: string;
   definition: string;
+  definitionEnglish: string;
+  examples: WordExample[];
+  /** Legacy single-example view retained for existing consumers. */
   example?: string;
+  synonyms: string[];
+  antonyms: string[];
+  contextMatch?: boolean;
+}
+
+export interface WordFamilyItem {
+  word: string;
+  pos: string[];
 }
 
 interface CachedResult {
@@ -30,75 +56,22 @@ interface CachedResult {
   pos: string;
   meanings: WordMeaning[];
   example: string;
+  synonyms: string[];
+  antonyms: string[];
+  collocations: string[];
+  wordFamily: WordFamilyItem[];
+  source: string;
+  sourceUrl: string;
 }
 
-export interface WordDictionaryResult {
-  translation: string;
-  phonetic: string;
-  pos: string;
-  meanings: WordMeaning[];
-  example: string;
+export interface WordDictionaryResult extends CachedResult {
   isLoading: boolean;
-}
-
-function isSingleWord(text: string): boolean {
-  return text.trim().split(/\s+/).length === 1;
-}
-
-function extractPhonetic(entry: DictionaryEntry): string {
-  if (entry.phonetic) return entry.phonetic;
-  const fallback = entry.phonetics?.find((p) => p.text && p.text.length > 0);
-  return fallback?.text || '';
-}
-
-function extractPos(entry: DictionaryEntry): string {
-  return entry.meanings?.[0]?.partOfSpeech || '';
-}
-
-interface RawMeaning {
-  pos: string;
-  definitions: Array<{ definition: string; example?: string }>;
-}
-
-function extractRawMeanings(entry: DictionaryEntry): RawMeaning[] {
-  if (!entry.meanings) return [];
-  return entry.meanings
-    .filter((m) => m.partOfSpeech && m.definitions?.length)
-    .map((m) => ({
-      pos: m.partOfSpeech!,
-      definitions: m.definitions!.slice(0, 2).map((d) => ({ definition: d.definition, example: d.example })),
-    }));
-}
-
-interface DictionaryResult {
-  phonetic: string;
-  pos: string;
-  rawMeanings: RawMeaning[];
 }
 
 interface RawWordBookEntry {
   word?: string;
   sentence?: string;
 }
-
-const SOURCE_POS_MAP: Record<string, string> = {
-  n: 'noun',
-  noun: 'noun',
-  v: 'verb',
-  verb: 'verb',
-  adj: 'adjective',
-  adjective: 'adjective',
-  adv: 'adverb',
-  adverb: 'adverb',
-  prep: 'preposition',
-  preposition: 'preposition',
-  pron: 'pronoun',
-  pronoun: 'pronoun',
-  conj: 'conjunction',
-  conjunction: 'conjunction',
-  interj: 'interjection',
-  interjection: 'interjection',
-};
 
 const EXAMPLE_FALLBACK_BOOK_IDS = [
   'junior-high',
@@ -113,50 +86,185 @@ const EXAMPLE_FALLBACK_BOOK_IDS = [
   'it-words',
 ] as const;
 
+const STOP_WORDS = new Set([
+  'a',
+  'an',
+  'and',
+  'are',
+  'as',
+  'at',
+  'be',
+  'been',
+  'being',
+  'by',
+  'for',
+  'from',
+  'had',
+  'has',
+  'have',
+  'he',
+  'her',
+  'his',
+  'i',
+  'in',
+  'is',
+  'it',
+  'its',
+  'of',
+  'on',
+  'or',
+  'she',
+  'that',
+  'the',
+  'their',
+  'them',
+  'they',
+  'this',
+  'to',
+  'was',
+  'were',
+  'will',
+  'with',
+  'you',
+  'your',
+]);
+
 const localExampleCache = new Map<string, Promise<string>>();
 
-function parseSourceDefinition(sourceDefinition: string | undefined, fallbackPos: string): WordMeaning | null {
-  const trimmed = sourceDefinition?.trim();
-  if (!trimmed || !/[\u4e00-\u9fff]/.test(trimmed)) return null;
-
-  const normalized = trimmed.replace(/\s+/g, ' ');
-  const match = normalized.match(/^([A-Za-z]+)\.\s*(.+)$/);
-  const pos = match ? SOURCE_POS_MAP[match[1]!.toLowerCase()] || match[1]! : fallbackPos || 'noun';
-  const definition = (match?.[2] || normalized).trim();
-  if (!definition) return null;
-
-  return { pos, definition };
+function emptyResult(): CachedResult {
+  return {
+    translation: '',
+    phonetic: '',
+    pos: '',
+    meanings: [],
+    example: '',
+    synonyms: [],
+    antonyms: [],
+    collocations: [],
+    wordFamily: [],
+    source: '',
+    sourceUrl: '',
+  };
 }
 
-async function fetchDictionary(word: string): Promise<DictionaryResult> {
+function isSingleWord(text: string): boolean {
+  return text.trim().split(/\s+/).length === 1;
+}
+
+function tokenize(text: string): string[] {
+  return text
+    .toLowerCase()
+    .replace(/[^a-z'-]+/g, ' ')
+    .split(/\s+/)
+    .filter((token) => token.length > 2 && !STOP_WORDS.has(token));
+}
+
+function scoreSense(sense: ExplorerSense, context: string, contextualTerms: string[], word: string): number {
+  if (!context.trim()) return 0;
+
+  const target = word.toLowerCase();
+  const contextTokens = new Set(tokenize(context).filter((token) => token !== target));
+  const datamuseTerms = new Set(contextualTerms.map((term) => term.toLowerCase()));
+  const definitionTokens = new Set(tokenize([sense.definition, ...sense.examples].join(' ')));
+  const relationTokens = new Set(sense.synonyms.map((term) => term.toLowerCase()));
+
+  let score = 0;
+  for (const token of definitionTokens) {
+    if (contextTokens.has(token)) score += 2;
+    if (datamuseTerms.has(token)) score += 1;
+  }
+  for (const synonym of relationTokens) {
+    if (datamuseTerms.has(synonym)) score += 5;
+    if (contextTokens.has(synonym)) score += 3;
+  }
+  return score;
+}
+
+function markContextSense(
+  senses: ExplorerSense[],
+  context: string,
+  contextualTerms: string[],
+  word: string,
+): Array<ExplorerSense & { contextMatch?: boolean }> {
+  if (senses.length === 0) return [];
+  const scores = senses.map((sense) => scoreSense(sense, context, contextualTerms, word));
+  const bestScore = Math.max(...scores);
+  const bestIndex = bestScore > 0 ? scores.indexOf(bestScore) : 0;
+  return senses.map((sense, index) => ({ ...sense, contextMatch: index === bestIndex }));
+}
+
+async function fetchExplorer(word: string, context: string): Promise<ExplorerApiResponse> {
   try {
-    const res = await fetch(`https://api.dictionaryapi.dev/api/v2/entries/en/${encodeURIComponent(word)}`);
-    if (!res.ok) return { phonetic: '', pos: '', rawMeanings: [] };
-    const data = (await res.json()) as DictionaryEntry[];
-    if (!Array.isArray(data) || data.length === 0) return { phonetic: '', pos: '', rawMeanings: [] };
-    return {
-      phonetic: extractPhonetic(data[0]),
-      pos: extractPos(data[0]),
-      rawMeanings: extractRawMeanings(data[0]),
-    };
+    const params = new URLSearchParams({ word });
+    if (context.trim()) params.set('context', context.trim());
+    const response = await fetch(`/api/words/explore?${params}`);
+    if (!response.ok) return { word };
+    return (await response.json()) as ExplorerApiResponse;
   } catch {
-    return { phonetic: '', pos: '', rawMeanings: [] };
+    return { word };
   }
 }
 
 async function fetchTranslation(text: string, targetLang: string): Promise<string> {
   try {
-    const res = await fetch('/api/translate/free', {
+    const response = await fetch('/api/translate/free', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ text, targetLang }),
     });
-    if (!res.ok) return '';
-    const data = (await res.json()) as { translation?: string };
+    if (!response.ok) return '';
+    const data = (await response.json()) as { translation?: string };
     return data.translation || '';
   } catch {
     return '';
   }
+}
+
+async function fetchBatchTranslations(sentences: string[], targetLang: string): Promise<string[]> {
+  if (sentences.length === 0) return [];
+  try {
+    const response = await fetch('/api/translate/free', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ sentences, targetLang }),
+    });
+    if (!response.ok) return sentences.map(() => '');
+    const data = (await response.json()) as { translations?: string[] };
+    return data.translations?.length === sentences.length ? data.translations : sentences.map(() => '');
+  } catch {
+    return sentences.map(() => '');
+  }
+}
+
+async function translateSenses(
+  senses: Array<ExplorerSense & { contextMatch?: boolean }>,
+  targetLang: string,
+): Promise<WordMeaning[]> {
+  const texts: string[] = [];
+  const layout = senses.map((sense) => {
+    const definitionIndex = texts.push(sense.definition) - 1;
+    const exampleIndexes = sense.examples.slice(0, 3).map((example) => texts.push(example) - 1);
+    return { definitionIndex, exampleIndexes };
+  });
+  const translated = await fetchBatchTranslations(texts, targetLang);
+
+  return senses.map((sense, index) => {
+    const examples = layout[index]!.exampleIndexes.map((translationIndex, exampleIndex) => ({
+      text: sense.examples[exampleIndex]!,
+      translation: translated[translationIndex] || undefined,
+    }));
+
+    return {
+      pos: sense.pos,
+      definition: translated[layout[index]!.definitionIndex] || sense.definition,
+      definitionEnglish: sense.definition,
+      examples,
+      example: examples[0]?.text,
+      synonyms: sense.synonyms,
+      antonyms: sense.antonyms,
+      contextMatch: sense.contextMatch,
+    };
+  });
 }
 
 function isUsefulEnglishExample(word: string, sentence: string): boolean {
@@ -177,9 +285,9 @@ async function fetchLocalExampleSentence(word: string): Promise<string> {
   const promise = (async () => {
     for (const bookId of EXAMPLE_FALLBACK_BOOK_IDS) {
       try {
-        const res = await fetch(`/wordbooks/${bookId}.json`);
-        if (!res.ok) continue;
-        const entries = (await res.json()) as RawWordBookEntry[];
+        const response = await fetch(`/wordbooks/${bookId}.json`);
+        if (!response.ok) continue;
+        const entries = (await response.json()) as RawWordBookEntry[];
         const match = entries.find(
           (entry) =>
             entry.word?.trim().toLowerCase() === normalizedWord &&
@@ -198,66 +306,25 @@ async function fetchLocalExampleSentence(word: string): Promise<string> {
   return promise;
 }
 
-async function fetchBatchTranslations(sentences: string[], targetLang: string): Promise<string[]> {
-  try {
-    const res = await fetch('/api/translate/free', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ sentences, targetLang }),
-    });
-    if (!res.ok) return sentences.map(() => '');
-    const data = (await res.json()) as { translations?: string[] };
-    return data.translations || sentences.map(() => '');
-  } catch {
-    return sentences.map(() => '');
-  }
-}
-
-async function translateMeanings(rawMeanings: RawMeaning[], targetLang: string): Promise<WordMeaning[]> {
-  if (rawMeanings.length === 0) return [];
-
-  const allDefs = rawMeanings.flatMap((m) => m.definitions.map((d) => d.definition));
-  const translations = await fetchBatchTranslations(allDefs, targetLang);
-
-  let idx = 0;
-  return rawMeanings
-    .map((m) => {
-      const translatedDefs = m.definitions.map(() => translations[idx++] || '');
-      const example = m.definitions.find((definition) => definition.example)?.example;
-      return {
-        pos: m.pos,
-        definition: translatedDefs.filter(Boolean).join('；'),
-        example,
-      };
-    })
-    .filter((meaning) => meaning.definition.length > 0);
-}
-
 export function useWordDictionary(
   word: string,
   targetLang: string,
   enabled: boolean,
-  sourceDefinition?: string,
+  contextText?: string,
 ): WordDictionaryResult {
-  const [result, setResult] = useState<CachedResult>({
-    translation: '',
-    phonetic: '',
-    pos: '',
-    meanings: [],
-    example: '',
-  });
+  const [result, setResult] = useState<CachedResult>(emptyResult());
   const [isLoading, setIsLoading] = useState(false);
   const cacheRef = useRef<Map<string, CachedResult>>(new Map());
 
   useEffect(() => {
     if (!enabled) {
-      setResult({ translation: '', phonetic: '', pos: '', meanings: [], example: '' });
+      setResult(emptyResult());
       return;
     }
-
     if (!word) return;
 
-    const key = `${word}::${targetLang}::${sourceDefinition?.trim() || ''}`;
+    const context = contextText?.trim() || '';
+    const key = `${word}::${targetLang}::${context}`;
     const cached = cacheRef.current.get(key);
     if (cached) {
       setResult(cached);
@@ -265,8 +332,10 @@ export function useWordDictionary(
     }
 
     if (getIOSNativeQAMode()) {
-      const mockEntry = {
-        translation: getIOSNativeQAMockTranslation(word, targetLang),
+      const mockTranslation = getIOSNativeQAMockTranslation(word, targetLang);
+      const mockEntry: CachedResult = {
+        ...emptyResult(),
+        translation: mockTranslation,
         phonetic: word ? `/${word.toLowerCase()}/` : '',
         pos: isSingleWord(word) ? 'noun' : '',
         meanings: isSingleWord(word)
@@ -274,10 +343,14 @@ export function useWordDictionary(
               {
                 pos: 'noun',
                 definition: getIOSNativeQAMockTranslation(`${word} practice term`, targetLang),
+                definitionEnglish: `${word} practice term`,
+                examples: [],
+                synonyms: [],
+                antonyms: [],
+                contextMatch: true,
               },
             ]
           : [],
-        example: '',
       };
       cacheRef.current.set(key, mockEntry);
       setResult(mockEntry);
@@ -289,40 +362,39 @@ export function useWordDictionary(
     let cancelled = false;
 
     async function load() {
-      let phonetic = '';
-      let pos = '';
-      let translation = '';
-      let meanings: WordMeaning[] = [];
-      let example = '';
+      let next = emptyResult();
 
       if (isSingleWord(word)) {
-        const [dictResult, transResult] = await Promise.all([
-          fetchDictionary(word),
+        const [explorer, translation] = await Promise.all([
+          fetchExplorer(word, context),
           fetchTranslation(word, targetLang),
         ]);
-        phonetic = dictResult.phonetic;
-        pos = dictResult.pos;
-        translation = transResult;
+        const rankedSenses = markContextSense(explorer.senses ?? [], context, explorer.contextualTerms ?? [], word);
+        const meanings = await translateSenses(rankedSenses, targetLang);
+        const contextMeaning = meanings.find((meaning) => meaning.contextMatch) ?? meanings[0];
+        let example = contextMeaning?.examples[0]?.text || '';
+        if (!example) example = await fetchLocalExampleSentence(word);
 
-        const sourceMeaning = parseSourceDefinition(sourceDefinition, dictResult.pos);
-        if (sourceMeaning) {
-          meanings = [sourceMeaning];
-        } else if (dictResult.rawMeanings.length > 0) {
-          meanings = await translateMeanings(dictResult.rawMeanings, targetLang);
-          example = meanings.find((meaning) => meaning.example)?.example || '';
-        }
-        if (!example) {
-          example = await fetchLocalExampleSentence(word);
-        }
+        next = {
+          translation,
+          phonetic: explorer.phonetic ?? '',
+          pos: contextMeaning?.pos ?? meanings[0]?.pos ?? '',
+          meanings,
+          example,
+          synonyms: explorer.synonyms ?? [],
+          antonyms: explorer.antonyms ?? [],
+          collocations: explorer.collocations ?? [],
+          wordFamily: explorer.wordFamily ?? [],
+          source: explorer.source ?? '',
+          sourceUrl: explorer.sourceUrl ?? '',
+        };
       } else {
-        translation = await fetchTranslation(word, targetLang);
+        next.translation = await fetchTranslation(word, targetLang);
       }
 
       if (cancelled) return;
-
-      const entry = { translation, phonetic, pos, meanings, example };
-      cacheRef.current.set(key, entry);
-      setResult(entry);
+      cacheRef.current.set(key, next);
+      setResult(next);
       setIsLoading(false);
     }
 
@@ -331,7 +403,7 @@ export function useWordDictionary(
     return () => {
       cancelled = true;
     };
-  }, [enabled, word, targetLang, sourceDefinition]);
+  }, [enabled, word, targetLang, contextText]);
 
   return { ...result, isLoading };
 }

@@ -85,7 +85,7 @@ export function JournalList() {
         <IOSPageHeader icon={MessageSquareQuote} tone="slate" title={t.title} description={t.description} />
       ) : (
         <header>
-          <h1 className="text-xl font-bold text-slate-900">{t.title}</h1>
+          <h1 className="font-heading text-xl font-extrabold tracking-tight text-slate-950">{t.title}</h1>
           <p className="text-sm text-slate-500">{t.description}</p>
         </header>
       )}

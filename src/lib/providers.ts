@@ -304,18 +304,22 @@ export const PROVIDER_REGISTRY: Record<ProviderId, ProviderDefinition> = {
     apiPath: '/openai/v1/chat/completions',
     models: [
       withCanonicalModelDescription('groq', {
-        id: 'llama-3.3-70b-versatile',
-        name: 'Llama 3.3 70B',
-        contextWindow: 128000,
+        id: 'openai/gpt-oss-120b',
+        name: 'GPT-OSS 120B',
+        contextWindow: 131072,
         isDefault: true,
       }),
       withCanonicalModelDescription('groq', {
-        id: 'llama-3.1-8b-instant',
-        name: 'Llama 3.1 8B',
-        contextWindow: 128000,
+        id: 'openai/gpt-oss-20b',
+        name: 'GPT-OSS 20B',
+        contextWindow: 131072,
       }),
-      withCanonicalModelDescription('groq', { id: 'gemma2-9b-it', name: 'Gemma 2 9B', contextWindow: 8192 }),
-      withCanonicalModelDescription('groq', { id: 'mixtral-8x7b-32768', name: 'Mixtral 8x7B', contextWindow: 32768 }),
+      withCanonicalModelDescription('groq', {
+        id: 'qwen/qwen3.6-27b',
+        name: 'Qwen 3.6 27B',
+        contextWindow: 131072,
+      }),
+      withCanonicalModelDescription('groq', { id: 'groq/compound', name: 'Groq Compound', contextWindow: 131072 }),
     ],
   },
 

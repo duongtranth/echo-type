@@ -1,33 +1,33 @@
 {
   "groups": {
-    "overview": "总览",
-    "learning": "学习",
-    "resources": "资源",
-    "system": "系统"
+    "overview": "Tổng quan",
+    "learning": "Học tập",
+    "resources": "Tài nguyên",
+    "system": "Hệ thống"
   },
   "items": {
-    "dashboard": "仪表盘",
-    "listen": "听力",
-    "speak": "口语",
-    "pronunciation": "发音",
-    "read": "阅读",
-    "write": "写作",
-    "library": "资料库",
-    "wordBooks": "词书",
-    "journal": "常用短语",
-    "favorites": "收藏",
-    "todayReview": "今日复习",
-    "weakSpots": "薄弱点",
-    "settings": "设置"
+    "dashboard": "Bảng điều khiển",
+    "listen": "Nghe",
+    "speak": "Nói",
+    "pronunciation": "Phát âm",
+    "read": "Đọc",
+    "write": "Viết",
+    "library": "Thư viện",
+    "wordBooks": "Sổ từ vựng",
+    "journal": "Cụm từ hữu ích",
+    "favorites": "Yêu thích",
+    "todayReview": "Ôn tập hôm nay",
+    "weakSpots": "Điểm yếu",
+    "settings": "Cài đặt"
   },
   "logo": {
-    "subtitle": "英语学习"
+    "subtitle": "Học tiếng Anh"
   },
   "controls": {
-    "collapse": "收起"
+    "collapse": "Thu gọn"
   },
   "updater": {
-    "restartToUpdate": "重启以更新",
-    "updateAvailable": "有可用更新"
+    "restartToUpdate": "Khởi động lại để cập nhật",
+    "updateAvailable": "Có bản cập nhật"
   }
 }

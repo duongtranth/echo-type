@@ -11,23 +11,23 @@ export const LEARNING_ACTIVITIES: LearningActivity[] = [
 const prompts: Record<LearningActivity, [string, string]> = {
   comprehension: [
     'Explain the main idea in your own words. Identify one important detail and quote the exact evidence supporting it.',
-    '用自己的话解释主旨，指出一个重要细节，并引用支持它的原文依据。',
+    'Giải thích ý chính bằng lời của riêng bạn. Xác định một chi tiết quan trọng và trích dẫn nguyên văn bằng chứng hỗ trợ nó.',
   ],
   writing: [
     'Write your own short update or summary inspired by this material. Include a clear main point, supporting detail and conclusion. Do not copy the source.',
-    '围绕本课材料自主写一段更新或摘要，包含主旨、细节与结论，不要抄写原文。',
+    'Viết một đoạn cập nhật hoặc tóm tắt ngắn của riêng bạn lấy cảm hứng từ tài liệu này. Bao gồm ý chính rõ ràng, chi tiết hỗ trợ và kết luận. Không sao chép từ nguồn.',
   ],
   retelling: [
     'Hide the source, then retell its main idea and two details aloud. Record yourself and add a short summary of what you said.',
-    '隐藏原文后，口头复述主旨与两个细节。录音后简述自己说了什么。',
+    'Ẩn tài liệu gốc, sau đó kể lại ý chính và hai chi tiết bằng lời nói. Ghi âm lại và thêm một tóm tắt ngắn về những gì bạn đã nói.',
   ],
   'personal-example': [
     'Choose an expression from the source and use it in your own new situation. Explain the context.',
-    '选择原文中的一个表达，在自己的新情境中造句，并说明语境。',
+    'Chọn một cách diễn đạt từ tài liệu gốc và sử dụng nó trong tình huống mới của riêng bạn. Giải thích ngữ cảnh.',
   ],
   'sentence-pronunciation': [
     'Choose one sentence. Mark stressed words and thought groups, record it, then listen for stress, rhythm and linking. Retry after noting one change.',
-    '选择一句，标记重读词与意群，录音并回听重音、节奏和连读。记录一个改进点后重录。',
+    'Chọn một câu. Đánh dấu từ trọng âm và nhóm ý, ghi âm lại, rồi nghe để kiểm tra trọng âm, nhịp điệu và nối âm. Ghi lại một điểm cần cải thiện rồi thử lại.',
   ],
 };
 export function activityPrompt(activity: LearningActivity, zh = false) {

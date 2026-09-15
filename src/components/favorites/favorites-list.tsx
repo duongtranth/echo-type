@@ -114,7 +114,9 @@ export function FavoritesList() {
         <div className="mb-6 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
           <div className="flex items-center justify-between sm:block">
             <div>
-              <h1 className="font-[var(--font-poppins)] text-xl font-bold text-slate-900 md:text-2xl">{t.title}</h1>
+              <h1 className="font-heading text-xl font-extrabold tracking-tight text-slate-950 md:text-2xl">
+                {t.title}
+              </h1>
               <p className="mt-0.5 text-xs text-slate-500 md:text-sm">
                 {t.items.replace('{{count}}', String(totalCount))}
                 {dueCount > 0 && (

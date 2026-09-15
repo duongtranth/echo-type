@@ -148,8 +148,8 @@ export default function BookDetailPage() {
             <div className="flex items-center gap-3 flex-wrap">
               <span className="text-4xl">{book.coverEmoji}</span>
               <div>
-                <h1 className="text-2xl font-bold text-indigo-900">{book.title}</h1>
-                <p className="text-sm text-indigo-500">by {book.author}</p>
+                <h1 className="font-heading text-2xl font-extrabold tracking-tight text-indigo-950">{book.title}</h1>
+                <p className="text-sm text-slate-500">by {book.author}</p>
               </div>
             </div>
             <p className="text-indigo-600 mt-2">{book.description}</p>

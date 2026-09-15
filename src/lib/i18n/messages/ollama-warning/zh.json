@@ -1,5 +1,5 @@
 {
-  "title": "本地模型性能",
-  "description": "Ollama 模型通常比云端 API 更慢（约 5-60 秒，对比 2-5 秒）。更适合离线使用或对隐私敏感的场景。",
-  "dismiss": "关闭提示"
+  "title": "Hiệu năng mô hình cục bộ",
+  "description": "Mô hình Ollama thường phản hồi chậm hơn API đám mây (khoảng 5-60 giây so với 2-5 giây). Phù hợp cho sử dụng ngoại tuyến hoặc các tình huống nhạy cảm về quyền riêng tư.",
+  "dismiss": "Bỏ qua cảnh báo"
 }

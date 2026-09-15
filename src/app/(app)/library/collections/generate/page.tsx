@@ -27,13 +27,13 @@ import type { CollectionItem, ContentItem, Difficulty } from '@/types/content';
 const difficultyOptions: Difficulty[] = ['beginner', 'intermediate', 'advanced'];
 
 const exampleKeywords = [
-  { label: '看医生', keyword: '看医生' },
+  { label: 'Khám bệnh', keyword: 'Khám bệnh' },
   { label: 'Job interview', keyword: 'Job interview' },
-  { label: '租房子', keyword: '租房子' },
+  { label: 'Thuê nhà', keyword: 'Thuê nhà' },
   { label: 'Airport', keyword: 'Airport' },
-  { label: '网上购物', keyword: '网上购物' },
+  { label: 'Mua sắm online', keyword: 'Mua sắm online' },
   { label: 'First date', keyword: 'First date' },
-  { label: '开会', keyword: '开会' },
+  { label: 'Họp hành', keyword: 'Họp hành' },
   { label: 'Road trip', keyword: 'Road trip' },
 ];
 
@@ -55,9 +55,9 @@ interface GeneratedResult {
 const IOS_NATIVE_QA_GENERATED_RESULT: GeneratedResult = {
   collection: {
     title: 'Airport Check-in',
-    titleZh: '机场值机',
+    titleZh: 'Làm thủ tục sân bay',
     description: 'Useful English for check-in counters, baggage, and boarding questions.',
-    descriptionZh: '适合机场值机、托运行李和登机问询的实用英语。',
+    descriptionZh: 'Tiếng Anh hữu ích cho quầy làm thủ tục, hành lý và các câu hỏi khi lên máy bay.',
     scenario: 'Airport check-in and boarding',
     category: 'travel',
     difficulty: 'intermediate',
@@ -256,11 +256,11 @@ export default function GenerateCollectionPage() {
         />
       ) : (
         <div>
-          <h1 className="text-2xl font-bold font-[var(--font-poppins)] text-indigo-900 flex items-center gap-2">
+          <h1 className="font-heading text-2xl font-extrabold tracking-tight text-indigo-950 flex items-center gap-2">
             <Sparkles className="w-6 h-6 text-indigo-500" />
             AI Generate Collection
           </h1>
-          <p className="text-indigo-500 mt-1 text-sm">
+          <p className="text-slate-500 mt-1 text-sm">
             Enter a scenario keyword to generate a collection of phrases and sentences for practice.
           </p>
         </div>
@@ -285,7 +285,7 @@ export default function GenerateCollectionPage() {
             <Input
               value={keyword}
               onChange={(e) => setKeyword(e.target.value)}
-              placeholder="e.g. 看医生, ordering coffee, job interview..."
+              placeholder="e.g. khám bệnh, ordering coffee, job interview..."
               aria-label="Collection generate keyword"
               className={isIOSNativeHost ? IOS_INPUT_CLASS : 'bg-white border-indigo-200'}
               onKeyDown={(e) => {

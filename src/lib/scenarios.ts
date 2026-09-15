@@ -4,14 +4,14 @@ export const BUILTIN_SCENARIOS: Scenario[] = [
   {
     id: 'sc_coffee',
     title: 'Ordering Coffee',
-    titleZh: '点咖啡',
+    titleZh: 'Gọi cà phê',
     description: 'Practice ordering your favorite drink at a cozy coffee shop.',
-    descriptionZh: '在咖啡店练习点单',
+    descriptionZh: 'Luyện gọi đồ uống tại quán cà phê',
     icon: 'Coffee',
     category: 'daily',
     difficulty: 'beginner',
     goals: ['Greet the barista', 'Order a drink with customizations', 'Ask about the price and pay'],
-    goalsZh: ['和咖啡师打招呼', '点一杯定制饮品', '询问价格并付款'],
+    goalsZh: ['Chào hỏi nhân viên pha chế', 'Gọi một ly đồ uống theo yêu cầu riêng', 'Hỏi giá và thanh toán'],
     systemPrompt: `You are a friendly barista at a cozy coffee shop called "Sunrise Coffee". Greet the customer warmly and help them order.
 - Offer the menu when asked (espresso, latte, cappuccino, americano, mocha, tea)
 - Suggest popular items if they seem unsure
@@ -27,14 +27,14 @@ export const BUILTIN_SCENARIOS: Scenario[] = [
   {
     id: 'sc_grocery',
     title: 'Grocery Shopping',
-    titleZh: '超市购物',
+    titleZh: 'Mua sắm siêu thị',
     description: 'Navigate a grocery store, find items, and check out.',
-    descriptionZh: '在超市找商品、结账',
+    descriptionZh: 'Tìm hàng và thanh toán tại siêu thị',
     icon: 'ShoppingCart',
     category: 'daily',
     difficulty: 'beginner',
     goals: ['Ask where to find an item', 'Ask about prices or deals', 'Complete the checkout'],
-    goalsZh: ['询问商品位置', '询问价格或优惠', '完成结账'],
+    goalsZh: ['Hỏi vị trí một món hàng', 'Hỏi về giá cả hoặc khuyến mãi', 'Hoàn tất thanh toán'],
     systemPrompt: `You are a helpful grocery store employee. You're stocking shelves when a customer approaches you.
 - Help them find items (fruits, vegetables, dairy, bread, snacks, drinks)
 - Tell them about any deals or specials today
@@ -49,9 +49,9 @@ export const BUILTIN_SCENARIOS: Scenario[] = [
   {
     id: 'sc_directions',
     title: 'Asking for Directions',
-    titleZh: '问路',
+    titleZh: 'Hỏi đường',
     description: 'Ask a local for directions to find your way around.',
-    descriptionZh: '向路人问路',
+    descriptionZh: 'Hỏi đường một người dân địa phương',
     icon: 'MapPin',
     category: 'travel',
     difficulty: 'beginner',
@@ -60,7 +60,7 @@ export const BUILTIN_SCENARIOS: Scenario[] = [
       'Understand the directions given',
       'Thank them and confirm the route',
     ],
-    goalsZh: ['询问如何到达某个地方', '理解对方给的方向', '感谢并确认路线'],
+    goalsZh: ['Hỏi cách đến một địa điểm cụ thể', 'Hiểu chỉ dẫn được đưa ra', 'Cảm ơn và xác nhận lại lộ trình'],
     systemPrompt: `You are a friendly local walking down the street. A tourist stops you to ask for directions.
 - Give clear, simple directions using landmarks (turn left at the bank, go straight past the park)
 - Use basic direction words: left, right, straight, next to, across from, behind
@@ -75,14 +75,14 @@ export const BUILTIN_SCENARIOS: Scenario[] = [
   {
     id: 'sc_hotel',
     title: 'Hotel Check-in',
-    titleZh: '酒店入住',
+    titleZh: 'Nhận phòng khách sạn',
     description: 'Check into a hotel, ask about amenities and services.',
-    descriptionZh: '办理酒店入住，了解设施服务',
+    descriptionZh: 'Nhận phòng khách sạn và tìm hiểu tiện ích, dịch vụ',
     icon: 'Hotel',
     category: 'travel',
     difficulty: 'intermediate',
     goals: ['Check in with your reservation', 'Ask about hotel amenities', 'Request something for your room'],
-    goalsZh: ['凭预订办理入住', '询问酒店设施', '为房间提出需求'],
+    goalsZh: ['Nhận phòng bằng thông tin đặt trước', 'Hỏi về tiện ích khách sạn', 'Đưa ra yêu cầu cho phòng của bạn'],
     systemPrompt: `You are a professional and friendly hotel receptionist at "The Grand Hotel".
 - Greet the guest and ask for their reservation name or confirmation number
 - Confirm their booking details (room type, nights, check-out date)
@@ -98,14 +98,14 @@ export const BUILTIN_SCENARIOS: Scenario[] = [
   {
     id: 'sc_restaurant',
     title: 'Restaurant Ordering',
-    titleZh: '餐厅点餐',
+    titleZh: 'Gọi món tại nhà hàng',
     description: 'Order a meal at a restaurant, ask about the menu, and handle the bill.',
-    descriptionZh: '在餐厅点餐、询问菜单、结账',
+    descriptionZh: 'Gọi món, hỏi về thực đơn và thanh toán tại nhà hàng',
     icon: 'UtensilsCrossed',
     category: 'daily',
     difficulty: 'intermediate',
     goals: ['Ask about menu recommendations', 'Order food and drinks', 'Ask for the bill and pay'],
-    goalsZh: ['询问菜单推荐', '点餐和饮品', '要账单并付款'],
+    goalsZh: ['Hỏi món được đề xuất trong thực đơn', 'Gọi món ăn và đồ uống', 'Xin hóa đơn và thanh toán'],
     systemPrompt: `You are an experienced waiter at an Italian restaurant called "Bella Notte".
 - Welcome the guests and offer menus
 - Describe daily specials with enthusiasm
@@ -123,9 +123,9 @@ export const BUILTIN_SCENARIOS: Scenario[] = [
   {
     id: 'sc_interview',
     title: 'Job Interview',
-    titleZh: '工作面试',
+    titleZh: 'Phỏng vấn xin việc',
     description: 'Practice a professional job interview with an HR manager.',
-    descriptionZh: '和HR经理进行模拟面试',
+    descriptionZh: 'Luyện phỏng vấn xin việc chuyên nghiệp với quản lý nhân sự',
     icon: 'Briefcase',
     category: 'work',
     difficulty: 'advanced',
@@ -134,7 +134,11 @@ export const BUILTIN_SCENARIOS: Scenario[] = [
       'Answer behavioral questions',
       'Ask thoughtful questions about the role',
     ],
-    goalsZh: ['专业地自我介绍', '回答行为面试问题', '提出关于职位的深思熟虑的问题'],
+    goalsZh: [
+      'Tự giới thiệu bản thân một cách chuyên nghiệp',
+      'Trả lời các câu hỏi phỏng vấn hành vi',
+      'Đặt câu hỏi sâu sắc về vị trí ứng tuyển',
+    ],
     systemPrompt: `You are an HR manager conducting a job interview for a software developer position at a tech company.
 - Start with small talk to put the candidate at ease
 - Ask common interview questions: "Tell me about yourself", "Why are you interested in this role?", "Describe a challenging project"
@@ -151,14 +155,14 @@ export const BUILTIN_SCENARIOS: Scenario[] = [
   {
     id: 'sc_doctor',
     title: "Doctor's Appointment",
-    titleZh: '看医生',
+    titleZh: 'Khám bệnh',
     description: 'Describe your symptoms and understand medical advice.',
-    descriptionZh: '描述症状，理解医嘱',
+    descriptionZh: 'Mô tả triệu chứng và hiểu lời khuyên của bác sĩ',
     icon: 'Stethoscope',
     category: 'daily',
     difficulty: 'intermediate',
     goals: ['Describe your symptoms clearly', "Answer the doctor's questions", 'Understand the treatment plan'],
-    goalsZh: ['清楚描述症状', '回答医生的问题', '理解治疗方案'],
+    goalsZh: ['Mô tả triệu chứng rõ ràng', 'Trả lời câu hỏi của bác sĩ', 'Hiểu phác đồ điều trị'],
     systemPrompt: `You are a friendly and patient doctor at a general clinic.
 - Ask the patient what brings them in today
 - Ask follow-up questions about symptoms (when did it start, how severe, any other symptoms)
@@ -175,14 +179,14 @@ export const BUILTIN_SCENARIOS: Scenario[] = [
   {
     id: 'sc_friends',
     title: 'Making Friends',
-    titleZh: '交朋友',
+    titleZh: 'Kết bạn mới',
     description: 'Meet someone new at a party and have a casual conversation.',
-    descriptionZh: '在派对上认识新朋友',
+    descriptionZh: 'Làm quen bạn mới tại một bữa tiệc',
     icon: 'Users',
     category: 'social',
     difficulty: 'beginner',
     goals: ['Introduce yourself', 'Find common interests', 'Suggest meeting again'],
-    goalsZh: ['自我介绍', '找到共同兴趣', '提议再次见面'],
+    goalsZh: ['Tự giới thiệu bản thân', 'Tìm sở thích chung', 'Đề nghị gặp lại lần sau'],
     systemPrompt: `You are a friendly person at a house party. Someone you haven't met before comes up to talk to you.
 - Introduce yourself naturally
 - Ask about their name, what they do, hobbies
@@ -199,14 +203,14 @@ export const BUILTIN_SCENARIOS: Scenario[] = [
   {
     id: 'sc_presenting',
     title: 'Presenting Ideas',
-    titleZh: '展示想法',
+    titleZh: 'Trình bày ý tưởng',
     description: 'Present your ideas in a team meeting and handle questions.',
-    descriptionZh: '在团队会议中展示想法并回答问题',
+    descriptionZh: 'Trình bày ý tưởng trong cuộc họp nhóm và trả lời câu hỏi',
     icon: 'Presentation',
     category: 'work',
     difficulty: 'advanced',
     goals: ['Present your idea clearly', 'Handle questions and pushback', 'Reach a conclusion or next steps'],
-    goalsZh: ['清晰地展示你的想法', '处理问题和反对意见', '达成结论或下一步计划'],
+    goalsZh: ['Trình bày ý tưởng rõ ràng', 'Xử lý câu hỏi và ý kiến phản đối', 'Đạt được kết luận hoặc bước tiếp theo'],
     systemPrompt: `You are a colleague in a team meeting. The other person is about to present an idea for a new project or feature.
 - Listen to their pitch and ask clarifying questions
 - Raise reasonable concerns or suggest improvements
@@ -223,14 +227,18 @@ export const BUILTIN_SCENARIOS: Scenario[] = [
   {
     id: 'sc_airport',
     title: 'Airport & Flights',
-    titleZh: '机场与航班',
+    titleZh: 'Sân bay và chuyến bay',
     description: 'Navigate the airport — check in, go through security, and board.',
-    descriptionZh: '在机场办理值机、过安检、登机',
+    descriptionZh: 'Làm thủ tục check-in, qua an ninh và lên máy bay tại sân bay',
     icon: 'Plane',
     category: 'travel',
     difficulty: 'intermediate',
     goals: ['Check in for your flight', 'Ask about gate and boarding time', 'Handle a flight issue (delay/change)'],
-    goalsZh: ['办理航班值机', '询问登机口和登机时间', '处理航班问题（延误/变更）'],
+    goalsZh: [
+      'Làm thủ tục check-in cho chuyến bay',
+      'Hỏi về cổng và giờ lên máy bay',
+      'Xử lý vấn đề chuyến bay (trễ/đổi lịch)',
+    ],
     systemPrompt: `You are an airline check-in agent at the airport counter.
 - Greet the passenger and ask for their passport and booking reference
 - Confirm flight details (destination, departure time)

@@ -15,6 +15,15 @@ interface SelectionTranslateResponse {
   related?: RelatedData;
 }
 
+function resolveTargetLanguageName(targetLang: string): string {
+  // EchoType upstream persisted Simplified Chinese as its default translation
+  // target. In this English-Vietnamese fork, preserve the legacy stored value
+  // but translate it to Vietnamese so existing browser data migrates safely.
+  if (targetLang.toLowerCase() === 'zh-cn') return 'Vietnamese';
+  if (targetLang.toLowerCase() === 'vi') return 'Vietnamese';
+  return targetLang;
+}
+
 export async function POST(req: NextRequest) {
   try {
     const {
@@ -41,6 +50,7 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: 'Missing text/sentences or targetLang' }, { status: 400 });
     }
 
+    const targetLanguage = resolveTargetLanguageName(targetLang);
     const providerId = provider as ProviderId;
     const resolution = resolveProviderForCapability({
       capability: 'translateText',
@@ -79,7 +89,7 @@ export async function POST(req: NextRequest) {
       const numbered = sentences.map((s: string, i: number) => `${i + 1}. ${s}`).join('\n');
       const { text: result } = await generateText({
         model,
-        system: `Translate each numbered English sentence to ${targetLang}. Return ONLY a JSON array of translated strings, one per input sentence. No explanations, no numbering, just the JSON array.`,
+        system: `Translate each numbered English sentence to ${targetLanguage}. Return ONLY a JSON array of translated strings, one per input sentence. No explanations, no numbering, just the JSON array.`,
         prompt: numbered,
       });
 
@@ -117,11 +127,11 @@ export async function POST(req: NextRequest) {
     }
 
     function buildSelectionTranslatePrompt(
-      targetLang: string,
+      targetLanguage: string,
       selectionType?: string,
       includeRelated?: boolean,
     ): string {
-      const base = `Translate the following English selection to ${targetLang}.`;
+      const base = `Translate the following English selection to ${targetLanguage}.`;
       const jsonInstruction = `Return a JSON object with these fields:
 - "itemTranslation": the translation of the selected word, phrase, or sentence
 - "exampleSentence": a clean English example sentence or context sentence, if one is available
@@ -143,7 +153,7 @@ export async function POST(req: NextRequest) {
     }
 
     if (selectionType || context || includeRelated) {
-      const system = buildSelectionTranslatePrompt(targetLang!, selectionType, includeRelated);
+      const system = buildSelectionTranslatePrompt(targetLanguage, selectionType, includeRelated);
       const prompt = context ? `${text ?? ''}\n\nContext: ${context}` : (text ?? '');
       const { text: result } = await generateText({ model, system, prompt });
 
@@ -180,7 +190,7 @@ export async function POST(req: NextRequest) {
     // Single text fallback (original behavior)
     const { text: translation } = await generateText({
       model,
-      system: `Translate the following English text to ${targetLang}. Return only the translation, no explanations.`,
+      system: `Translate the following English text to ${targetLanguage}. Return only the translation, no explanations.`,
       prompt: text ?? '',
     });
 

@@ -6,16 +6,18 @@ export type LearningSection =
   | 'notes'
   | 'conversation'
   | 'pronunciation'
+  | 'exams'
   | 'settings';
 
 export const PRIMARY_LEARNING_LINKS = [
-  { section: 'today', href: '/dashboard', en: 'Today', zh: '今日学习' },
-  { section: 'courses', href: '/learn', en: 'My courses', zh: '我的课程' },
-  { section: 'materials', href: '/library', en: 'Learning materials', zh: '学习资料' },
-  { section: 'review', href: '/review', en: 'Review center', zh: '复习中心' },
-  { section: 'notes', href: '/favorites', en: 'My notes', zh: '我的笔记' },
-  { section: 'conversation', href: '/speak', en: 'AI conversation', zh: 'AI 对话' },
-  { section: 'pronunciation', href: '/pronunciation', en: 'Pronunciation', zh: '发音训练' },
+  { section: 'today', href: '/dashboard', en: 'Today', zh: 'Hôm nay' },
+  { section: 'courses', href: '/learn', en: 'My courses', zh: 'Khóa học của tôi' },
+  { section: 'materials', href: '/library', en: 'Learning materials', zh: 'Tài liệu học' },
+  { section: 'review', href: '/review', en: 'Review center', zh: 'Trung tâm ôn tập' },
+  { section: 'notes', href: '/favorites', en: 'My notes', zh: 'Ghi chú của tôi' },
+  { section: 'conversation', href: '/speak', en: 'AI conversation', zh: 'Hội thoại AI' },
+  { section: 'pronunciation', href: '/pronunciation', en: 'Pronunciation', zh: 'Luyện phát âm' },
+  { section: 'exams', href: '/exams', en: 'IELTS & TOEIC', zh: 'Luyện IELTS & TOEIC' },
 ] as const;
 
 export function withinRoute(path: string, root: string): boolean {

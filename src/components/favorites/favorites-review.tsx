@@ -24,6 +24,7 @@ import { previewRatings } from '@/lib/fsrs';
 import { detectIOSNativeHost, reportNativeQAState } from '@/lib/tauri';
 import { cn } from '@/lib/utils';
 import { useFavoriteStore } from '@/stores/favorite-store';
+import { useLanguageStore } from '@/stores/language-store';
 
 export function FavoritesReview() {
   return (
@@ -46,6 +47,8 @@ function FavoritesReviewRoute() {
 
 function FavoritesReviewSession({ targetId }: { targetId: string | null }) {
   const isIOSNativeHost = detectIOSNativeHost();
+  const zh = useLanguageStore((s) => s.interfaceLanguage) === 'zh';
+  const t = (en: string, cn: string) => (zh ? cn : en);
   const gradeReview = useFavoriteStore((s) => s.gradeReview);
   const isLoaded = useFavoriteStore((s) => s.isLoaded);
   const [revealed, setRevealed] = useState(false);
@@ -127,12 +130,14 @@ function FavoritesReviewSession({ targetId }: { targetId: string | null }) {
           <div className="max-w-lg mx-auto text-center py-20">
             <div className="text-4xl mb-4">&#127881;</div>
             <p className="text-lg font-medium text-slate-700">
-              {completedCount > 0 ? `已完成 ${completedCount} 项复习！` : '没有待复习的收藏'}
+              {completedCount > 0
+                ? t(`Completed ${completedCount} reviews!`, `Đã hoàn thành ${completedCount} lượt ôn tập!`)
+                : t('No favorites due for review', 'Không có mục yêu thích nào cần ôn tập')}
             </p>
             <Link href="/favorites">
               <Button variant="outline" className="mt-4 gap-1.5">
                 <ArrowLeft className="h-4 w-4" />
-                返回收藏列表
+                {t('Back to favorites', 'Quay lại danh sách yêu thích')}
               </Button>
             </Link>
           </div>
@@ -159,7 +164,10 @@ function FavoritesReviewSession({ targetId }: { targetId: string | null }) {
       setCompletedCount((c) => c + 1);
       setRevealed(false);
     } catch {
-      if (isCurrent()) setGradeError('Review could not be saved. Please try again. / 复习保存失败，请重试。');
+      if (isCurrent())
+        setGradeError(
+          t('Review could not be saved. Please try again.', 'Không thể lưu kết quả ôn tập. Vui lòng thử lại.'),
+        );
     } finally {
       gradingLock.current = false;
       if (isCurrent()) setGrading(false);
@@ -377,7 +385,9 @@ function FavoritesReviewSession({ targetId }: { targetId: string | null }) {
                 {item.context && <p className="text-xs text-slate-400 mt-2">{item.context}</p>}
               </div>
             ) : (
-              <p className="text-sm text-slate-400 mt-4">点击翻转查看翻译</p>
+              <p className="text-sm text-slate-400 mt-4">
+                {t('Tap to flip and see the translation', 'Chạm để lật và xem bản dịch')}
+              </p>
             )}
           </div>
 

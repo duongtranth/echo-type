@@ -14,6 +14,7 @@ import { Input } from '@/components/ui/input';
 import { detectIOSNativeHost } from '@/lib/tauri';
 import { cn } from '@/lib/utils';
 import { useFavoriteStore } from '@/stores/favorite-store';
+import { useLanguageStore } from '@/stores/language-store';
 
 interface Props {
   open: boolean;
@@ -24,6 +25,8 @@ const EMOJI_OPTIONS = ['📚', '🎯', '💼', '🌍', '🔬', '🎨', '🏠', '
 
 export function FolderManageDialog({ open, onOpenChange }: Props) {
   const isIOSNativeHost = detectIOSNativeHost();
+  const zh = useLanguageStore((s) => s.interfaceLanguage) === 'zh';
+  const t = (en: string, vi: string) => (zh ? vi : en);
   const folders = useFavoriteStore((s) => s.folders);
   const addFolder = useFavoriteStore((s) => s.addFolder);
   const updateFolder = useFavoriteStore((s) => s.updateFolder);
@@ -48,7 +51,15 @@ export function FolderManageDialog({ open, onOpenChange }: Props) {
   };
 
   const handleDelete = async (id: string) => {
-    if (!confirm('删除后，该收藏夹中的内容将移至默认收藏。确定删除？')) return;
+    if (
+      !confirm(
+        t(
+          'Items in this folder will move to Default favorites after deletion. Delete anyway?',
+          'Sau khi xóa, nội dung trong thư mục này sẽ chuyển vào Yêu thích mặc định. Bạn có chắc muốn xóa?',
+        ),
+      )
+    )
+      return;
     await removeFolder(id);
   };
 
@@ -65,7 +76,7 @@ export function FolderManageDialog({ open, onOpenChange }: Props) {
           <DialogTitle
             className={isIOSNativeHost ? 'text-xl font-semibold tracking-[-0.03em] text-slate-950' : undefined}
           >
-            管理收藏夹
+            {t('Manage folders', 'Quản lý thư mục')}
           </DialogTitle>
         </DialogHeader>
 
@@ -92,7 +103,7 @@ export function FolderManageDialog({ open, onOpenChange }: Props) {
             ))}
           </select>
           <Input
-            placeholder="收藏夹名称"
+            placeholder={t('Folder name', 'Tên thư mục')}
             data-testid="favorites-folder-name-input"
             value={newName}
             onChange={(e) => setNewName(e.target.value)}
@@ -108,7 +119,7 @@ export function FolderManageDialog({ open, onOpenChange }: Props) {
               isIOSNativeHost ? 'h-10 rounded-full bg-indigo-600 px-4 text-white hover:bg-indigo-700' : undefined
             }
           >
-            创建
+            {t('Create', 'Tạo')}
           </Button>
         </div>
 

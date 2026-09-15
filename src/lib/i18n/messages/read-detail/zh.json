@@ -1,35 +1,35 @@
 {
   "notFound": {
-    "title": "内容未找到",
-    "description": "该内容可能已被删除，或链接无效。",
-    "goToLibrary": "前往内容库"
+    "title": "Không tìm thấy nội dung",
+    "description": "Nội dung này có thể đã bị xóa hoặc liên kết không hợp lệ.",
+    "goToLibrary": "Đi tới Thư viện"
   },
   "header": {
-    "subtitle": "朗读模式"
+    "subtitle": "Chế độ đọc to"
   },
   "content": {
-    "referenceText": "参考文本",
-    "stop": "停止",
-    "listenAlong": "跟读"
+    "referenceText": "Văn bản tham chiếu",
+    "stop": "Dừng",
+    "listenAlong": "Nghe theo"
   },
   "recording": {
-    "reset": "重置",
-    "processingSpeech": "正在处理语音...",
-    "speechNotSupported": "当前浏览器不支持语音识别。",
-    "failedToStart": "录音启动失败：{{error}}"
+    "reset": "Đặt lại",
+    "processingSpeech": "Đang xử lý giọng nói...",
+    "speechNotSupported": "Trình duyệt này không hỗ trợ nhận dạng giọng nói.",
+    "failedToStart": "Không thể bắt đầu ghi âm: {{error}}"
   },
   "results": {
-    "title": "你的成绩",
-    "pronunciationFeedback": "发音反馈",
-    "analyzingPronunciation": "正在分析发音...",
-    "rawTranscript": "原始语音文本"
+    "title": "Kết quả của bạn",
+    "pronunciationFeedback": "Phản hồi phát âm",
+    "analyzingPronunciation": "Đang phân tích phát âm...",
+    "rawTranscript": "Bản ghi thô"
   },
   "errors": {
-    "ttsFailed": "语音合成失败，请重试或切换其他语音源。"
+    "ttsFailed": "Tổng hợp giọng nói thất bại. Vui lòng thử lại hoặc chuyển sang nguồn giọng đọc khác."
   },
   "a11y": {
-    "processingSpeech": "正在处理语音",
-    "stopRecording": "停止录音",
-    "startRecording": "开始录音"
+    "processingSpeech": "Đang xử lý giọng nói",
+    "stopRecording": "Dừng ghi âm",
+    "startRecording": "Bắt đầu ghi âm"
   }
 }

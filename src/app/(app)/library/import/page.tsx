@@ -136,8 +136,8 @@ export default function ImportPage() {
             </Button>
           </Link>
           <div>
-            <h1 className="font-[var(--font-poppins)] text-3xl font-bold text-indigo-900">{ip.title}</h1>
-            <p className="mt-1 text-indigo-600">{ip.subtitle}</p>
+            <h1 className="font-heading text-3xl font-extrabold tracking-tight text-indigo-950">{ip.title}</h1>
+            <p className="mt-1 text-slate-500">{ip.subtitle}</p>
           </div>
         </div>
       )}

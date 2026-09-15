@@ -259,7 +259,7 @@ export default function WordBookDetailPage() {
             </div>
             <div className="flex-1 min-w-0">
               <div className="flex items-center gap-2 flex-wrap">
-                <h1 className="text-2xl font-bold text-indigo-900">{book.nameEn}</h1>
+                <h1 className="font-heading text-2xl font-extrabold tracking-tight text-indigo-950">{book.nameEn}</h1>
                 {diff && (
                   <Badge className={diff} variant="secondary">
                     {book.difficulty}
