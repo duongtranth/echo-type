@@ -2,9 +2,9 @@
 
 import { AlertCircle, Loader2, Sparkles } from 'lucide-react';
 import { useState } from 'react';
+import { Bar, BarChart, Cell, LabelList, ResponsiveContainer, XAxis, YAxis } from 'recharts';
 import { TextHighlighter } from '@/components/fancy/text-highlighter';
 import { NumberTicker } from '@/components/magicui/number-ticker';
-import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import { saveEssayGrading } from '@/lib/exams/repository';
@@ -29,6 +29,12 @@ function bandColorClass(band: number): string {
   if (band >= 7) return 'text-emerald-600 dark:text-emerald-400';
   if (band >= 5) return 'text-primary';
   return 'text-destructive';
+}
+
+function bandFillColor(band: number): string {
+  if (band >= 7) return 'var(--success)';
+  if (band >= 5) return 'var(--primary)';
+  return 'var(--destructive)';
 }
 
 export function EssayGradingPanel({
@@ -114,18 +120,42 @@ export function EssayGradingPanel({
       </div>
 
       {grading.criteria.length > 0 && (
-        <div className="space-y-2">
-          {grading.criteria.map((criterion) => (
-            <div key={criterion.criterion} className="flex items-start justify-between gap-3 text-sm">
-              <div>
-                <p className="font-medium text-foreground">{criterion.criterion}</p>
-                <p className="text-xs text-muted-foreground">{criterion.feedback}</p>
-              </div>
-              <Badge variant="outline" className={bandColorClass(criterion.score)}>
-                {criterion.score.toFixed(1)}
-              </Badge>
-            </div>
-          ))}
+        <div className="space-y-3">
+          <div style={{ height: grading.criteria.length * 36 + 16 }}>
+            <ResponsiveContainer width="100%" height="100%">
+              <BarChart data={grading.criteria} layout="vertical" margin={{ top: 4, right: 28, bottom: 4, left: 4 }}>
+                <XAxis type="number" domain={[0, 9]} ticks={[0, 3, 6, 9]} tick={{ fontSize: 11 }} />
+                <YAxis
+                  type="category"
+                  dataKey="criterion"
+                  width={130}
+                  tick={{ fontSize: 12 }}
+                  axisLine={false}
+                  tickLine={false}
+                />
+                <Bar dataKey="score" radius={[0, 4, 4, 0]} barSize={14}>
+                  {grading.criteria.map((criterion) => (
+                    <Cell key={criterion.criterion} fill={bandFillColor(criterion.score)} />
+                  ))}
+                  <LabelList
+                    dataKey="score"
+                    position="right"
+                    formatter={(value: unknown) => (typeof value === 'number' ? value.toFixed(1) : String(value ?? ''))}
+                    style={{ fontSize: 12, fontWeight: 600 }}
+                  />
+                </Bar>
+              </BarChart>
+            </ResponsiveContainer>
+          </div>
+
+          <div className="space-y-2">
+            {grading.criteria.map((criterion) => (
+              <p key={criterion.criterion} className="text-xs text-muted-foreground">
+                <span className={cn('font-medium', bandColorClass(criterion.score))}>{criterion.criterion}:</span>{' '}
+                {criterion.feedback}
+              </p>
+            ))}
+          </div>
         </div>
       )}
 
