@@ -2,6 +2,7 @@
 
 import { BookOpen, ChevronDown, ChevronUp, ExternalLink, Loader2, Sparkles } from 'lucide-react';
 import { useEffect, useMemo, useState } from 'react';
+import { LookupSentence } from '@/components/shared/lookup-sentence';
 import { useWordDictionary, type WordMeaning } from '@/hooks/use-word-dictionary';
 import { formatInterval } from '@/lib/fsrs';
 import { createWordSenseId, getWordSenseProgressMap, setWordSenseStatus } from '@/lib/word-sense-progress';
@@ -273,8 +274,21 @@ export function WordDictionaryInfo({ word, targetLang, module, contextText }: Wo
           </p>
           <p className="mt-1 text-xs leading-5 text-slate-500">{contextMeaning.definitionEnglish}</p>
           {contextText?.trim() && (
-            <p className="mt-2 text-xs italic leading-5 text-indigo-600">“{contextText.trim()}”</p>
+            <p className="mt-2 text-xs italic leading-5 text-indigo-600">
+              “<LookupSentence sentence={contextText.trim()} targetLang={targetLang} excludeWord={word} />”
+            </p>
           )}
+          {contextMeaning.examples
+            .filter((example) => example.text.trim() !== contextText?.trim())
+            .slice(0, 2)
+            .map((example) => (
+              <p key={example.text} className="mt-1.5 text-xs leading-5 text-slate-500 italic">
+                <LookupSentence sentence={example.text} targetLang={targetLang} excludeWord={word} />
+                {example.translation && (
+                  <span className="ml-1 text-indigo-500 not-italic">— {example.translation}</span>
+                )}
+              </p>
+            ))}
           <SenseStatusControls
             progress={contextProgress.progress}
             saving={savingSenseId === contextProgress.senseId}

@@ -183,7 +183,7 @@ async function fetchWiktionary(word: string): Promise<ExplorerSense[]> {
         senses.push({
           pos,
           definition: cleaned,
-          examples: unique((definition.examples ?? []).map(cleanHtml), 2),
+          examples: unique((definition.examples ?? []).map(cleanHtml), 3),
           synonyms: [],
           antonyms: [],
         });

@@ -243,7 +243,7 @@ async function translateSenses(
   const texts: string[] = [];
   const layout = senses.map((sense) => {
     const definitionIndex = texts.push(sense.definition) - 1;
-    const exampleIndexes = sense.examples.slice(0, 2).map((example) => texts.push(example) - 1);
+    const exampleIndexes = sense.examples.slice(0, 3).map((example) => texts.push(example) - 1);
     return { definitionIndex, exampleIndexes };
   });
   const translated = await fetchBatchTranslations(texts, targetLang);
