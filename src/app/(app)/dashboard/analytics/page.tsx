@@ -11,7 +11,8 @@ import {
   IOSPageHeader,
 } from '@/components/shared/ios-native-ui';
 import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Card } from '@/components/ui/card';
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { useAnalytics } from '@/hooks/use-analytics';
 import { useI18n } from '@/lib/i18n/use-i18n';
 import { detectIOSNativeHost, nativeHaptic, reportNativeQAState } from '@/lib/tauri';
@@ -93,25 +94,21 @@ export default function AnalyticsPage() {
         .replace('{{count}}', String(data.streak.current))
         .replace('{{unit}}', formatDayUnit(data.streak.current)),
       icon: Flame,
-      accent: 'border-l-orange-400',
     },
     {
       label: messages.page.stats.totalSessions,
       value: data.totalSessions,
       icon: TrendingUp,
-      accent: 'border-l-indigo-400',
     },
     {
       label: messages.page.stats.avgAccuracy,
       value: `${data.avgAccuracy}%`,
       icon: Target,
-      accent: 'border-l-emerald-400',
     },
     {
       label: messages.page.stats.avgWpm,
       value: data.avgWpm,
       icon: PenTool,
-      accent: 'border-l-purple-400',
     },
   ];
 
@@ -162,15 +159,10 @@ export default function AnalyticsPage() {
         </div>
       )}
 
-      {/* Stat cards */}
-      <div
-        className={cn(
-          'grid gap-4',
-          isIOSNativeHost ? 'grid-cols-1 sm:grid-cols-2 md:grid-cols-4' : 'grid-cols-2 md:grid-cols-4',
-        )}
-      >
-        {statCards.map(({ label, value, icon: Icon, accent }) =>
-          isIOSNativeHost ? (
+      {/* Stat summary */}
+      {isIOSNativeHost ? (
+        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 md:grid-cols-4">
+          {statCards.map(({ label, value, icon: Icon }) => (
             <div
               key={label}
               data-testid={`analytics-stat-${label.toLowerCase().replace(/\s+/g, '-')}`}
@@ -189,26 +181,40 @@ export default function AnalyticsPage() {
                 </p>
               )}
             </div>
-          ) : (
-            <Card key={label} className={`bg-white border-slate-100 shadow-sm border-l-3 ${accent}`}>
-              <CardHeader className="flex flex-row items-center justify-between pb-2">
-                <CardTitle className="text-sm font-medium text-indigo-600">{label}</CardTitle>
-                <Icon className="w-4 h-4 text-indigo-400" />
-              </CardHeader>
-              <CardContent>
-                <div className="text-2xl font-bold text-indigo-900">{value}</div>
-                {label === messages.page.stats.streak && data.streak.longest > 0 && (
-                  <p className="text-xs text-indigo-400 mt-1">
-                    {messages.page.stats.longest
-                      .replace('{{count}}', String(data.streak.longest))
-                      .replace('{{unit}}', formatDayUnit(data.streak.longest))}
-                  </p>
-                )}
-              </CardContent>
-            </Card>
-          ),
-        )}
-      </div>
+          ))}
+        </div>
+      ) : (
+        <Card className="border-slate-100 bg-white p-0 shadow-sm">
+          <Table>
+            <TableHeader>
+              <TableRow className="border-slate-100 hover:bg-transparent">
+                <TableHead className="text-indigo-400">Chỉ số</TableHead>
+                <TableHead className="text-right text-indigo-400">Giá trị</TableHead>
+              </TableRow>
+            </TableHeader>
+            <TableBody>
+              {statCards.map(({ label, value, icon: Icon }) => (
+                <TableRow key={label} className="border-slate-100">
+                  <TableCell>
+                    <div className="flex items-center gap-2 font-medium text-indigo-600">
+                      <Icon className="h-4 w-4 text-indigo-400" />
+                      {label}
+                    </div>
+                    {label === messages.page.stats.streak && data.streak.longest > 0 && (
+                      <p className="mt-1 text-xs font-normal text-indigo-400">
+                        {messages.page.stats.longest
+                          .replace('{{count}}', String(data.streak.longest))
+                          .replace('{{unit}}', formatDayUnit(data.streak.longest))}
+                      </p>
+                    )}
+                  </TableCell>
+                  <TableCell className="text-right text-xl font-bold text-indigo-900">{value}</TableCell>
+                </TableRow>
+              ))}
+            </TableBody>
+          </Table>
+        </Card>
+      )}
 
       {/* Heatmap */}
       <div
