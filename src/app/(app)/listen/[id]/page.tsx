@@ -1265,6 +1265,7 @@ export default function ListenDetailPage() {
                   content.text,
                   translationDisplayState?.sentenceTranslations,
                 )}
+                lookupTargetLang={targetLang}
               />
               {translationDisplayState && (
                 <TranslationDisplay

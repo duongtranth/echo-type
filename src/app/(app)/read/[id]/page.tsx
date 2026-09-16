@@ -1154,6 +1154,7 @@ export default function ReadDetailPage() {
                   onWordClick={handleReadAloudWordClick}
                   showTranslation={showTranslation}
                   sentenceTranslations={readAloudSentenceTranslations}
+                  lookupTargetLang={targetLang}
                 />
               ) : (
                 <FormattedContentText
@@ -1162,6 +1163,7 @@ export default function ReadDetailPage() {
                   titleClassName="text-2xl font-semibold text-indigo-900 leading-tight"
                   labelClassName="text-xs font-semibold tracking-[0.18em] text-indigo-400"
                   quoteClassName="border-l-2 border-indigo-200 pl-4 text-lg italic leading-relaxed text-indigo-700"
+                  lookupTargetLang={targetLang}
                 />
               )}
               {showTranslation && translationLoading && (

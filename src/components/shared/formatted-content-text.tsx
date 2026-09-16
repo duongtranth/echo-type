@@ -1,3 +1,4 @@
+import { LookupSentence } from '@/components/shared/lookup-sentence';
 import { splitContentBlocks } from '@/lib/content-format';
 import { cn } from '@/lib/utils';
 
@@ -8,6 +9,8 @@ interface FormattedContentTextProps {
   titleClassName?: string;
   labelClassName?: string;
   quoteClassName?: string;
+  /** When set, every word renders as a Cambridge/Collins-style hover-to-define lookup. */
+  lookupTargetLang?: string;
 }
 
 export function FormattedContentText({
@@ -17,6 +20,7 @@ export function FormattedContentText({
   titleClassName,
   labelClassName,
   quoteClassName,
+  lookupTargetLang,
 }: FormattedContentTextProps) {
   const blocks = splitContentBlocks(text);
 
@@ -33,7 +37,7 @@ export function FormattedContentText({
             block.kind === 'quote' && quoteClassName,
           )}
         >
-          {block.text}
+          {lookupTargetLang ? <LookupSentence sentence={block.text} targetLang={lookupTargetLang} /> : block.text}
         </div>
       ))}
     </div>

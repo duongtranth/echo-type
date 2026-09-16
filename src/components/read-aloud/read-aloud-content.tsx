@@ -1,6 +1,8 @@
 'use client';
 
-import { useCallback, useEffect, useRef } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
+import { WordLookupContent } from '@/components/shared/word-lookup';
+import { HoverCard, HoverCardContent, HoverCardTrigger } from '@/components/ui/hover-card';
 import { type ContentBlock, splitContentBlocks } from '@/lib/content-format';
 import { cn } from '@/lib/utils';
 import { useReadAloudStore } from '@/stores/read-aloud-store';
@@ -10,6 +12,12 @@ interface ReadAloudContentProps {
   onWordClick?: (word: string) => void;
   showTranslation?: boolean;
   sentenceTranslations?: Array<{ startWordIndex: number; endWordIndex: number; translation: string }> | null;
+  /** When set, hovering any word shows a Cambridge/Collins-style dictionary popup. */
+  lookupTargetLang?: string;
+}
+
+function cleanLookupWord(rawWord: string): string {
+  return rawWord.replace(/[^A-Za-z'-]/g, '');
 }
 
 function SelectableWord({
@@ -20,6 +28,7 @@ function SelectableWord({
   sentenceIndex,
   isPlaying,
   onClick,
+  lookupTargetLang,
 }: {
   word: string;
   globalIndex: number;
@@ -28,8 +37,10 @@ function SelectableWord({
   sentenceIndex: number;
   isPlaying: boolean;
   onClick?: (word: string) => void;
+  lookupTargetLang?: string;
 }) {
   const ref = useRef<HTMLSpanElement>(null);
+  const [lookupOpen, setLookupOpen] = useState(false);
   const isCurrent = currentWordIndex >= 0 && globalIndex === currentWordIndex;
   const isRead = currentWordIndex >= 0 && globalIndex < currentWordIndex;
   const isActiveSentence = currentSentenceIndex >= 0 && sentenceIndex === currentSentenceIndex;
@@ -40,7 +51,7 @@ function SelectableWord({
     }
   }, [isCurrent, isPlaying]);
 
-  return (
+  const wordSpan = (
     <span
       ref={ref}
       role="button"
@@ -75,6 +86,18 @@ function SelectableWord({
       {word}
     </span>
   );
+
+  const cleanWord = lookupTargetLang ? cleanLookupWord(word) : '';
+  if (!lookupTargetLang || !cleanWord) return wordSpan;
+
+  return (
+    <HoverCard open={lookupOpen} onOpenChange={setLookupOpen} openDelay={250} closeDelay={100}>
+      <HoverCardTrigger asChild>{wordSpan}</HoverCardTrigger>
+      <HoverCardContent className="p-4">
+        <WordLookupContent word={cleanWord.toLowerCase()} targetLang={lookupTargetLang} enabled={lookupOpen} />
+      </HoverCardContent>
+    </HoverCard>
+  );
 }
 
 function SentenceBlock({
@@ -85,6 +108,7 @@ function SentenceBlock({
   getSentenceIndex,
   onWordClick,
   translations,
+  lookupTargetLang,
 }: {
   block: ContentBlock;
   currentSentenceIndex: number;
@@ -93,6 +117,7 @@ function SentenceBlock({
   getSentenceIndex: (globalWordIndex: number) => number;
   onWordClick?: (word: string) => void;
   translations: Map<number, string>;
+  lookupTargetLang?: string;
 }) {
   return (
     <div>
@@ -121,6 +146,7 @@ function SentenceBlock({
                   sentenceIndex={wordSentenceIndex}
                   isPlaying={isPlaying}
                   onClick={onWordClick}
+                  lookupTargetLang={lookupTargetLang}
                 />
                 {localIndex < block.words.length - 1 ? ' ' : null}
                 {translations.has(globalIndex) && (
@@ -140,7 +166,13 @@ function SentenceBlock({
   );
 }
 
-export function ReadAloudContent({ text, onWordClick, showTranslation, sentenceTranslations }: ReadAloudContentProps) {
+export function ReadAloudContent({
+  text,
+  onWordClick,
+  showTranslation,
+  sentenceTranslations,
+  lookupTargetLang,
+}: ReadAloudContentProps) {
   const currentWordIndex = useReadAloudStore((s) => s.currentWordIndex);
   const currentSentenceIndex = useReadAloudStore((s) => s.currentSentenceIndex);
   const isPlaying = useReadAloudStore((s) => s.isPlaying);
@@ -172,6 +204,7 @@ export function ReadAloudContent({ text, onWordClick, showTranslation, sentenceT
             getSentenceIndex={getSentenceIndex}
             onWordClick={onWordClick}
             translations={translations}
+            lookupTargetLang={lookupTargetLang}
           />
         );
       })}
