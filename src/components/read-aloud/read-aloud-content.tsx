@@ -3,6 +3,7 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { WordLookupContent } from '@/components/shared/word-lookup';
 import { HoverCard, HoverCardContent, HoverCardTrigger } from '@/components/ui/hover-card';
+import { useHasHover } from '@/hooks/use-has-hover';
 import { type ContentBlock, splitContentBlocks } from '@/lib/content-format';
 import { cn } from '@/lib/utils';
 import { useReadAloudStore } from '@/stores/read-aloud-store';
@@ -41,6 +42,7 @@ function SelectableWord({
 }) {
   const ref = useRef<HTMLSpanElement>(null);
   const [lookupOpen, setLookupOpen] = useState(false);
+  const hasHover = useHasHover();
   const isCurrent = currentWordIndex >= 0 && globalIndex === currentWordIndex;
   const isRead = currentWordIndex >= 0 && globalIndex < currentWordIndex;
   const isActiveSentence = currentSentenceIndex >= 0 && sentenceIndex === currentSentenceIndex;
@@ -88,7 +90,9 @@ function SelectableWord({
   );
 
   const cleanWord = lookupTargetLang ? cleanLookupWord(word) : '';
-  if (!lookupTargetLang || !cleanWord) return wordSpan;
+  // Skip the lookup wrapper on touch-only devices: HoverCardTrigger calls preventDefault()
+  // on touchstart, which would risk breaking the existing tap-to-seek gesture below.
+  if (!lookupTargetLang || !cleanWord || !hasHover) return wordSpan;
 
   return (
     <HoverCard open={lookupOpen} onOpenChange={setLookupOpen} openDelay={250} closeDelay={100}>

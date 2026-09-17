@@ -4,6 +4,8 @@ import { Loader2, Volume2 } from 'lucide-react';
 import type { ReactNode } from 'react';
 import { useState } from 'react';
 import { HoverCard, HoverCardContent, HoverCardTrigger } from '@/components/ui/hover-card';
+import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
+import { useHasHover } from '@/hooks/use-has-hover';
 import { useTTS } from '@/hooks/use-tts';
 import { useWordDictionary } from '@/hooks/use-word-dictionary';
 import { cn } from '@/lib/utils';
@@ -110,18 +112,31 @@ interface WordLookupProps {
  */
 export function WordLookup({ word, contextText, targetLang, children, className }: WordLookupProps) {
   const [open, setOpen] = useState(false);
+  const hasHover = useHasHover();
+  const triggerClassName = cn(
+    'cursor-help rounded-sm border-b border-dotted border-indigo-300 transition-colors hover:bg-indigo-50 hover:text-indigo-700',
+    className,
+  );
+
+  // Touch devices have no real hover concept, and Radix's HoverCard deliberately ignores touch
+  // input — fall back to a tap-driven Popover so the lookup stays reachable on phones/tablets.
+  if (!hasHover) {
+    return (
+      <Popover open={open} onOpenChange={setOpen}>
+        <PopoverTrigger asChild>
+          <span className={triggerClassName}>{children}</span>
+        </PopoverTrigger>
+        <PopoverContent className="w-72 p-4">
+          <WordLookupContent word={word} contextText={contextText} targetLang={targetLang} enabled={open} />
+        </PopoverContent>
+      </Popover>
+    );
+  }
 
   return (
     <HoverCard open={open} onOpenChange={setOpen} openDelay={200} closeDelay={100}>
       <HoverCardTrigger asChild>
-        <span
-          className={cn(
-            'cursor-help rounded-sm border-b border-dotted border-indigo-300 transition-colors hover:bg-indigo-50 hover:text-indigo-700',
-            className,
-          )}
-        >
-          {children}
-        </span>
+        <span className={triggerClassName}>{children}</span>
       </HoverCardTrigger>
       <HoverCardContent className="p-4">
         <WordLookupContent word={word} contextText={contextText} targetLang={targetLang} enabled={open} />
