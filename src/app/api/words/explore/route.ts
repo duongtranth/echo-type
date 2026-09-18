@@ -52,7 +52,22 @@ interface WordFamilyItem {
   pos: string[];
 }
 
+interface RealWorldExample {
+  text: string;
+  translationVi: string;
+}
+
+interface TatoebaSentence {
+  text?: string;
+  translations?: Array<{ text?: string }>;
+}
+
+interface TatoebaResponse {
+  data?: TatoebaSentence[];
+}
+
 const DATAMUSE_BASE = 'https://api.datamuse.com/words';
+const TATOEBA_BASE = 'https://api.tatoeba.org/v1/sentences';
 const POS_TAGS = new Set(['n', 'v', 'adj', 'adv']);
 const IRREGULAR_FORMS: Record<string, string[]> = {
   be: ['am', 'is', 'are', 'was', 'were', 'been', 'being'],
@@ -227,6 +242,36 @@ async function fetchDatamuse(params: Record<string, string>): Promise<DatamuseWo
   }
 }
 
+async function fetchTatoebaExamples(word: string, limit = 3): Promise<RealWorldExample[]> {
+  try {
+    const url = new URL(TATOEBA_BASE);
+    url.searchParams.set('lang', 'eng');
+    url.searchParams.set('q', word);
+    url.searchParams.set('trans:lang', 'vie');
+    url.searchParams.set('showtrans:lang', 'vie');
+    url.searchParams.set('sort', 'relevance');
+    url.searchParams.set('limit', String(limit));
+
+    const response = await fetch(url, { signal: AbortSignal.timeout(6000), next: { revalidate: 86400 } });
+    if (!response.ok) return [];
+
+    const payload = (await response.json()) as TatoebaResponse;
+    if (!Array.isArray(payload.data)) return [];
+
+    const results: RealWorldExample[] = [];
+    for (const sentence of payload.data) {
+      const text = sentence.text?.trim();
+      const translationVi = sentence.translations?.[0]?.text?.trim();
+      if (!text || !translationVi) continue;
+      results.push({ text, translationVi });
+      if (results.length >= limit) break;
+    }
+    return results;
+  } catch {
+    return [];
+  }
+}
+
 function normalizeWordToken(value: string): string {
   return value.toLowerCase().replace(/[^a-z'-]/g, '');
 }
@@ -319,7 +364,11 @@ export async function GET(request: Request) {
     return Response.json({ error: 'A single English word is required.' }, { status: 400 });
   }
 
-  const [dictionary, wiktionarySenses] = await Promise.all([fetchFreeDictionary(word), fetchWiktionary(word)]);
+  const [dictionary, wiktionarySenses, realWorldExamples] = await Promise.all([
+    fetchFreeDictionary(word),
+    fetchWiktionary(word),
+    fetchTatoebaExamples(word),
+  ]);
   const senses = mergeSenses(dictionary.senses, wiktionarySenses);
   const primaryPos = senses[0]?.pos.toLowerCase() ?? '';
   const window = contextWindow(word, context);
@@ -366,6 +415,7 @@ export async function GET(request: Request) {
       collocations: buildCollocations(word, followers, predecessors, adjectiveNouns, nounAdjectives),
       wordFamily: mapFamily(family, word),
       contextualTerms: mapWords(contextualTerms, 16),
+      realWorldExamples,
       source,
       sourceUrl,
     },

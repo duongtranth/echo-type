@@ -33,7 +33,12 @@ interface WordLookupContentProps {
 /** The fetched dictionary body shown inside a lookup popup. No wrapper/trigger of its own. */
 export function WordLookupContent({ word, contextText, targetLang, enabled }: WordLookupContentProps) {
   const { speak } = useTTS();
-  const { phonetic, meanings, translation, isLoading } = useWordDictionary(word, targetLang, enabled, contextText);
+  const { phonetic, meanings, translation, realWorldExamples, isLoading } = useWordDictionary(
+    word,
+    targetLang,
+    enabled,
+    contextText,
+  );
 
   const contextMeaning = meanings.find((meaning) => meaning.contextMatch) ?? meanings[0];
   const examples = contextMeaning?.examples.slice(0, 3) ?? [];
@@ -92,6 +97,28 @@ export function WordLookupContent({ word, contextText, targetLang, enabled }: Wo
               {example.translation && <p className="text-xs leading-5 text-indigo-500">{example.translation}</p>}
             </div>
           ))}
+        </div>
+      )}
+
+      {realWorldExamples.length > 0 && (
+        <div className="space-y-1.5 border-t border-slate-100 pt-2">
+          <p className="text-[10px] font-semibold uppercase tracking-wide text-slate-400">Câu ví dụ thực tế</p>
+          <div className="space-y-1.5 border-l-2 border-emerald-100 pl-2.5">
+            {realWorldExamples.map((example) => (
+              <div key={example.text}>
+                <p className="text-xs leading-5 text-slate-700 italic">{example.text}</p>
+                {example.translation && <p className="text-xs leading-5 text-emerald-600">{example.translation}</p>}
+              </div>
+            ))}
+          </div>
+          <a
+            href="https://tatoeba.org"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="block text-[10px] text-slate-300 underline hover:text-slate-500"
+          >
+            Nguồn: Tatoeba.org (CC BY)
+          </a>
         </div>
       )}
     </div>

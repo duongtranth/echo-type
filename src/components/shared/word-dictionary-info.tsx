@@ -159,6 +159,7 @@ export function WordDictionaryInfo({ word, targetLang, module, contextText }: Wo
     antonyms,
     collocations,
     wordFamily,
+    realWorldExamples,
     source,
     sourceUrl,
     isLoading,
@@ -234,7 +235,8 @@ export function WordDictionaryInfo({ word, targetLang, module, contextText }: Wo
       synonyms.length > 0 ||
       antonyms.length > 0 ||
       collocations.length > 0 ||
-      wordFamily.length > 0);
+      wordFamily.length > 0 ||
+      realWorldExamples.length > 0);
 
   if (isLoading) {
     return (
@@ -407,6 +409,32 @@ export function WordDictionaryInfo({ word, targetLang, module, contextText }: Wo
                   </span>
                 ))}
               </div>
+            </section>
+          )}
+
+          {realWorldExamples.length > 0 && (
+            <section>
+              <h3 className="mb-2 text-xs font-bold uppercase tracking-wide text-slate-500">
+                Câu ví dụ thực tế · Tatoeba
+              </h3>
+              <div className="space-y-2.5">
+                {realWorldExamples.map((example) => (
+                  <div key={example.text} className="rounded-lg border border-emerald-100 bg-emerald-50/40 px-3 py-2">
+                    <p className="text-sm leading-5 text-slate-800 italic">{example.text}</p>
+                    {example.translation && (
+                      <p className="mt-0.5 text-xs leading-5 text-emerald-600">{example.translation}</p>
+                    )}
+                  </div>
+                ))}
+              </div>
+              <a
+                href="https://tatoeba.org"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="mt-1.5 inline-flex items-center gap-0.5 text-[10px] text-slate-400 underline hover:text-slate-600"
+              >
+                Câu ví dụ từ cộng đồng Tatoeba.org (CC BY) <ExternalLink className="h-2.5 w-2.5" />
+              </a>
             </section>
           )}
 

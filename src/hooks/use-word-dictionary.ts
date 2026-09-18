@@ -14,6 +14,11 @@ interface ExplorerWordFamilyItem {
   pos: string[];
 }
 
+interface ExplorerRealWorldExample {
+  text: string;
+  translationVi: string;
+}
+
 interface ExplorerApiResponse {
   word: string;
   phonetic?: string;
@@ -24,6 +29,7 @@ interface ExplorerApiResponse {
   collocations?: string[];
   wordFamily?: ExplorerWordFamilyItem[];
   contextualTerms?: string[];
+  realWorldExamples?: ExplorerRealWorldExample[];
   source?: string;
   sourceUrl?: string;
 }
@@ -60,6 +66,8 @@ interface CachedResult {
   antonyms: string[];
   collocations: string[];
   wordFamily: WordFamilyItem[];
+  /** Authentic community-written sentences from Tatoeba.org, with ready-made Vietnamese translations. */
+  realWorldExamples: WordExample[];
   source: string;
   sourceUrl: string;
 }
@@ -142,6 +150,7 @@ function emptyResult(): CachedResult {
     antonyms: [],
     collocations: [],
     wordFamily: [],
+    realWorldExamples: [],
     source: '',
     sourceUrl: '',
   };
@@ -385,6 +394,10 @@ export function useWordDictionary(
           antonyms: explorer.antonyms ?? [],
           collocations: explorer.collocations ?? [],
           wordFamily: explorer.wordFamily ?? [],
+          realWorldExamples: (explorer.realWorldExamples ?? []).map((item) => ({
+            text: item.text,
+            translation: item.translationVi,
+          })),
           source: explorer.source ?? '',
           sourceUrl: explorer.sourceUrl ?? '',
         };
