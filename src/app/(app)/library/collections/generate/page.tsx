@@ -156,7 +156,7 @@ export default function GenerateCollectionPage() {
           ...(apiPath && { 'x-api-path': apiPath }),
           ...(modelId && { 'x-model-id': modelId }),
         },
-        body: JSON.stringify({ keyword: keyword.trim(), difficulty, count: 15 }),
+        body: JSON.stringify({ keyword: keyword.trim(), difficulty, count: 18 }),
         signal: AbortSignal.timeout(60000),
       });
 

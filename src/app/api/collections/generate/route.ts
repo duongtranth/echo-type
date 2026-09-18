@@ -55,7 +55,7 @@ function isLocalBaseUrl(url: string): boolean {
 }
 
 function clampCount(n: number): number {
-  return Math.min(20, Math.max(10, n));
+  return Math.min(24, Math.max(10, n));
 }
 
 function normalizeCategory(value: string | undefined): Category {
@@ -108,6 +108,13 @@ function buildCollectionPrompt(keyword: string, difficulty: DifficultyLevel, cou
 Target difficulty for English lines: ${difficulty}
 Exactly ${count} learning lines (mix "phrase" and "sentence"; phrases are 1-5 English words, sentences are complete and natural).
 
+First, silently imagine ONE specific, concrete conversation between two people living out this exact scenario — give
+them a reason to be there, a small detail or two (a name, a price, a time, a specific item), and a natural beginning,
+middle, and end. Then write the ${count} lines as that conversation unfolding turn by turn, alternating between the
+two speakers in order, as if transcribing what each person actually says. Do not label who is speaking — each line
+must also stand on its own as something a learner could say or hear in this situation, since lines are studied
+individually later.
+
 Return ONLY valid JSON (no markdown) in this exact shape:
 {
   "collection":{
@@ -129,7 +136,10 @@ Return ONLY valid JSON (no markdown) in this exact shape:
 
 Rules:
 - English learning content for Vietnamese speakers; all "text" values are English only.
-- Order items in a natural conversational flow for the scenario.
+- Lines must read as ONE continuous, connected exchange in order — never a grab-bag of unrelated useful phrases on
+  the same general topic. A learner reading top to bottom should be able to follow the story of what happened.
+- Ground it with specifics (a name, a number, a place, a brand, a time) instead of generic textbook filler like
+  "Hello, how are you?" or "Thank you very much" used out of context.
 - Practical, high-frequency wording; difficulty matches ${difficulty} (beginner: short/simple; intermediate: richer; advanced: idiomatic nuance allowed).
 - category must fit the keyword best.
 - Produce exactly ${count} items.
