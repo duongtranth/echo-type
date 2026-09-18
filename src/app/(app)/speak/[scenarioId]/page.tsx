@@ -102,10 +102,13 @@ export default function ConversationPage() {
             </Button>
           </Link>
           <div className="flex-1 min-w-0">
-            <h1 className="text-lg font-bold font-[var(--font-poppins)] text-indigo-900 truncate">{scenario.title}</h1>
-            <p className="text-xs text-indigo-400 truncate">{scenario.titleZh}</p>
+            <h1 className="font-heading text-lg font-bold text-indigo-950 truncate">{scenario.title}</h1>
+            <p className="text-xs text-slate-500 truncate">{scenario.titleZh}</p>
           </div>
-          <Badge variant="outline" className={`text-[10px] px-1.5 py-0 ${difficultyColors[scenario.difficulty]}`}>
+          <Badge
+            variant="outline"
+            className={`font-mono uppercase tracking-wide text-[9px] px-1.5 py-0 ${difficultyColors[scenario.difficulty]}`}
+          >
             {scenario.difficulty}
           </Badge>
           <TranslationBar module="speak" />

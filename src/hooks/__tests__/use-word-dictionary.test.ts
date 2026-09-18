@@ -18,11 +18,8 @@ const runtime = vi.hoisted(() => {
   const pendingEffects: Array<{ effect: EffectCallback; index: number }> = [];
 
   function reset() {
-    // Run cleanups
     for (const cell of cells) {
-      if (cell.kind === 'effect' && typeof cell.cleanup === 'function') {
-        cell.cleanup();
-      }
+      if (cell.kind === 'effect' && typeof cell.cleanup === 'function') cell.cleanup();
     }
     cells.length = 0;
     cursor = 0;
@@ -35,8 +32,7 @@ const runtime = vi.hoisted(() => {
   }
 
   function areDepsEqual(a?: unknown[], b?: unknown[]) {
-    if (!a || !b) return false;
-    if (a.length !== b.length) return false;
+    if (!a || !b || a.length !== b.length) return false;
     return a.every((value, index) => Object.is(value, b[index]));
   }
 
@@ -51,7 +47,6 @@ const runtime = vi.hoisted(() => {
 
   function render() {
     if (!currentHook) return;
-
     do {
       rerenderRequested = false;
       cursor = 0;
@@ -70,9 +65,7 @@ const runtime = vi.hoisted(() => {
           cell.cleanup = undefined;
         }
         const cleanup = item.effect();
-        if (cell && cell.kind === 'effect') {
-          cell.cleanup = cleanup;
-        }
+        if (cell && cell.kind === 'effect') cell.cleanup = cleanup;
       }
       isRunningEffects = false;
     } while (rerenderRequested);
@@ -81,7 +74,6 @@ const runtime = vi.hoisted(() => {
   function useState<T>(initialValue: T | (() => T)) {
     const index = cursor++;
     const existing = cells[index];
-
     if (!existing || existing.kind !== 'state') {
       cells[index] = {
         kind: 'state',
@@ -91,30 +83,24 @@ const runtime = vi.hoisted(() => {
 
     const cell = cells[index];
     if (!cell || cell.kind !== 'state') throw new Error('Expected state cell');
-
     const setState = (nextValue: T | ((prev: T) => T)) => {
-      const cell = cells[index];
-      if (!cell || cell.kind !== 'state') return;
-      const resolved = typeof nextValue === 'function' ? (nextValue as (prev: T) => T)(cell.value as T) : nextValue;
-      if (Object.is(cell.value, resolved)) return;
-      cell.value = resolved;
+      const target = cells[index];
+      if (!target || target.kind !== 'state') return;
+      const resolved =
+        typeof nextValue === 'function' ? (nextValue as (prev: T) => T)(target.value as T) : nextValue;
+      if (Object.is(target.value, resolved)) return;
+      target.value = resolved;
       scheduleRender();
     };
-
     return [cell.value as T, setState] as const;
   }
 
   function useRef<T>(initialValue: T) {
     const index = cursor++;
     const existing = cells[index];
-
-    if (!existing || existing.kind !== 'ref') {
-      cells[index] = { kind: 'ref', value: { current: initialValue } };
-    }
-
+    if (!existing || existing.kind !== 'ref') cells[index] = { kind: 'ref', value: { current: initialValue } };
     const cell = cells[index];
     if (!cell || cell.kind !== 'ref') throw new Error('Expected ref cell');
-
     return cell.value as { current: T };
   }
 
@@ -122,18 +108,15 @@ const runtime = vi.hoisted(() => {
     const index = cursor++;
     const existing = cells[index];
     const shouldRun = !existing || existing.kind !== 'effect' || !areDepsEqual(existing.deps, deps);
-
-    if (shouldRun) {
-      const cleanup = existing && existing.kind === 'effect' ? existing.cleanup : undefined;
-      cells[index] = { kind: 'effect', deps: deps ? [...deps] : undefined, cleanup };
-      pendingEffects.push({ effect, index });
-    }
+    if (!shouldRun) return;
+    const cleanup = existing && existing.kind === 'effect' ? existing.cleanup : undefined;
+    cells[index] = { kind: 'effect', deps: deps ? [...deps] : undefined, cleanup };
+    pendingEffects.push({ effect, index });
   }
 
   function renderHook<T>(hook: () => T) {
     currentHook = hook;
     render();
-
     return {
       get current() {
         return currentResult as T;
@@ -154,7 +137,6 @@ vi.mock('react', () => ({
   useEffect: runtime.useEffect,
 }));
 
-// Mock global fetch
 const mockFetch = vi.fn();
 vi.stubGlobal('fetch', mockFetch);
 
@@ -173,6 +155,18 @@ async function waitFor(assertion: () => void, timeoutMs = 2000) {
   }
 }
 
+function response(payload: unknown, ok = true) {
+  return Promise.resolve({ ok, json: () => Promise.resolve(payload) });
+}
+
+function translationResponse(options?: { body?: string }) {
+  const body = options?.body ? (JSON.parse(options.body) as { text?: string; sentences?: string[] }) : {};
+  if (body.sentences) {
+    return response({ translations: body.sentences.map((value) => `vi:${value}`) });
+  }
+  return response({ translation: body.text ? `vi:${body.text}` : '' });
+}
+
 beforeEach(() => {
   runtime.reset();
   mockFetch.mockReset();
@@ -183,437 +177,192 @@ afterEach(() => {
 });
 
 describe('useWordDictionary', () => {
-  it('returns empty state when disabled', () => {
-    const hook = runtime.renderHook(() => useWordDictionary('apple', 'zh-CN', false));
+  it('returns an empty result when disabled', () => {
+    const hook = runtime.renderHook(() => useWordDictionary('run', 'vi', false));
     expect(hook.current.translation).toBe('');
-    expect(hook.current.phonetic).toBe('');
-    expect(hook.current.pos).toBe('');
     expect(hook.current.meanings).toEqual([]);
-    expect(hook.current.example).toBe('');
+    expect(hook.current.synonyms).toEqual([]);
+    expect(hook.current.collocations).toEqual([]);
     expect(hook.current.isLoading).toBe(false);
   });
 
-  it('fetches dictionary + translation for single word', async () => {
-    mockFetch.mockImplementation((url: string) => {
-      if (typeof url === 'string' && url.includes('dictionaryapi.dev')) {
-        return Promise.resolve({
-          ok: true,
-          json: () =>
-            Promise.resolve([
-              {
-                word: 'apple',
-                phonetic: '/ˈæp.əl/',
-                phonetics: [{ text: '/ˈæp.əl/' }],
-                meanings: [{ partOfSpeech: 'noun', definitions: [] }],
-              },
-            ]),
+  it('loads separate senses, examples, relations, collocations, and word family', async () => {
+    mockFetch.mockImplementation((url: string, options?: { body?: string }) => {
+      if (url.startsWith('/api/words/explore')) {
+        return response({
+          word: 'run',
+          phonetic: '/rʌn/',
+          senses: [
+            {
+              pos: 'verb',
+              definition: 'To move quickly on foot.',
+              examples: ['She runs every morning.'],
+              synonyms: ['sprint'],
+              antonyms: ['walk'],
+            },
+            {
+              pos: 'verb',
+              definition: 'To manage or operate something.',
+              examples: ['She runs a small company.'],
+              synonyms: ['manage', 'operate'],
+              antonyms: [],
+            },
+            {
+              pos: 'noun',
+              definition: 'An act or period of running.',
+              examples: ['He went for a run.'],
+              synonyms: ['jog'],
+              antonyms: [],
+            },
+          ],
+          synonyms: ['manage', 'operate', 'sprint'],
+          antonyms: ['walk'],
+          collocations: ['run a business', 'run smoothly'],
+          wordFamily: [
+            { word: 'runner', pos: ['n'] },
+            { word: 'running', pos: ['n', 'adj'] },
+          ],
+          contextualTerms: ['manage', 'company'],
+          source: 'Free Dictionary API',
+          sourceUrl: 'https://example.test/run',
         });
       }
-      // /api/translate/free
-      return Promise.resolve({
-        ok: true,
-        json: () => Promise.resolve({ translation: '苹果' }),
-      });
+      return translationResponse(options);
     });
 
-    const hook = runtime.renderHook(() => useWordDictionary('apple', 'zh-CN', true));
+    const hook = runtime.renderHook(() =>
+      useWordDictionary('run', 'vi', true, 'She runs a small company with her sister.'),
+    );
 
-    expect(hook.current.isLoading).toBe(true);
+    await waitFor(() => expect(hook.current.isLoading).toBe(false));
 
-    await waitFor(() => {
-      expect(hook.current.isLoading).toBe(false);
+    expect(hook.current.phonetic).toBe('/rʌn/');
+    expect(hook.current.meanings).toHaveLength(3);
+    expect(hook.current.meanings[1].contextMatch).toBe(true);
+    expect(hook.current.meanings[1].definition).toBe('vi:To manage or operate something.');
+    expect(hook.current.meanings[1].definitionEnglish).toBe('To manage or operate something.');
+    expect(hook.current.meanings[1].example).toBe('She runs a small company.');
+    expect(hook.current.meanings[1].examples[0]).toEqual({
+      text: 'She runs a small company.',
+      translation: 'vi:She runs a small company.',
     });
-
-    expect(hook.current.phonetic).toBe('/ˈæp.əl/');
-    expect(hook.current.pos).toBe('noun');
-    expect(hook.current.translation).toBe('苹果');
-    expect(hook.current.example).toBe('');
-    expect(mockFetch).toHaveBeenCalledWith(expect.stringContaining('dictionaryapi.dev'));
-    expect(mockFetch).toHaveBeenCalledWith('/api/translate/free', expect.any(Object));
+    expect(hook.current.synonyms).toContain('manage');
+    expect(hook.current.antonyms).toEqual(['walk']);
+    expect(hook.current.collocations).toContain('run a business');
+    expect(hook.current.wordFamily[0]).toEqual({ word: 'runner', pos: ['n'] });
+    expect(hook.current.source).toBe('Free Dictionary API');
   });
 
-  it('fetches translation only for multi-word phrases', async () => {
-    mockFetch.mockResolvedValue({
-      ok: true,
-      json: () => Promise.resolve({ translation: '红苹果' }),
-    });
+  it('only translates multi-word phrases', async () => {
+    mockFetch.mockImplementation((_url: string, options?: { body?: string }) => translationResponse(options));
 
-    const hook = runtime.renderHook(() => useWordDictionary('red apple', 'zh-CN', true));
+    const hook = runtime.renderHook(() => useWordDictionary('run into', 'vi', true));
+    await waitFor(() => expect(hook.current.isLoading).toBe(false));
 
-    await waitFor(() => {
-      expect(hook.current.isLoading).toBe(false);
-    });
-
-    expect(hook.current.translation).toBe('红苹果');
-    expect(hook.current.phonetic).toBe('');
-    expect(hook.current.pos).toBe('');
-    // Only one fetch call (translate), no dictionary API call
+    expect(hook.current.translation).toBe('vi:run into');
+    expect(hook.current.meanings).toEqual([]);
     expect(mockFetch).toHaveBeenCalledTimes(1);
   });
 
-  it('handles dictionary API 404 gracefully', async () => {
-    mockFetch.mockImplementation((url: string) => {
-      if (typeof url === 'string' && url.includes('dictionaryapi.dev')) {
-        return Promise.resolve({
-          ok: false,
-          status: 404,
-          json: () => Promise.resolve({ title: 'No Definitions Found' }),
-        });
-      }
-      return Promise.resolve({
-        ok: true,
-        json: () => Promise.resolve({ translation: '苹果' }),
-      });
-    });
-
-    const hook = runtime.renderHook(() => useWordDictionary('apple', 'zh-CN', true));
-
-    await waitFor(() => {
-      expect(hook.current.isLoading).toBe(false);
-    });
-
-    expect(hook.current.phonetic).toBe('');
-    expect(hook.current.pos).toBe('');
-    expect(hook.current.translation).toBe('苹果');
-  });
-
-  it('uses fallback phonetics array when top-level phonetic is empty', async () => {
-    mockFetch.mockImplementation((url: string) => {
-      if (typeof url === 'string' && url.includes('dictionaryapi.dev')) {
-        return Promise.resolve({
-          ok: true,
-          json: () =>
-            Promise.resolve([
-              {
-                word: 'hello',
-                phonetic: '',
-                phonetics: [{ text: '' }, { text: '/həˈloʊ/' }],
-                meanings: [{ partOfSpeech: 'exclamation', definitions: [] }],
-              },
-            ]),
-        });
-      }
-      return Promise.resolve({
-        ok: true,
-        json: () => Promise.resolve({ translation: '你好' }),
-      });
-    });
-
-    const hook = runtime.renderHook(() => useWordDictionary('hello', 'zh-CN', true));
-
-    await waitFor(() => {
-      expect(hook.current.isLoading).toBe(false);
-    });
-
-    expect(hook.current.phonetic).toBe('/həˈloʊ/');
-    expect(hook.current.pos).toBe('exclamation');
-  });
-
-  it('caches results and does not re-fetch', async () => {
-    mockFetch.mockImplementation((url: string) => {
-      if (typeof url === 'string' && url.includes('dictionaryapi.dev')) {
-        return Promise.resolve({
-          ok: true,
-          json: () =>
-            Promise.resolve([
-              {
-                word: 'apple',
-                phonetic: '/ˈæp.əl/',
-                phonetics: [],
-                meanings: [{ partOfSpeech: 'noun', definitions: [] }],
-              },
-            ]),
-        });
-      }
-      return Promise.resolve({
-        ok: true,
-        json: () => Promise.resolve({ translation: '苹果' }),
-      });
-    });
-
-    const hook = runtime.renderHook(() => useWordDictionary('apple', 'zh-CN', true));
-
-    await waitFor(() => {
-      expect(hook.current.isLoading).toBe(false);
-    });
-
-    expect(mockFetch).toHaveBeenCalledTimes(2);
-
-    // Re-render with same args — should use cache
-    hook.rerender();
-    expect(mockFetch).toHaveBeenCalledTimes(2); // no new calls
-    expect(hook.current.translation).toBe('苹果');
-  });
-
-  it('clears result when disabled', async () => {
-    mockFetch.mockImplementation((url: string) => {
-      if (typeof url === 'string' && url.includes('dictionaryapi.dev')) {
-        return Promise.resolve({
-          ok: true,
-          json: () =>
-            Promise.resolve([
-              {
-                word: 'apple',
-                phonetic: '/ˈæp.əl/',
-                phonetics: [],
-                meanings: [{ partOfSpeech: 'noun', definitions: [] }],
-              },
-            ]),
-        });
-      }
-      return Promise.resolve({
-        ok: true,
-        json: () => Promise.resolve({ translation: '苹果' }),
-      });
-    });
-
-    let enabled = true;
-    const hook = runtime.renderHook(() => useWordDictionary('apple', 'zh-CN', enabled));
-
-    await waitFor(() => {
-      expect(hook.current.isLoading).toBe(false);
-    });
-
-    enabled = false;
-    hook.rerender();
-    expect(hook.current.translation).toBe('');
-    expect(hook.current.phonetic).toBe('');
-    expect(hook.current.pos).toBe('');
-    expect(hook.current.meanings).toEqual([]);
-    expect(hook.current.example).toBe('');
-  });
-
-  it('fetches multiple meanings with batch translation', async () => {
+  it('falls back to a local wordbook example when lexical sources have no example', async () => {
     mockFetch.mockImplementation((url: string, options?: { body?: string }) => {
-      if (typeof url === 'string' && url.includes('dictionaryapi.dev')) {
-        return Promise.resolve({
-          ok: true,
-          json: () =>
-            Promise.resolve([
-              {
-                word: 'prompt',
-                phonetic: '/pɹɒmpt/',
-                phonetics: [{ text: '/pɹɒmpt/' }],
-                meanings: [
-                  {
-                    partOfSpeech: 'noun',
-                    definitions: [
-                      { definition: 'A reminder or cue.', example: 'The prompt helped her remember the answer.' },
-                      { definition: 'A time limit.' },
-                    ],
-                  },
-                  {
-                    partOfSpeech: 'verb',
-                    definitions: [{ definition: 'To lead someone toward what they should say or do.' }],
-                  },
-                  {
-                    partOfSpeech: 'adjective',
-                    definitions: [{ definition: 'Quick; acting without delay.' }],
-                  },
-                ],
-              },
-            ]),
+      if (url.startsWith('/api/words/explore')) {
+        return response({
+          word: 'suitable',
+          phonetic: '/ˈsuːtəbl/',
+          senses: [
+            {
+              pos: 'adjective',
+              definition: 'Right or appropriate for a particular purpose.',
+              examples: [],
+              synonyms: ['appropriate'],
+              antonyms: ['unsuitable'],
+            },
+          ],
+          synonyms: ['appropriate'],
+          antonyms: ['unsuitable'],
+          collocations: ['suitable candidate'],
+          wordFamily: [],
+          contextualTerms: [],
         });
       }
-      const body = options?.body ? JSON.parse(options.body) : {};
-      if (body.sentences) {
-        return Promise.resolve({
-          ok: true,
-          json: () =>
-            Promise.resolve({
-              translations: body.sentences.map((s: string) => {
-                if (s.includes('reminder')) return '提醒或暗示。';
-                if (s.includes('time limit')) return '时间限制。';
-                if (s.includes('lead someone')) return '引导某人说或做应该做的事。';
-                if (s.includes('Quick')) return '迅速的；毫不拖延的。';
-                return '';
-              }),
-            }),
-        });
+      if (url === '/wordbooks/junior-high.json') {
+        return response([{ word: 'suitable', sentence: 'We are hoping to find a suitable school.' }]);
       }
-      return Promise.resolve({
-        ok: true,
-        json: () => Promise.resolve({ translation: '提示' }),
-      });
+      if (url.startsWith('/wordbooks/')) return response([], false);
+      return translationResponse(options);
     });
 
-    const hook = runtime.renderHook(() => useWordDictionary('prompt', 'zh-CN', true));
-
-    await waitFor(() => {
-      expect(hook.current.isLoading).toBe(false);
-    });
-
-    expect(hook.current.phonetic).toBe('/pɹɒmpt/');
-    expect(hook.current.pos).toBe('noun');
-    expect(hook.current.translation).toBe('提示');
-    expect(hook.current.meanings).toHaveLength(3);
-    expect(hook.current.meanings[0].pos).toBe('noun');
-    expect(hook.current.meanings[0].definition).toContain('提醒或暗示');
-    expect(hook.current.meanings[0].example).toBe('The prompt helped her remember the answer.');
-    expect(hook.current.example).toBe('The prompt helped her remember the answer.');
-    expect(hook.current.meanings[1].pos).toBe('verb');
-    expect(hook.current.meanings[2].pos).toBe('adjective');
-  });
-
-  it('falls back to a local wordbook English example when dictionary has no example', async () => {
-    mockFetch.mockImplementation((url: string, options?: { body?: string }) => {
-      if (typeof url === 'string' && url.includes('dictionaryapi.dev')) {
-        return Promise.resolve({
-          ok: true,
-          json: () =>
-            Promise.resolve([
-              {
-                word: 'suitable',
-                phonetic: '/ˈsuːtəbl/',
-                meanings: [
-                  {
-                    partOfSpeech: 'adjective',
-                    definitions: [{ definition: 'Having enough qualities for a purpose.' }],
-                  },
-                ],
-              },
-            ]),
-        });
-      }
-
-      if (typeof url === 'string' && url.includes('/wordbooks/junior-high.json')) {
-        return Promise.resolve({
-          ok: true,
-          json: () => Promise.resolve([{ word: 'suitable', sentence: 'We are hoping to find a suitable school.' }]),
-        });
-      }
-
-      if (typeof url === 'string' && url.startsWith('/wordbooks/')) {
-        return Promise.resolve({
-          ok: false,
-          json: () => Promise.resolve([]),
-        });
-      }
-
-      const body = options?.body ? JSON.parse(options.body) : {};
-      if (body.sentences) {
-        return Promise.resolve({
-          ok: true,
-          json: () => Promise.resolve({ translations: ['适合某种用途。'] }),
-        });
-      }
-
-      return Promise.resolve({
-        ok: true,
-        json: () => Promise.resolve({ translation: '适合的' }),
-      });
-    });
-
-    const hook = runtime.renderHook(() => useWordDictionary('suitable', 'zh-CN', true));
-
-    await waitFor(() => {
-      expect(hook.current.isLoading).toBe(false);
-    });
+    const hook = runtime.renderHook(() => useWordDictionary('suitable', 'vi', true));
+    await waitFor(() => expect(hook.current.isLoading).toBe(false));
 
     expect(hook.current.example).toBe('We are hoping to find a suitable school.');
   });
 
-  it('prefers the source wordbook definition over translated dictionary meanings for learned vocabulary', async () => {
+  it('uses the first sense when context does not provide a stronger signal', async () => {
     mockFetch.mockImplementation((url: string, options?: { body?: string }) => {
-      if (typeof url === 'string' && url.includes('dictionaryapi.dev')) {
-        return Promise.resolve({
-          ok: true,
-          json: () =>
-            Promise.resolve([
-              {
-                word: 'climate',
-                phonetic: '/ˈklaɪmət/',
-                meanings: [
-                  {
-                    partOfSpeech: 'noun',
-                    definitions: [{ definition: 'An area of the earth between two parallels of latitude.' }],
-                  },
-                  {
-                    partOfSpeech: 'verb',
-                    definitions: [{ definition: 'To dwell.' }],
-                  },
-                ],
-              },
-            ]),
+      if (url.startsWith('/api/words/explore')) {
+        return response({
+          word: 'issue',
+          senses: [
+            {
+              pos: 'noun',
+              definition: 'An important topic or problem for debate.',
+              examples: [],
+              synonyms: ['problem'],
+              antonyms: [],
+            },
+            {
+              pos: 'verb',
+              definition: 'To officially provide or announce something.',
+              examples: [],
+              synonyms: ['provide'],
+              antonyms: [],
+            },
+          ],
+          contextualTerms: [],
         });
       }
-
-      const body = options?.body ? JSON.parse(options.body) : {};
-      if (body.sentences) {
-        return Promise.resolve({
-          ok: true,
-          json: () =>
-            Promise.resolve({
-              translations: ['两条纬线之间的地球表面区域。', '居住。'],
-            }),
-        });
-      }
-
-      return Promise.resolve({
-        ok: true,
-        json: () => Promise.resolve({ translation: '气候' }),
-      });
+      return translationResponse(options);
     });
 
-    const hook = runtime.renderHook(() =>
-      useWordDictionary('climate', 'zh-CN', true, 'n. 气候；风气；思潮；风土'),
-    );
+    const hook = runtime.renderHook(() => useWordDictionary('issue', 'vi', true, 'This issue is complicated.'));
+    await waitFor(() => expect(hook.current.isLoading).toBe(false));
 
-    await waitFor(() => {
-      expect(hook.current.isLoading).toBe(false);
-    });
-
-    expect(hook.current.meanings).toEqual([
-      {
-        pos: 'noun',
-        definition: '气候；风气；思潮；风土',
-      },
-    ]);
-    expect(hook.current.translation).toBe('气候');
+    expect(hook.current.meanings[0].contextMatch).toBe(true);
+    expect(hook.current.pos).toBe('noun');
   });
 
-  it('falls back to the word translation when meaning translations are empty', async () => {
+  it('caches the rich result for identical word, language, and context', async () => {
     mockFetch.mockImplementation((url: string, options?: { body?: string }) => {
-      if (typeof url === 'string' && url.includes('dictionaryapi.dev')) {
-        return Promise.resolve({
-          ok: true,
-          json: () =>
-            Promise.resolve([
-              {
-                word: 'prince',
-                phonetic: '/prɪns/',
-                meanings: [
-                  {
-                    partOfSpeech: 'noun',
-                    definitions: [{ definition: 'A male member of a royal family.' }],
-                  },
-                ],
-              },
-            ]),
+      if (url.startsWith('/api/words/explore')) {
+        return response({
+          word: 'significant',
+          senses: [
+            {
+              pos: 'adjective',
+              definition: 'Important or large enough to be noticed.',
+              examples: ['There was a significant increase.'],
+              synonyms: ['important'],
+              antonyms: ['insignificant'],
+            },
+          ],
+          synonyms: ['important'],
+          antonyms: ['insignificant'],
+          collocations: ['significant increase'],
+          wordFamily: [{ word: 'significantly', pos: ['adv'] }],
+          contextualTerms: [],
         });
       }
-
-      const body = options?.body ? JSON.parse(options.body) : {};
-      if (body.sentences) {
-        return Promise.resolve({
-          ok: false,
-          json: () => Promise.resolve({ error: 'Translation unavailable' }),
-        });
-      }
-
-      return Promise.resolve({
-        ok: true,
-        json: () => Promise.resolve({ translation: '王子' }),
-      });
+      return translationResponse(options);
     });
 
-    const hook = runtime.renderHook(() => useWordDictionary('prince', 'zh-CN', true));
+    const hook = runtime.renderHook(() => useWordDictionary('significant', 'vi', true, 'a significant increase'));
+    await waitFor(() => expect(hook.current.isLoading).toBe(false));
+    const callsAfterLoad = mockFetch.mock.calls.length;
 
-    await waitFor(() => {
-      expect(hook.current.isLoading).toBe(false);
-    });
-
-    expect(hook.current.translation).toBe('王子');
-    expect(hook.current.meanings).toEqual([]);
+    hook.rerender();
+    expect(mockFetch).toHaveBeenCalledTimes(callsAfterLoad);
+    expect(hook.current.collocations).toEqual(['significant increase']);
   });
 });

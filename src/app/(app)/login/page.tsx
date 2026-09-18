@@ -160,7 +160,7 @@ function LoginContent() {
           <div className="mx-auto mb-5 flex h-14 w-14 items-center justify-center rounded-2xl bg-gradient-to-br from-indigo-500 to-violet-600 shadow-lg shadow-indigo-200/50">
             <span className="text-2xl font-bold text-white">E</span>
           </div>
-          <h1 className="text-2xl font-bold text-slate-900 tracking-tight">
+          <h1 className="font-heading text-2xl font-extrabold text-slate-950 tracking-tight">
             {emailOtpSent ? t('checkEmail') : t('title')}
           </h1>
           <p className="mt-2 text-sm text-slate-500">

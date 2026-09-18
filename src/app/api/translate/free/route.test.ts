@@ -27,7 +27,7 @@ describe('POST /api/translate/free', () => {
     pendingResponses.length = 0;
   });
 
-  it('dispatches batch sentence translations with a bounded concurrency window', async () => {
+  it('routes the legacy zh-CN target to Vietnamese and bounds batch concurrency', async () => {
     fetchMock.mockImplementation((url: string) => {
       return new Promise<Response>((resolve) => {
         pendingResponses.push({ url, resolve });
@@ -45,13 +45,16 @@ describe('POST /api/translate/free', () => {
 
     expect(fetchMock).toHaveBeenCalledTimes(4);
     expect(pendingResponses).toHaveLength(4);
+    for (const pending of pendingResponses) {
+      expect(new URL(pending.url).searchParams.get('tl')).toBe('vi');
+    }
 
     for (const pending of pendingResponses.slice(0, 4)) {
       const sentence = new URL(pending.url).searchParams.get('q') ?? '';
       pending.resolve(
         new Response(
           JSON.stringify({
-            sentences: [{ trans: `zh:${sentence}` }],
+            sentences: [{ trans: `vi:${sentence}` }],
           }),
           {
             status: 200,
@@ -70,11 +73,12 @@ describe('POST /api/translate/free', () => {
     if (!lastPending) {
       throw new Error('Expected fifth pending request');
     }
+    expect(new URL(lastPending.url).searchParams.get('tl')).toBe('vi');
     const sentence = new URL(lastPending.url).searchParams.get('q') ?? '';
     lastPending.resolve(
       new Response(
         JSON.stringify({
-          sentences: [{ trans: `zh:${sentence}` }],
+          sentences: [{ trans: `vi:${sentence}` }],
         }),
         {
           status: 200,
@@ -87,11 +91,11 @@ describe('POST /api/translate/free', () => {
     expect(response.status).toBe(200);
     expect(await response.json()).toEqual({
       translations: [
-        'zh:First sentence.',
-        'zh:Second sentence.',
-        'zh:Third sentence.',
-        'zh:Fourth sentence.',
-        'zh:Fifth sentence.',
+        'vi:First sentence.',
+        'vi:Second sentence.',
+        'vi:Third sentence.',
+        'vi:Fourth sentence.',
+        'vi:Fifth sentence.',
       ],
       engine: 'google-free',
     });

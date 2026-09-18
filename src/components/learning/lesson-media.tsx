@@ -59,7 +59,7 @@ export function LessonMedia({ item }: { item: ContentItem }) {
           { content: item },
         ).catch(() => {
           saved.current = false;
-          setError(zh ? '保存失败，请重新播放后重试。' : 'Could not save. Replay to retry.');
+          setError(zh ? 'Lưu thất bại. Hãy phát lại để thử lại.' : 'Could not save. Replay to retry.');
         });
       }
     }
@@ -68,18 +68,18 @@ export function LessonMedia({ item }: { item: ContentItem }) {
     return (
       <p className="rounded-xl bg-amber-50 p-4 text-sm text-amber-900">
         {zh
-          ? '原音频在当前设备不可用，可使用下方文字朗读。'
+          ? 'Âm thanh gốc không khả dụng trên thiết bị này. Bạn có thể dùng công cụ đọc văn bản bên dưới.'
           : 'Original audio is unavailable on this device. You can use text-to-speech below.'}
       </p>
     );
   return (
     <div className="space-y-3 rounded-2xl bg-slate-50 p-4">
       <p className="text-sm font-semibold text-slate-800">
-        {zh ? '原声精听' : 'Original recording'} · {Math.floor(start)}s{end ? ` – ${Math.ceil(end)}s` : ''}
+        {zh ? 'Nghe kỹ âm thanh gốc' : 'Original recording'} · {Math.floor(start)}s{end ? ` – ${Math.ceil(end)}s` : ''}
       </p>
       <audio
         ref={ref}
-        aria-label={zh ? '课程原声' : 'Lesson recording'}
+        aria-label={zh ? 'Âm thanh gốc bài học' : 'Lesson recording'}
         className="w-full"
         controls
         src={url}
@@ -97,7 +97,11 @@ export function LessonMedia({ item }: { item: ContentItem }) {
         onTimeUpdate={onTime}
         onEnded={onTime}
         onError={() =>
-          setError(zh ? '无法播放该音频，请检查原文件。' : 'Unable to play this audio. Check the original file.')
+          setError(
+            zh
+              ? 'Không thể phát âm thanh này. Hãy kiểm tra tệp gốc.'
+              : 'Unable to play this audio. Check the original file.',
+          )
         }
       >
         <track kind="captions" />

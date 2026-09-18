@@ -2,6 +2,7 @@
 
 import { Maximize2, Pause, Play, RotateCcw, SkipBack, SkipForward } from 'lucide-react';
 import { Button } from '@/components/ui/button';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import enPracticeUi from '@/lib/i18n/messages/practice-ui/en.json';
 import zhPracticeUi from '@/lib/i18n/messages/practice-ui/zh.json';
 import { cn } from '@/lib/utils';
@@ -55,20 +56,25 @@ export function ReadAloudInlineControls({
   return (
     <div
       data-testid="read-aloud-inline-controls"
-      className={cn('rounded-2xl border border-slate-200 bg-slate-50/95 p-3 shadow-sm backdrop-blur', className)}
+      className={cn('rounded-2xl border border-slate-200 bg-slate-50/95 p-2.5 shadow-sm backdrop-blur', className)}
     >
-      <div className="flex flex-wrap items-start justify-between gap-2">
-        <div>
-          <p className="text-[11px] font-semibold uppercase tracking-[0.18em] text-slate-400">{label}</p>
-          {showProgress ? (
-            <p className="mt-1 text-sm text-slate-500">
-              {Math.round(progress)}% {raT.progress.toLowerCase()}
-            </p>
-          ) : null}
-        </div>
-        <div className="rounded-full bg-white px-3 py-1.5 text-sm font-semibold text-slate-700 shadow-sm tabular-nums">
-          {speed}x
-        </div>
+      <div className="flex flex-wrap items-center justify-between gap-2">
+        <p className="text-[10px] font-semibold uppercase tracking-[0.18em] text-slate-400">
+          {label}
+          {showProgress ? ` · ${Math.round(progress)}% ${raT.progress.toLowerCase()}` : null}
+        </p>
+        <Select value={String(speed)} onValueChange={(value) => setSpeed(Number(value))}>
+          <SelectTrigger size="sm" className="h-7 min-w-16 rounded-full bg-white text-xs font-semibold shadow-sm">
+            <SelectValue />
+          </SelectTrigger>
+          <SelectContent>
+            {SPEED_STEPS.map((step) => (
+              <SelectItem key={step} value={String(step)}>
+                {step}x
+              </SelectItem>
+            ))}
+          </SelectContent>
+        </Select>
       </div>
 
       {showProgress ? (
@@ -78,7 +84,7 @@ export function ReadAloudInlineControls({
           aria-valuemin={0}
           aria-valuemax={100}
           aria-valuenow={Math.round(progress)}
-          className="mt-2 h-2 overflow-hidden rounded-full bg-white"
+          className="mt-1.5 h-1.5 overflow-hidden rounded-full bg-white"
         >
           <div
             className={cn(
@@ -91,25 +97,26 @@ export function ReadAloudInlineControls({
         </div>
       ) : null}
 
-      <div className="mt-3 flex flex-wrap items-center justify-center gap-2">
-        <Button type="button" variant="outline" size="icon" onClick={onPrev} aria-label={raT.previousSentence}>
-          <SkipBack className="h-4 w-4" />
+      <div className="mt-2 flex flex-wrap items-center justify-center gap-1.5">
+        <Button type="button" variant="outline" size="icon-sm" onClick={onPrev} aria-label={raT.previousSentence}>
+          <SkipBack className="h-3.5 w-3.5" />
         </Button>
         <Button
           type="button"
           variant="outline"
-          size="icon"
+          size="icon-sm"
           onClick={onRestart ?? onPrev}
           aria-label="Restart"
           disabled={!onRestart}
         >
-          <RotateCcw className="h-4 w-4" />
+          <RotateCcw className="h-3.5 w-3.5" />
         </Button>
         <Button
           type="button"
+          size="sm"
           onClick={isPlaying ? onPause : onPlay}
           className={cn(
-            'min-w-28 gap-2 shadow-sm',
+            'min-w-24 gap-2 shadow-sm',
             accentClassName.includes('orange')
               ? 'bg-orange-500 hover:bg-orange-600 text-white'
               : 'bg-indigo-600 hover:bg-indigo-700 text-white',
@@ -119,39 +126,23 @@ export function ReadAloudInlineControls({
           {isPlaying ? <Pause className="h-4 w-4" /> : <Play className="ml-0.5 h-4 w-4" />}
           {isPlaying ? raT.pause : raT.play}
         </Button>
-        <Button type="button" variant="outline" size="icon" onClick={onNext} aria-label={raT.nextSentence}>
-          <SkipForward className="h-4 w-4" />
+        <Button type="button" variant="outline" size="icon-sm" onClick={onNext} aria-label={raT.nextSentence}>
+          <SkipForward className="h-3.5 w-3.5" />
         </Button>
         {showImmersive ? (
           <Button
             type="button"
             variant="outline"
-            size="icon"
+            size="icon-sm"
             onClick={toggleImmersiveMode}
             aria-label={immersiveMode ? raT.exitImmersive : raT.immersiveMode}
           >
-            <Maximize2 className="h-4 w-4" />
+            <Maximize2 className="h-3.5 w-3.5" />
           </Button>
         ) : null}
       </div>
 
-      <div className="mt-3 flex flex-wrap items-center justify-center gap-2">
-        {SPEED_STEPS.map((step) => (
-          <button
-            key={step}
-            type="button"
-            onClick={() => setSpeed(step)}
-            className={cn(
-              'rounded-full px-3 py-1.5 text-xs font-semibold transition-colors',
-              speed === step ? 'bg-indigo-600 text-white' : 'bg-white text-slate-600 hover:bg-slate-100',
-            )}
-          >
-            {step}x
-          </button>
-        ))}
-      </div>
-
-      {children ? <div className="mt-3 border-t border-slate-200 pt-3">{children}</div> : null}
+      {children ? <div className="mt-2 border-t border-slate-200 pt-2">{children}</div> : null}
     </div>
   );
 }

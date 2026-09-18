@@ -217,7 +217,9 @@ export default function CollectionDetailPage() {
             <div className="flex items-start gap-4">
               <span className="text-4xl">{collection.icon}</span>
               <div className="flex-1 min-w-0">
-                <h1 className="text-2xl font-bold font-[var(--font-poppins)] text-indigo-900">{collection.title}</h1>
+                <h1 className="font-heading text-2xl font-extrabold tracking-tight text-indigo-950">
+                  {collection.title}
+                </h1>
                 <p className="text-indigo-500 mt-0.5">{collection.titleZh}</p>
                 <p className="text-sm text-slate-500 mt-2">{collection.description}</p>
                 <p className="text-sm text-slate-400 mt-0.5">{collection.descriptionZh}</p>

@@ -112,9 +112,9 @@ Return ONLY valid JSON (no markdown) in this exact shape:
 {
   "collection":{
     "title":"short English collection title",
-    "titleZh":"简短中文标题",
+    "titleZh":"short Vietnamese title",
     "description":"1-2 English sentences describing the collection for learners",
-    "descriptionZh":"1-2 句简体中文说明",
+    "descriptionZh":"1-2 Vietnamese sentences describing the collection for learners",
     "scenario":"Concise English label of the situation (derived from keyword)",
     "category":"one of: ${categoryList}",
     "difficulty":"${difficulty}",
@@ -128,7 +128,7 @@ Return ONLY valid JSON (no markdown) in this exact shape:
 }
 
 Rules:
-- English learning content for Chinese speakers; all "text" values are English only.
+- English learning content for Vietnamese speakers; all "text" values are English only.
 - Order items in a natural conversational flow for the scenario.
 - Practical, high-frequency wording; difficulty matches ${difficulty} (beginner: short/simple; intermediate: richer; advanced: idiomatic nuance allowed).
 - category must fit the keyword best.
@@ -192,11 +192,11 @@ export async function POST(req: NextRequest) {
       apiPath: req.headers.get('x-api-path')?.trim() || undefined,
     });
 
-    const system = `You are an expert English-learning curriculum writer for EchoType, an app used by Chinese speakers.
+    const system = `You are an expert English-learning curriculum writer for EchoType, an app used by Vietnamese speakers.
 You produce practical scenario-based phrase and sentence sets: natural, realistic, immediately usable in daily life.
 Output must be STRICT JSON only (no markdown fences, no explanations).
-Mixed metadata: titles and descriptions are bilingual (English + Simplified Chinese). All learning lines ("text") are English only.
-Never use Japanese, Korean, or non–Chinese-character scripts besides English in zh fields (Simplified Chinese only).`;
+Mixed metadata: titles and descriptions are bilingual (English + Vietnamese). All learning lines ("text") are English only.
+Never use Chinese, Japanese, Korean, or any script other than English and Vietnamese (Latin script with diacritics) in the zh fields.`;
 
     const prompt = buildCollectionPrompt(keyword, difficulty, count);
 

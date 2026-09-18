@@ -1,53 +1,53 @@
 {
-  "loading": "正在加载语音...",
-  "noVoicesAvailable": "当前没有可用语音。",
-  "noVoicesFoundTitle": "未找到语音",
-  "noVoicesFoundHint": "试试其他搜索词",
-  "fishSetup": "请先在下方填写 Fish Audio API 密钥，以加载云端语音库。",
-  "googleSetup": "请先在下方填写 Google Cloud API key，以加载官方云端语音。",
-  "openaiSetup": "请先在下方填写 OpenAI API key，以试听和使用 OpenAI 兼容语音。",
-  "kokoroSetup": "请先在下方填写 Kokoro 服务地址，以加载远程语音库。",
+  "loading": "Đang tải giọng đọc...",
+  "noVoicesAvailable": "Hiện không có giọng đọc nào.",
+  "noVoicesFoundTitle": "Không tìm thấy giọng đọc",
+  "noVoicesFoundHint": "Hãy thử từ khóa tìm kiếm khác",
+  "fishSetup": "Nhập khóa API Fish Audio bên dưới để tải thư viện giọng đọc đám mây.",
+  "googleSetup": "Nhập khóa API Google Cloud bên dưới để tải giọng đọc chính thức của Google.",
+  "openaiSetup": "Nhập khóa API OpenAI bên dưới để nghe thử và sử dụng các giọng đọc tương thích OpenAI.",
+  "kokoroSetup": "Nhập địa chỉ máy chủ Kokoro bên dưới để tải thư viện giọng đọc từ xa.",
   "tabs": {
-    "english": "英语",
-    "all": "全部",
-    "premium": "高级",
-    "system": "系统"
+    "english": "Tiếng Anh",
+    "all": "Tất cả",
+    "premium": "Cao cấp",
+    "system": "Hệ thống"
   },
   "search": {
-    "fish": "按名称、作者或标签搜索语音...",
-    "google": "按名称、口音或性别搜索 Google 语音...",
-    "openai": "按名称或风格搜索 OpenAI 语音...",
-    "kokoro": "按名称、语言或性别搜索语音...",
-    "edge": "按名称、口音或性别搜索 Edge 语音...",
-    "browser": "按名称、口音或提供方搜索语音..."
+    "fish": "Tìm giọng đọc theo tên, tác giả hoặc thẻ...",
+    "google": "Tìm giọng đọc Google theo tên, giọng vùng hoặc giới tính...",
+    "openai": "Tìm giọng đọc OpenAI theo tên hoặc phong cách...",
+    "kokoro": "Tìm giọng đọc theo tên, ngôn ngữ hoặc giới tính...",
+    "edge": "Tìm giọng đọc Edge theo tên, giọng vùng hoặc giới tính...",
+    "browser": "Tìm giọng đọc theo tên, giọng vùng hoặc nhà cung cấp..."
   },
-  "browserSummary": "当前视图显示 {{filtered}} / {{visible}} 个浏览器语音。WebView 中可用 {{english}} 个英语语音，共 {{total}} 个语音。",
+  "browserSummary": "Đang hiển thị {{filtered}}/{{visible}} giọng đọc trình duyệt trong chế độ xem này. Hiện có {{english}} giọng tiếng Anh và {{total}} giọng đọc tổng cộng trong WebView này.",
   "badges": {
-    "premium": "高级",
-    "natural": "自然",
-    "fun": "趣味",
-    "cloud": "云端",
-    "other": "其他"
+    "premium": "Cao cấp",
+    "natural": "Tự nhiên",
+    "fun": "Vui nhộn",
+    "cloud": "Đám mây",
+    "other": "Khác"
   },
   "providerBadges": {
     "apple": "Apple",
     "google": "Google",
     "openai": "OpenAI",
     "microsoft": "Microsoft",
-    "browser-cloud": "云端",
+    "browser-cloud": "Đám mây",
     "kokoro": "Kokoro",
-    "other": "其他"
+    "other": "Khác"
   },
-  "authorPrefix": "作者",
+  "authorPrefix": "Bởi",
   "errors": {
-    "fish": "Fish 语音库加载失败：",
-    "google": "Google Cloud TTS 语音库加载失败：",
-    "kokoro": "Kokoro 语音库加载失败：",
-    "edge": "Edge 语音加载失败，使用备用列表。"
+    "fish": "Lỗi tải thư viện giọng đọc Fish:",
+    "google": "Lỗi tải thư viện giọng đọc Google Cloud TTS:",
+    "kokoro": "Lỗi tải thư viện giọng đọc Kokoro:",
+    "edge": "Không tải được giọng đọc Edge. Đang dùng danh sách dự phòng."
   },
   "actions": {
-    "clearSearch": "清空搜索",
-    "preview": "试听语音",
-    "stopPreview": "停止试听"
+    "clearSearch": "Xóa tìm kiếm",
+    "preview": "Nghe thử giọng đọc",
+    "stopPreview": "Dừng nghe thử"
   }
 }

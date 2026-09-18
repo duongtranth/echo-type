@@ -8,7 +8,7 @@ export function buildLibraryCollection(title: string, itemIds: string[]): Collec
     title,
     titleZh: title,
     description: `${itemIds.length} saved items`,
-    descriptionZh: `${itemIds.length} 条已保存内容`,
+    descriptionZh: `${itemIds.length} mục đã lưu`,
     scenario: title,
     category: 'custom',
     difficulty: 'beginner',

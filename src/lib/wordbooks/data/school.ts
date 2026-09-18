@@ -3,7 +3,7 @@ import type { WordBook } from '@/types/wordbook';
 export const schoolBooks: WordBook[] = [
   {
     id: 'elementary',
-    name: '小学英语词汇',
+    name: 'Từ vựng tiếng Anh Tiểu học',
     nameEn: 'Elementary School',
     description:
       'Fun, foundational English words for elementary learners (grades 3-6), covering everyday objects and basic actions.',
@@ -16,7 +16,7 @@ export const schoolBooks: WordBook[] = [
   },
   {
     id: 'junior-high',
-    name: '初中英语词汇',
+    name: 'Từ vựng tiếng Anh Trung học cơ sở',
     nameEn: 'Junior High School',
     description: 'Essential vocabulary for junior high students, bridging basic to intermediate English proficiency.',
     kind: 'vocabulary',
@@ -28,7 +28,7 @@ export const schoolBooks: WordBook[] = [
   },
   {
     id: 'senior-high',
-    name: '高中英语词汇',
+    name: 'Từ vựng tiếng Anh Trung học phổ thông',
     nameEn: 'Senior High School',
     description: 'Advanced vocabulary for senior high, preparing students for college entrance and academic English.',
     kind: 'vocabulary',
@@ -40,7 +40,7 @@ export const schoolBooks: WordBook[] = [
   },
   {
     id: 'gaokao2026',
-    name: '高考核心词汇',
+    name: 'Từ vựng cốt lõi kỳ thi Gaokao',
     nameEn: 'Gaokao Core',
     description: 'High-frequency words for the Gaokao English exam, curated from past papers and official syllabi.',
     kind: 'vocabulary',

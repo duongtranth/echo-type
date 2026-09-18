@@ -338,16 +338,17 @@ export const SelectionTranslationPopup = forwardRef<HTMLDivElement, Props>(
     );
 
     const typeBadge: Record<FavoriteType, { label: string; color: string }> = {
-      word: { label: '单词', color: 'bg-blue-100 text-blue-700' },
-      phrase: { label: '短语', color: 'bg-purple-100 text-purple-700' },
-      sentence: { label: '句子', color: 'bg-emerald-100 text-emerald-700' },
+      word: { label: 'Từ', color: 'bg-blue-100 text-blue-700' },
+      phrase: { label: 'Cụm từ', color: 'bg-purple-100 text-purple-700' },
+      sentence: { label: 'Câu', color: 'bg-emerald-100 text-emerald-700' },
     };
 
     const badge = typeBadge[selection.type];
     const itemTranslation = result?.itemTranslation || result?.translation;
     const exampleSentence = result?.exampleSentence;
-    const folderOptions = folders.length === 0 ? [{ id: 'default', name: '默认收藏' }] : folders;
-    const selectedFolderName = folderOptions.find((folder) => folder.id === selectedFolderId)?.name ?? '默认收藏';
+    const folderOptions = folders.length === 0 ? [{ id: 'default', name: 'Yêu thích mặc định' }] : folders;
+    const selectedFolderName =
+      folderOptions.find((folder) => folder.id === selectedFolderId)?.name ?? 'Yêu thích mặc định';
 
     return createPortal(
       <div
@@ -467,13 +468,13 @@ export const SelectionTranslationPopup = forwardRef<HTMLDivElement, Props>(
               <div className="flex items-end gap-2">
                 <div className="min-w-0 flex-1">
                   <label htmlFor="selection-favorite-folder" className="text-[10px] font-medium text-slate-500">
-                    收藏到
+                    Lưu vào
                   </label>
                   <div className="relative mt-1">
                     <button
                       id="selection-favorite-folder"
                       type="button"
-                      aria-label="选择收藏夹"
+                      aria-label="Chọn thư mục yêu thích"
                       aria-haspopup="true"
                       aria-expanded={isFolderMenuOpen}
                       aria-controls="selection-favorite-folder-list"
@@ -497,7 +498,7 @@ export const SelectionTranslationPopup = forwardRef<HTMLDivElement, Props>(
                     setIsFolderMenuOpen(false);
                     setIsCreatingFolder((value) => !value);
                   }}
-                  aria-label="新建收藏夹"
+                  aria-label="Tạo thư mục mới"
                 >
                   <Plus className="h-4 w-4" />
                 </Button>
@@ -510,14 +511,18 @@ export const SelectionTranslationPopup = forwardRef<HTMLDivElement, Props>(
                   )}
                   onClick={handleFavorite}
                 >
-                  {favoriteAction === 'remove' ? '取消收藏' : favoriteAction === 'move' ? '移动到此收藏夹' : '♡ 收藏'}
+                  {favoriteAction === 'remove'
+                    ? 'Bỏ yêu thích'
+                    : favoriteAction === 'move'
+                      ? 'Chuyển vào thư mục này'
+                      : '♡ Yêu thích'}
                 </Button>
               </div>
               {isFolderMenuOpen && (
                 <div
                   id="selection-favorite-folder-list"
                   role="group"
-                  aria-label="收藏夹"
+                  aria-label="Thư mục yêu thích"
                   className="mt-2 max-h-36 overflow-y-auto rounded-lg border border-slate-200 bg-white p-1 shadow-lg"
                 >
                   {folderOptions.map((folder) => (
@@ -544,11 +549,11 @@ export const SelectionTranslationPopup = forwardRef<HTMLDivElement, Props>(
               {isCreatingFolder && (
                 <form className="mt-2 flex gap-2" onSubmit={handleCreateFolder}>
                   <Input
-                    aria-label="新收藏夹名称"
+                    aria-label="Tên thư mục mới"
                     value={newFolderName}
                     onChange={(e) => setNewFolderName(e.target.value)}
                     onClick={(e) => e.stopPropagation()}
-                    placeholder="新收藏夹名称"
+                    placeholder="Tên thư mục mới"
                     className="h-8 bg-white text-xs"
                     autoFocus
                   />
@@ -558,7 +563,7 @@ export const SelectionTranslationPopup = forwardRef<HTMLDivElement, Props>(
                     className="h-8 shrink-0 text-xs"
                     disabled={isSavingFolder || !newFolderName.trim()}
                   >
-                    创建
+                    Tạo
                   </Button>
                 </form>
               )}

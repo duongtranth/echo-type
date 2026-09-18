@@ -1,46 +1,46 @@
 {
   "page": {
-    "title": "今日复习",
-    "description": "优先完成待复习项目。如需新内容，请返回仪表盘继续今日计划。",
-    "loading": "正在加载今日复习...",
-    "backToDashboard": "返回仪表盘"
+    "title": "Ôn tập hôm nay",
+    "description": "Ưu tiên hoàn thành các mục cần ôn tập trước. Nếu muốn nội dung mới, quay lại Bảng điều khiển để tiếp tục kế hoạch hôm nay.",
+    "loading": "Đang tải nội dung ôn tập hôm nay...",
+    "backToDashboard": "Về Bảng điều khiển"
   },
   "progress": {
-    "cleared": "本次已完成 {{completed}}/{{total}}",
-    "remaining": "剩余 {{count}} 个复习项目",
-    "remainingPlural": "剩余 {{count}} 个复习项目",
-    "refresh": "刷新"
+    "cleared": "Đã hoàn thành {{completed}}/{{total}} trong lượt này",
+    "remaining": "Còn {{count}} mục cần ôn tập",
+    "remainingPlural": "Còn {{count}} mục cần ôn tập",
+    "refresh": "Làm mới"
   },
   "empty": {
-    "doneTitle": "今日复习已完成",
-    "doneDescription": "你已完成所有待复习项目。稍后如有新的到期项目会自动出现。",
-    "noDueTitle": "暂无待复习项目",
-    "noDueDescription": "当项目到达复习时间后，会自动出现在这里。"
+    "doneTitle": "Đã hoàn thành ôn tập hôm nay",
+    "doneDescription": "Bạn đã hoàn thành tất cả các mục cần ôn tập. Hãy quay lại sau nếu có thêm mục mới đến hạn.",
+    "noDueTitle": "Hiện chưa có mục nào cần ôn tập",
+    "noDueDescription": "Khi các mục đến hạn ôn tập tiếp theo, chúng sẽ tự động xuất hiện ở đây."
   },
   "current": {
-    "label": "当前复习",
-    "openPractice": "打开完整练习页",
-    "hint": "你可以在下方直接复习，也可以打开完整模块页面使用全部功能。"
+    "label": "Đang ôn tập",
+    "openPractice": "Mở trang luyện tập đầy đủ",
+    "hint": "Bạn có thể ôn tập trực tiếp bên dưới, hoặc mở trang mô-đun đầy đủ nếu cần toàn bộ tính năng."
   },
   "upNext": {
-    "title": "接下来",
-    "lastItem": "这是当前最后一个待复习项目。"
+    "title": "Tiếp theo",
+    "lastItem": "Đây là mục cần ôn tập cuối cùng hiện tại."
   },
   "inline": {
-    "title": "内联复习",
-    "description": "在此完成复习，队列将自动推进。"
+    "title": "Ôn tập nhanh",
+    "description": "Hoàn thành mục này tại đây và hàng đợi sẽ tự động chuyển tiếp."
   },
   "rating": {
-    "question": "你记得多好？",
-    "again": "重来",
-    "hard": "困难",
-    "good": "良好",
-    "easy": "简单"
+    "question": "Bạn nhớ tốt đến mức nào?",
+    "again": "Làm lại",
+    "hard": "Khó",
+    "good": "Tốt",
+    "easy": "Dễ"
   },
   "modules": {
-    "listen": "听力",
-    "speak": "口语",
-    "read": "阅读",
-    "write": "写作"
+    "listen": "Nghe",
+    "speak": "Nói",
+    "read": "Đọc",
+    "write": "Viết"
   }
 }

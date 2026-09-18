@@ -3,7 +3,7 @@ import type { WordBook } from '@/types/wordbook';
 export const coreVocabBooks: WordBook[] = [
   {
     id: 'oxford3000',
-    name: '牛津3000核心词',
+    name: 'Từ cốt lõi Oxford 3000',
     nameEn: 'Oxford 3000',
     description:
       'The Oxford 3000 — the most important and useful words to learn in English, selected by language experts.',
@@ -16,7 +16,7 @@ export const coreVocabBooks: WordBook[] = [
   },
   {
     id: 'oxford5000',
-    name: '牛津5000核心词',
+    name: 'Từ cốt lõi Oxford 5000',
     nameEn: 'Oxford 5000',
     description:
       'The Oxford 5000 — an expanded list of 5000 important words for upper-intermediate to advanced learners.',
@@ -29,7 +29,7 @@ export const coreVocabBooks: WordBook[] = [
   },
   {
     id: 'coca20000',
-    name: 'COCA两万词频',
+    name: 'COCA 20.000 từ tần suất cao',
     nameEn: 'COCA 20000',
     description:
       'The top 20,000 most frequent words from the Corpus of Contemporary American English — the gold standard for word frequency.',
@@ -42,7 +42,7 @@ export const coreVocabBooks: WordBook[] = [
   },
   {
     id: 'essential4000',
-    name: '4000必备英语词',
+    name: '4000 từ tiếng Anh thiết yếu',
     nameEn: '4000 Essential Words',
     description:
       'The 4000 Essential English Words series — carefully selected vocabulary with example sentences for effective learning.',

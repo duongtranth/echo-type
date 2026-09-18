@@ -3,7 +3,7 @@ import type { WordBook } from '@/types/wordbook';
 export const nceBooks: WordBook[] = [
   {
     id: 'nce1',
-    name: '新概念英语第一册',
+    name: 'New Concept English - Quyển 1',
     nameEn: 'NCE Book 1',
     description:
       'Vocabulary from New Concept English Book 1 — First Things First. Foundation-level words for beginners.',
@@ -16,7 +16,7 @@ export const nceBooks: WordBook[] = [
   },
   {
     id: 'nce2',
-    name: '新概念英语第二册',
+    name: 'New Concept English - Quyển 2',
     nameEn: 'NCE Book 2',
     description:
       'Vocabulary from New Concept English Book 2 — Practice and Progress. Building fluency with intermediate words.',
@@ -29,7 +29,7 @@ export const nceBooks: WordBook[] = [
   },
   {
     id: 'nce3',
-    name: '新概念英语第三册',
+    name: 'New Concept English - Quyển 3',
     nameEn: 'NCE Book 3',
     description:
       'Vocabulary from New Concept English Book 3 — Developing Skills. Advanced vocabulary for proficient learners.',
@@ -42,7 +42,7 @@ export const nceBooks: WordBook[] = [
   },
   {
     id: 'nce4',
-    name: '新概念英语第四册',
+    name: 'New Concept English - Quyển 4',
     nameEn: 'NCE Book 4',
     description:
       'Vocabulary from New Concept English Book 4 — Fluency in English. Mastery-level words for advanced learners.',

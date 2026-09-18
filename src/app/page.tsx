@@ -2,8 +2,13 @@
 
 import { ArrowRight, BookOpen, Headphones, MessageCircle, Mic, PenTool, Sparkles } from 'lucide-react';
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 import { ChatFab } from '@/components/chat/chat-fab';
 import { LandingNav } from '@/components/layout/landing-nav';
+import { AnimatedGradientText } from '@/components/magicui/animated-gradient-text';
+import { BorderBeam } from '@/components/magicui/border-beam';
+import { DotPattern } from '@/components/magicui/dot-pattern';
+import { ShimmerButton } from '@/components/magicui/shimmer-button';
 import { detectIOSNativeHost } from '@/lib/tauri';
 
 function getNativeHostSearchParam(): string | null {
@@ -12,6 +17,7 @@ function getNativeHostSearchParam(): string | null {
 }
 
 export default function LandingPage() {
+  const router = useRouter();
   const isIOSNativeHost = getNativeHostSearchParam() === 'ios' || detectIOSNativeHost();
   const features = [
     {
@@ -97,26 +103,34 @@ export default function LandingPage() {
             </div>
           </div>
         ) : (
-          <>
-            <h1 className="text-5xl md:text-6xl font-bold text-indigo-900 font-[var(--font-poppins)] leading-tight">
+          <div className="relative isolate">
+            <DotPattern
+              glow
+              className="opacity-60 [mask-image:radial-gradient(480px_circle_at_center,white,transparent)]"
+            />
+            <div className="mb-4 inline-flex items-center gap-2 rounded-full border border-indigo-100 bg-white/70 px-3 py-1 font-mono text-[11px] font-semibold uppercase tracking-[0.18em] text-indigo-500 backdrop-blur">
+              <Sparkles className="h-3.5 w-3.5" />
+              English Practice Hub
+            </div>
+            <h1 className="font-heading text-5xl md:text-6xl font-extrabold text-indigo-950 leading-tight tracking-tight">
               Master English Through
               <br />
-              <span className="text-indigo-600">Immersive Practice</span>
+              <AnimatedGradientText className="font-extrabold">Immersive Practice</AnimatedGradientText>
             </h1>
-            <p className="mt-6 text-lg text-indigo-600 max-w-2xl mx-auto">
+            <p className="mt-6 text-lg text-slate-500 max-w-2xl mx-auto">
               Listen, speak, read, and write — with AI-powered feedback at every step. Import your own content and
               master English through immersive practice.
             </p>
             <div className="mt-10 flex items-center justify-center gap-4">
-              <Link
-                href="/dashboard"
-                className="px-8 py-3 bg-green-500 text-white rounded-lg font-semibold hover:bg-green-600 transition-colors duration-200 flex items-center gap-2 cursor-pointer"
+              <ShimmerButton
+                onClick={() => router.push('/dashboard')}
+                className="font-mono font-semibold uppercase tracking-wide"
               >
                 Get Started Free
                 <ArrowRight className="w-5 h-5" />
-              </Link>
+              </ShimmerButton>
             </div>
-          </>
+          </div>
         )}
       </section>
 
@@ -126,33 +140,39 @@ export default function LandingPage() {
             isIOSNativeHost ? 'grid grid-cols-1 gap-4 md:grid-cols-2' : 'grid grid-cols-1 md:grid-cols-2 gap-6'
           }
         >
-          {features.map((feature, index) => (
-            <Link
-              key={feature.title}
-              href={feature.href}
-              className={`block cursor-pointer transition-all duration-200 ${
-                isIOSNativeHost
-                  ? 'rounded-[28px] border border-white/70 bg-white/82 p-5 shadow-[0_18px_40px_rgba(15,23,42,0.06)] hover:-translate-y-0.5 hover:shadow-[0_24px_52px_rgba(15,23,42,0.10)] backdrop-blur-xl'
-                  : 'bg-white/70 backdrop-blur-xl rounded-2xl p-8 border border-indigo-100 hover:shadow-lg hover:-translate-y-0.5'
-              } ${index === features.length - 1 && features.length % 2 === 1 ? 'md:col-span-2' : ''}`}
-            >
-              <div
-                className={`${isIOSNativeHost ? 'mb-4 flex h-12 w-12 items-center justify-center rounded-2xl shadow-[inset_0_1px_0_rgba(255,255,255,0.28)]' : 'w-12 h-12 rounded-xl flex items-center justify-center mb-4'} ${feature.color}`}
-              >
-                <feature.icon className="w-6 h-6 text-white" />
-              </div>
-              <h3
-                className={
+          {features.map((feature, index) => {
+            const isLastOdd = index === features.length - 1 && features.length % 2 === 1;
+            return (
+              <Link
+                key={feature.title}
+                href={feature.href}
+                className={`relative block cursor-pointer transition-all duration-200 ${
                   isIOSNativeHost
-                    ? 'mb-2 text-lg font-semibold tracking-[-0.02em] text-slate-950 font-[var(--font-poppins)]'
-                    : 'text-xl font-semibold text-indigo-900 font-[var(--font-poppins)] mb-2'
-                }
+                    ? 'rounded-[28px] border border-white/70 bg-white/82 p-5 shadow-[0_18px_40px_rgba(15,23,42,0.06)] hover:-translate-y-0.5 hover:shadow-[0_24px_52px_rgba(15,23,42,0.10)] backdrop-blur-xl'
+                    : 'bg-white/70 backdrop-blur-xl rounded-2xl p-8 border border-indigo-100 hover:shadow-lg hover:-translate-y-0.5'
+                } ${isLastOdd ? 'md:col-span-2' : ''}`}
               >
-                {feature.title}
-              </h3>
-              <p className={isIOSNativeHost ? 'text-sm leading-6 text-slate-500' : 'text-indigo-600'}>{feature.desc}</p>
-            </Link>
-          ))}
+                {isLastOdd && <BorderBeam size={120} duration={8} />}
+                <div
+                  className={`${isIOSNativeHost ? 'mb-4 flex h-12 w-12 items-center justify-center rounded-2xl shadow-[inset_0_1px_0_rgba(255,255,255,0.28)]' : 'w-12 h-12 rounded-xl flex items-center justify-center mb-4 shadow-md'} ${feature.color}`}
+                >
+                  <feature.icon className="w-6 h-6 text-white" />
+                </div>
+                <h3
+                  className={
+                    isIOSNativeHost
+                      ? 'mb-2 text-lg font-semibold tracking-[-0.02em] text-slate-950 font-[var(--font-poppins)]'
+                      : 'font-heading text-xl font-bold text-indigo-950 mb-2'
+                  }
+                >
+                  {feature.title}
+                </h3>
+                <p className={isIOSNativeHost ? 'text-sm leading-6 text-slate-500' : 'text-slate-500'}>
+                  {feature.desc}
+                </p>
+              </Link>
+            );
+          })}
         </div>
       </section>
 

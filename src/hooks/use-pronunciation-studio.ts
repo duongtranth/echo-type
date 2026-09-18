@@ -81,7 +81,7 @@ export function usePronunciationStudio(target: string) {
   async function start() {
     if (pending.current || recorder.current?.state === 'recording' || assessingRef.current) return;
     if (!navigator.mediaDevices?.getUserMedia || typeof MediaRecorder === 'undefined') {
-      setError('Recording is unavailable in this browser. / 当前浏览器不支持录音。');
+      setError('Recording is unavailable in this browser. / Trình duyệt này không hỗ trợ ghi âm.');
       return;
     }
     const token = ++generation.current;
@@ -119,7 +119,7 @@ export function usePronunciationStudio(target: string) {
         setRecording(false);
         const audio = new Blob(chunks, { type: active.mimeType });
         if (!audio.size) {
-          setError('No audio captured. / 未录到音频。');
+          setError('No audio captured. / Không ghi được âm thanh nào.');
           return;
         }
         blob.current = audio;
@@ -129,7 +129,7 @@ export function usePronunciationStudio(target: string) {
       active.onerror = () => {
         if (token === generation.current) {
           stop();
-          setError('Recording failed. / 录音失败。');
+          setError('Recording failed. / Ghi âm thất bại.');
         }
       };
       recorder.current = active;
@@ -157,17 +157,17 @@ export function usePronunciationStudio(target: string) {
         };
         asr.onerror = (event) => {
           if (token === generation.current)
-            setRecognitionStatus(`Recognition unavailable (${event.error}). / 语音识别不可用。`);
+            setRecognitionStatus(`Recognition unavailable (${event.error}). / Không dùng được nhận dạng giọng nói.`);
         };
         asr.onend = () => {};
         try {
           asr.start();
         } catch {
-          setRecognitionStatus('Recognition unavailable. / 语音识别不可用。');
+          setRecognitionStatus('Recognition unavailable. / Không dùng được nhận dạng giọng nói.');
         }
       } else
         setRecognitionStatus(
-          'Browser recognition unsupported; recording still works. / 不支持语音识别，但仍可录音回放。',
+          'Browser recognition unsupported; recording still works. / Trình duyệt không hỗ trợ nhận dạng giọng nói, nhưng vẫn ghi âm được.',
         );
       timeout.current = setTimeout(() => {
         if (token === generation.current) stop();
@@ -177,8 +177,8 @@ export function usePronunciationStudio(target: string) {
         stream.current?.getTracks().forEach((track) => track.stop());
         setError(
           cause instanceof DOMException && cause.name === 'NotAllowedError'
-            ? 'Microphone permission denied. Allow access in browser settings. / 麦克风权限被拒绝，请在浏览器设置中允许。'
-            : 'Could not start the microphone. Check your input device. / 无法启动麦克风，请检查输入设备。',
+            ? 'Microphone permission denied. Allow access in browser settings. / Quyền truy cập micro bị từ chối. Hãy cho phép trong cài đặt trình duyệt.'
+            : 'Could not start the microphone. Check your input device. / Không thể khởi động micro. Hãy kiểm tra thiết bị đầu vào.',
         );
       }
     } finally {
@@ -193,11 +193,11 @@ export function usePronunciationStudio(target: string) {
     if (assessingRef.current || !blob.current || recording || pending.current) return;
     const settings = usePronunciationStore.getState();
     if (!settings.speechSuperAppKey || !settings.speechSuperSecretKey) {
-      setError('Configure SpeechSuper in Settings first. / 请先在设置中配置 SpeechSuper。');
+      setError('Configure SpeechSuper in Settings first. / Hãy cấu hình SpeechSuper trong Cài đặt trước.');
       return;
     }
     if (getMonthlyUsage().count >= settings.monthlyLimit) {
-      setError('Monthly assessment limit reached. / 已达到每月评估上限。');
+      setError('Monthly assessment limit reached. / Đã đạt giới hạn đánh giá hằng tháng.');
       return;
     }
     const token = generation.current;
@@ -216,7 +216,7 @@ export function usePronunciationStudio(target: string) {
       body.append('appKey', settings.speechSuperAppKey);
       body.append('secretKey', settings.speechSuperSecretKey);
       const response = await fetch('/api/pronunciation', { method: 'POST', body, signal: controller.signal });
-      if (!response.ok) throw new Error('SpeechSuper request failed. / SpeechSuper 请求失败。');
+      if (!response.ok) throw new Error('SpeechSuper request failed. / Yêu cầu SpeechSuper thất bại.');
       const result = parseAcousticAssessment(await response.json());
       if (token !== generation.current) return;
       const usage = getMonthlyUsage();
@@ -228,7 +228,7 @@ export function usePronunciationStudio(target: string) {
       setAssessment(result);
     } catch (cause) {
       if (token === generation.current)
-        setError(cause instanceof Error ? cause.message : 'Assessment failed. / 评估失败。');
+        setError(cause instanceof Error ? cause.message : 'Assessment failed. / Đánh giá thất bại.');
     } finally {
       clearTimeout(deadline);
       if (token === generation.current) {

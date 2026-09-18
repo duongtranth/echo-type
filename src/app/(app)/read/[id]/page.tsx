@@ -1099,17 +1099,15 @@ export default function ReadDetailPage() {
         </Card>
       )}
       {!isIOSNativeHost && (
-        <div className="flex items-center gap-3 md:gap-4 py-3 md:py-4 shrink-0">
+        <div className="flex items-center gap-2 py-2 shrink-0 opacity-80">
           <Link href="/read" prefetch={false}>
-            <Button variant="ghost" size="icon" className="text-indigo-600 cursor-pointer">
-              <ArrowLeft className="w-5 h-5" />
+            <Button variant="ghost" size="icon-sm" className="text-indigo-500 cursor-pointer">
+              <ArrowLeft className="w-4 h-4" />
             </Button>
           </Link>
           <div className="min-w-0 flex-1">
-            <h1 className="text-xl md:text-2xl font-bold font-[var(--font-poppins)] text-indigo-900 truncate">
-              {content.title}
-            </h1>
-            <p className="text-sm text-indigo-500">
+            <h1 className="text-xs font-semibold text-indigo-700 truncate">{content.title}</h1>
+            <p className="text-[11px] text-indigo-400">
               {content.type} · {t.header.subtitle}
             </p>
           </div>
@@ -1121,16 +1119,11 @@ export default function ReadDetailPage() {
         </div>
       )}
 
-      <div data-testid="read-practice-workspace" className="flex h-[calc(100dvh-9.5rem)] min-h-0 flex-col gap-3">
-        <Card
-          className={cn(
-            isIOSNativeHost ? IOS_SECTION_CARD_CLASS : 'bg-white border-slate-100 shadow-sm',
-            'min-h-0 flex-1 overflow-hidden',
-          )}
-        >
-          <CardContent className="flex h-full min-h-0 flex-col p-4 md:p-6">
+      <div data-testid="read-practice-workspace" className="flex flex-col gap-3">
+        <Card className={cn(isIOSNativeHost ? IOS_SECTION_CARD_CLASS : 'bg-white border-slate-100 shadow-sm')}>
+          <CardContent className="flex flex-col p-4 md:p-6">
             <div className="flex items-center justify-between mb-4 shrink-0 gap-2">
-              <h3 className="font-semibold text-indigo-900 shrink-0">{t.content.referenceText}</h3>
+              <h3 className="text-xs font-semibold text-indigo-400 shrink-0">{t.content.referenceText}</h3>
               <div className="flex items-center gap-1 md:gap-2">
                 {!isIOSNativeHost && <TranslationBar module="read" />}
                 <div className="w-px h-6 bg-indigo-200 mx-0.5 md:mx-1 hidden sm:block" />
@@ -1151,7 +1144,7 @@ export default function ReadDetailPage() {
               data-testid="read-reference-scroll"
               data-selection-scope
               className={cn(
-                'min-h-0 flex-1 overflow-y-auto pr-2',
+                'max-h-[65dvh] overflow-y-auto pr-2',
                 isIOSNativeHost && `${IOS_LIST_CARD_CLASS} px-4 py-4`,
               )}
             >
@@ -1161,6 +1154,7 @@ export default function ReadDetailPage() {
                   onWordClick={handleReadAloudWordClick}
                   showTranslation={showTranslation}
                   sentenceTranslations={readAloudSentenceTranslations}
+                  lookupTargetLang={targetLang}
                 />
               ) : (
                 <FormattedContentText
@@ -1169,6 +1163,7 @@ export default function ReadDetailPage() {
                   titleClassName="text-2xl font-semibold text-indigo-900 leading-tight"
                   labelClassName="text-xs font-semibold tracking-[0.18em] text-indigo-400"
                   quoteClassName="border-l-2 border-indigo-200 pl-4 text-lg italic leading-relaxed text-indigo-700"
+                  lookupTargetLang={targetLang}
                 />
               )}
               {showTranslation && translationLoading && (

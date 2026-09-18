@@ -22,9 +22,8 @@ import { useCallback, useEffect, useRef, useState } from 'react';
 import { ReadAloudInlineControls } from '@/components/read-aloud';
 import { PageSpinner } from '@/components/shared/page-spinner';
 import { PracticeCompleteBanner } from '@/components/shared/practice-complete-banner';
-import { WordDictionaryInfo } from '@/components/shared/word-dictionary-info';
+import { VocabWordCard } from '@/components/shared/vocab-word-card';
 import { TranslationBar } from '@/components/translation/translation-bar';
-import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { useFallbackSTT } from '@/hooks/use-fallback-stt';
@@ -92,12 +91,6 @@ type BrowserSpeechRecognition = typeof window & {
 };
 
 // ─── Constants ───────────────────────────────────────────────────────────────
-
-const difficultyColors: Record<string, string> = {
-  beginner: 'bg-emerald-100 text-emerald-700',
-  intermediate: 'bg-yellow-100 text-yellow-700',
-  advanced: 'bg-red-100 text-red-700',
-};
 
 const moduleIcons = {
   listen: { icon: Headphones, backColor: 'text-indigo-600' },
@@ -497,19 +490,23 @@ function WritePractice({
       />
       {saving && (
         <p role="status" className="text-center text-sm text-slate-600">
-          {lang === 'zh' ? '正在保存练习…' : 'Saving practice…'}
+          {lang === 'zh' ? 'Đang lưu bài luyện tập…' : 'Saving practice…'}
         </p>
       )}
       {saveError && (
         <p role="alert" className="text-center text-sm text-red-600">
           {lang === 'zh'
-            ? '保存失败，答案已保留，请重试。'
+            ? 'Lưu thất bại. Câu trả lời của bạn vẫn được giữ lại, hãy thử lại.'
             : 'Could not save practice. Your answer is kept; please retry.'}
         </p>
       )}
       {result === 'correct' && (
         <p role="status" className="text-center text-green-600 font-medium text-sm">
-          {onCorrect ? t.write.correct : lang === 'zh' ? '答对了，练习已保存。' : 'Correct! Practice saved.'}
+          {onCorrect
+            ? t.write.correct
+            : lang === 'zh'
+              ? 'Chính xác! Đã lưu bài luyện tập.'
+              : 'Correct! Practice saved.'}
         </p>
       )}
       {result === 'wrong' && (
@@ -1020,10 +1017,10 @@ const encourageMessagesEn: Record<string, string> = {
 };
 
 const encourageMessagesZh: Record<string, string> = {
-  listen: '你的听力越来越敏锐了——明天继续加油！',
-  speak: '很棒的发音练习——明天继续保持！',
-  read: '出色的阅读——明天再来！',
-  write: '打字水平在提升——明天继续进步！',
+  listen: 'Khả năng nghe của bạn đang tiến bộ — quay lại vào ngày mai nhé!',
+  speak: 'Buổi luyện phát âm tuyệt vời — hãy duy trì vào ngày mai!',
+  read: 'Buổi đọc xuất sắc — hẹn gặp lại vào ngày mai!',
+  write: 'Kỹ năng gõ chữ đang tiến bộ — tiếp tục phát huy vào ngày mai!',
 };
 
 const encourageMessagesByLang = { en: encourageMessagesEn, zh: encourageMessagesZh };
@@ -1366,29 +1363,28 @@ export function WordBookPractice({ module }: WordBookPracticeProps) {
     <div className="max-w-2xl mx-auto space-y-4">
       {/* Header */}
       {!IS_IOS_NATIVE_HOST && (
-        <div className="flex items-center gap-3">
+        <div className="flex items-center gap-2 opacity-80">
           <Link href={`/${module}`}>
-            <Button variant="ghost" size="icon" className={cn('cursor-pointer shrink-0', config.backColor)}>
-              <ArrowLeft className="w-5 h-5" />
+            <Button variant="ghost" size="icon-sm" className={cn('cursor-pointer shrink-0', config.backColor)}>
+              <ArrowLeft className="w-4 h-4" />
             </Button>
           </Link>
           <div className="flex-1 min-w-0">
-            <h1 className="text-lg font-bold text-indigo-900 truncate">
+            <h1 className="text-xs font-semibold text-indigo-700 truncate">
               {book ? `${book.emoji} ${book.nameEn}` : bookInfo ? `${bookInfo.emoji} ${bookInfo.name}` : bookId}
             </h1>
-            <p className="text-xs text-indigo-500">{t.nav.mode.replace('{{label}}', moduleLabel)}</p>
           </div>
           <TranslationBar module={module} />
-          <Badge className="bg-indigo-100 text-indigo-600 shrink-0 font-mono">
-            {currentIndex + 1} / {total}
-          </Badge>
+          <span className="shrink-0 font-mono text-[11px] text-indigo-400">
+            {currentIndex + 1}/{total}
+          </span>
         </div>
       )}
 
       {/* Progress bar */}
-      <div className="w-full bg-indigo-100 rounded-full h-1.5">
+      <div className="w-full bg-indigo-100 rounded-full h-1">
         <div
-          className="bg-indigo-500 h-1.5 rounded-full transition-all duration-300 ease-out"
+          className="bg-indigo-500 h-1 rounded-full transition-all duration-300 ease-out"
           style={{ width: `${((currentIndex + 1) / total) * 100}%` }}
         />
       </div>
@@ -1400,41 +1396,17 @@ export function WordBookPractice({ module }: WordBookPracticeProps) {
             <Card className="bg-white border-indigo-100 shadow-md">
               <CardContent className="p-6 space-y-4">
                 {/* Word / Title */}
-                <div className="text-center space-y-2">
-                  <div className="flex items-center justify-center gap-2">
-                    <h2 className="text-3xl font-bold text-indigo-900">{currentItem.title}</h2>
-                    <button
-                      type="button"
-                      onClick={() => speak(currentItem.title)}
-                      className="text-indigo-400 hover:text-indigo-600 cursor-pointer transition-colors p-1"
-                      title={t.tooltips.playWord}
-                    >
-                      <Volume2 className="w-5 h-5" />
-                    </button>
-                  </div>
-                  <WordDictionaryInfo
-                    word={currentItem.title}
-                    targetLang={targetLang}
-                    module={module}
-                    sourceDefinition={currentItem.text}
-                  />
-                  <div className="flex items-center justify-center gap-2 flex-wrap">
-                    {currentItem.difficulty && (
-                      <Badge className={difficultyColors[currentItem.difficulty]} variant="secondary">
-                        {currentItem.difficulty}
-                      </Badge>
-                    )}
-                    {currentItem.tags.slice(0, 3).map((tag, index) => (
-                      <Badge
-                        key={`${currentItem.id}-${tag}-${index}`}
-                        variant="outline"
-                        className="border-indigo-200 text-indigo-400 text-xs"
-                      >
-                        {tag}
-                      </Badge>
-                    ))}
-                  </div>
-                </div>
+                <VocabWordCard
+                  word={currentItem.title}
+                  example={currentItem.text}
+                  targetLang={targetLang}
+                  module={module}
+                  difficulty={currentItem.difficulty}
+                  tags={currentItem.tags}
+                  idPrefix={currentItem.id}
+                  onSpeakWord={() => speak(currentItem.title)}
+                  playWordTooltip={t.tooltips.playWord}
+                />
 
                 {/* Example text / content */}
                 <div className="bg-indigo-50/50 rounded-xl p-4 space-y-2">
@@ -1573,45 +1545,19 @@ export function SingleItemPractice({
       </div>
       <Card className="bg-white border-indigo-100 shadow-md">
         <CardContent className="p-6 space-y-4">
-          <div className="text-center space-y-2">
-            {!course && (
-              <div className="flex items-center justify-center gap-2">
-                <h2 className="text-3xl font-bold text-indigo-900">{item.title}</h2>
-                <button
-                  type="button"
-                  onClick={() => speak(item.title)}
-                  className="text-indigo-400 hover:text-indigo-600 cursor-pointer transition-colors p-1"
-                  title={t.tooltips.playWord}
-                >
-                  <Volume2 className="w-5 h-5" />
-                </button>
-              </div>
-            )}
-            {item.type === 'word' && (
-              <WordDictionaryInfo
-                word={item.title}
-                targetLang={targetLang}
-                module={module}
-                sourceDefinition={item.text}
-              />
-            )}
-            <div className="flex items-center justify-center gap-2 flex-wrap">
-              {item.difficulty && (
-                <Badge className={difficultyColors[item.difficulty]} variant="secondary">
-                  {item.difficulty}
-                </Badge>
-              )}
-              {item.tags.slice(0, 3).map((tag, index) => (
-                <Badge
-                  key={`${item.id}-${tag}-${index}`}
-                  variant="outline"
-                  className="border-indigo-200 text-indigo-400 text-xs"
-                >
-                  {tag}
-                </Badge>
-              ))}
-            </div>
-          </div>
+          <VocabWordCard
+            word={item.title}
+            example={item.text}
+            targetLang={targetLang}
+            module={module}
+            difficulty={item.difficulty}
+            tags={item.tags}
+            idPrefix={item.id}
+            showWord={!course}
+            showMeaning={item.type === 'word'}
+            onSpeakWord={() => speak(item.title)}
+            playWordTooltip={t.tooltips.playWord}
+          />
 
           <div className="bg-indigo-50/50 rounded-xl p-4 space-y-2">
             <div className="flex items-center justify-center gap-2">

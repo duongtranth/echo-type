@@ -1,70 +1,70 @@
 {
   "notFound": {
-    "title": "内容未找到",
-    "description": "该内容可能已被删除，或链接无效。",
-    "goToLibrary": "前往内容库"
+    "title": "Không tìm thấy nội dung",
+    "description": "Nội dung này có thể đã bị xóa hoặc liên kết không hợp lệ.",
+    "goToLibrary": "Đi tới Thư viện"
   },
   "header": {
-    "words": "{{count}} 个单词",
-    "cloudPlaybackNotice": "{{source}} 正在播放。句子级高亮为估算值，精度不及浏览器逐词高亮。",
-    "selectedPlaybackNotice": "已选择：{{selected}}。当前实际播放源：{{actual}}。",
-    "browserFallbackNotice": "已选择：{{selected}}。由于 Edge TTS 当前不稳定，现已切换为 {{actual}} 以保证播放稳定。"
+    "words": "{{count}} từ",
+    "cloudPlaybackNotice": "Đang phát bằng {{source}}. Việc tô sáng theo câu chỉ là ước tính nên sẽ kém chính xác hơn tô sáng theo từ của trình duyệt.",
+    "selectedPlaybackNotice": "Đã chọn: {{selected}}. Đang phát bằng: {{actual}}.",
+    "browserFallbackNotice": "Đã chọn: {{selected}}. Đang phát bằng: {{actual}} để đảm bảo ổn định vì Edge TTS tạm thời không khả dụng."
   },
   "sources": {
     "edge": "Edge TTS",
     "fish": "Fish Audio",
     "google": "Google Cloud TTS",
     "openai": "OpenAI TTS",
-    "browser": "浏览器语音"
+    "browser": "Giọng đọc trình duyệt"
   },
   "modes": {
-    "title": "练习模式",
+    "title": "Chế độ luyện tập",
     "normal": {
-      "label": "普通",
-      "description": "边听边看文本，适合熟悉内容。"
+      "label": "Bình thường",
+      "description": "Đọc theo văn bản trong khi âm thanh phát."
     },
     "repeat": {
-      "label": "重复",
-      "description": "反复播放当前句子，直到你听顺为止。"
+      "label": "Lặp lại",
+      "description": "Lặp lại câu hiện tại cho đến khi bạn thấy dễ dàng."
     },
     "hide-text": {
-      "label": "隐藏文本",
-      "description": "先靠听力理解，再按需要查看原文。"
+      "label": "Ẩn văn bản",
+      "description": "Nghe trước, chỉ hiện văn bản khi bạn cần."
     },
     "dictation": {
-      "label": "听写",
-      "description": "把听到的内容打出来，把错误沉淀成可重练的薄弱点。"
+      "label": "Nghe chép chính tả",
+      "description": "Gõ lại những gì bạn nghe được và biến lỗi sai thành điểm cần luyện lại."
     }
   },
   "repeat": {
-    "title": "句子重复",
-    "sentenceLabel": "第 {{current}} / {{total}} 句",
-    "cta": "重听当前句"
+    "title": "Lặp lại câu",
+    "sentenceLabel": "Câu {{current}} / {{total}}",
+    "cta": "Nghe lại câu này"
   },
   "hidden": {
-    "title": "当前已隐藏文本",
-    "description": "先听，再决定要不要看原文核对。",
-    "reveal": "显示文本",
-    "hide": "隐藏文本",
-    "transcriptHidden": "当前模式下原文已隐藏。",
-    "keepListening": "继续使用播放、上一句、下一句来完成训练。"
+    "title": "Đã ẩn văn bản",
+    "description": "Hãy nghe trước rồi chỉ hiện văn bản khi bạn muốn kiểm tra lại.",
+    "reveal": "Hiện văn bản",
+    "hide": "Ẩn văn bản",
+    "transcriptHidden": "Văn bản đang bị ẩn trong chế độ này.",
+    "keepListening": "Dùng phát, câu trước, câu tiếp theo để tiếp tục luyện nghe."
   },
   "dictation": {
-    "title": "句子听写",
-    "sentenceLabel": "第 {{current}} / {{total}} 句",
-    "replay": "重听当前句",
-    "reveal": "查看答案",
-    "placeholder": "请输入你听到的内容...",
-    "check": "检查听写",
-    "clear": "清空",
-    "pass": "不错，听对了。",
-    "retry": "还差一点。",
-    "accuracy": "准确率 {{accuracy}}%",
-    "failedHint": "这句话会加入薄弱点，方便你稍后定向重练。",
-    "answer": "标准答案",
-    "weakSpotReason": "最近一次听写准确率为 {{accuracy}}%。"
+    "title": "Nghe chép chính tả",
+    "sentenceLabel": "Câu {{current}} / {{total}}",
+    "replay": "Nghe lại câu này",
+    "reveal": "Xem đáp án",
+    "placeholder": "Gõ lại những gì bạn nghe được...",
+    "check": "Kiểm tra",
+    "clear": "Xóa",
+    "pass": "Làm tốt lắm.",
+    "retry": "Chưa đúng hẳn.",
+    "accuracy": "Độ chính xác {{accuracy}}%",
+    "failedHint": "Câu này sẽ được thêm vào danh sách điểm yếu để bạn luyện lại sau.",
+    "answer": "Câu đáp án",
+    "weakSpotReason": "Độ chính xác nghe chép lần gần nhất là {{accuracy}}%."
   },
   "errors": {
-    "ttsFailed": "语音合成失败，请重试或切换其他语音源。"
+    "ttsFailed": "Tổng hợp giọng nói thất bại. Vui lòng thử lại hoặc chuyển sang nguồn giọng đọc khác."
   }
 }

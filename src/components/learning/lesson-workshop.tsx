@@ -73,20 +73,24 @@ export function LessonWorkshop({
       });
       if (!isCurrent()) return;
       setResolveMessage(
-        zh ? '已按你的确认标记解决；练习证据仍保留。' : 'Resolved by your confirmation. Practice evidence is retained.',
+        zh
+          ? 'Đã đánh dấu giải quyết theo xác nhận của bạn; bằng chứng luyện tập vẫn được giữ lại.'
+          : 'Resolved by your confirmation. Practice evidence is retained.',
       );
     } catch {
       if (!isCurrent()) return;
       setResolveMessage(
-        zh ? '暂时无法解决，请重试并确认有新练习记录。' : 'Could not resolve. Retry after completing new practice.',
+        zh
+          ? 'Chưa thể giải quyết. Hãy thử lại sau khi hoàn thành thêm bài luyện tập mới.'
+          : 'Could not resolve. Retry after completing new practice.',
       );
     }
   }
   return (
-    <section aria-label={zh ? '理解与表达' : 'Understand and express'} className="space-y-4">
+    <section aria-label={zh ? 'Hiểu và diễn đạt' : 'Understand and express'} className="space-y-4">
       <p className="text-sm text-slate-600">
         {zh
-          ? `核心学习闭环 ${progress.completedSteps}/2：阅读理解 + 修改后的自主写作。其他专项按需练习。`
+          ? `Vòng học cốt lõi ${progress.completedSteps}/2: đọc hiểu + viết lại sau chỉnh sửa. Các hoạt động khác là tùy chọn.`
           : `Core learning loop ${progress.completedSteps}/2: comprehension + revised writing. Other activities are optional.`}
       </p>
       {related.length > 0 && !weakSpot && (
@@ -97,7 +101,7 @@ export function LessonWorkshop({
               className={`${button} bg-amber-50 text-amber-900`}
               href={`/learn/${encodeURIComponent(lesson.unitId)}?lesson=${encodeURIComponent(lesson.id)}&weakSpot=${encodeURIComponent(item.id)}`}
             >
-              {zh ? '针对练习：' : 'Target practice: '}
+              {zh ? 'Luyện tập trọng tâm: ' : 'Target practice: '}
               {item.text}
             </Link>
           ))}
@@ -106,15 +110,15 @@ export function LessonWorkshop({
       {weakSpot && (
         <div className="rounded-xl bg-amber-50 p-4 text-sm text-amber-950">
           <h3 className="font-semibold">
-            {zh ? '针对薄弱项' : 'Targeted weak spot'}: {weakSpot.text}
+            {zh ? 'Điểm yếu trọng tâm' : 'Targeted weak spot'}: {weakSpot.text}
           </h3>
           <p>
             {zh
-              ? '先提交一次针对练习，再修改重试，最后在个人例句中换语境使用。仅在你确认进步后标记解决；不是 AI 掌握认证。'
+              ? 'Hãy nộp một bài luyện tập trọng tâm trước, sửa và thử lại, rồi dùng nó trong ngữ cảnh mới ở phần Ví dụ của bạn. Chỉ đánh dấu giải quyết sau khi bạn tự xem lại; đây không phải chứng nhận thành thạo từ AI.'
               : 'Submit targeted practice, revise and retry, then use it in a new context in Your example. Resolve only after your own review; this is not AI-certified mastery.'}
           </p>
           {weakSpot.resolved ? (
-            <p>{zh ? '已标记解决' : 'Marked resolved'}</p>
+            <p>{zh ? 'Đã đánh dấu giải quyết' : 'Marked resolved'}</p>
           ) : (
             <>
               <label className="my-2 flex gap-2">
@@ -125,7 +129,7 @@ export function LessonWorkshop({
                   onChange={(event) => setConfirm(event.target.checked)}
                 />
                 {zh
-                  ? '我已对照重试和新例句，确认这个问题已改善'
+                  ? 'Tôi đã đối chiếu lần thử lại và ví dụ mới, xác nhận vấn đề này đã được cải thiện'
                   : 'I reviewed my retry and new example and confirm improvement'}
               </label>
               <button
@@ -134,7 +138,7 @@ export function LessonWorkshop({
                 onClick={() => void resolve()}
                 className={`${button} bg-white text-amber-950`}
               >
-                {zh ? '确认解决' : 'Confirm resolved'}
+                {zh ? 'Xác nhận giải quyết' : 'Confirm resolved'}
               </button>
             </>
           )}
@@ -153,11 +157,11 @@ export function LessonWorkshop({
             {i + 1}.{' '}
             {
               {
-                comprehension: zh ? '阅读理解' : 'Comprehension',
-                writing: zh ? '自主写作' : 'Writing',
-                retelling: zh ? '复述' : 'Retelling',
-                'personal-example': zh ? '个人例句' : 'Your example',
-                'sentence-pronunciation': zh ? '句子发音' : 'Sentence practice',
+                comprehension: zh ? 'Đọc hiểu' : 'Comprehension',
+                writing: zh ? 'Viết tự do' : 'Writing',
+                retelling: zh ? 'Kể lại' : 'Retelling',
+                'personal-example': zh ? 'Ví dụ của bạn' : 'Your example',
+                'sentence-pronunciation': zh ? 'Luyện phát âm câu' : 'Sentence practice',
               }[value]
             }
           </button>
@@ -296,7 +300,7 @@ function WorkshopActivity({
       setMessage(
         t(
           'Microphone unavailable. Allow permission or attach an audio recording below.',
-          '麦克风不可用，请允许权限，或在下方选择已有录音。',
+          'Không dùng được micro. Hãy cấp quyền hoặc đính kèm một bản ghi âm bên dưới.',
         ),
       );
     }
@@ -308,10 +312,10 @@ function WorkshopActivity({
     if (valid) {
       setMessage(
         valid === 'quote'
-          ? t('Quote a passage exactly as it appears above.', '请填写上方原文中真实存在的依据。')
+          ? t('Quote a passage exactly as it appears above.', 'Trích dẫn chính xác một đoạn có thật ở trên.')
           : valid === 'recording'
-            ? t('Record or attach audio first.', '请先录制或上传音频。')
-            : t('Write your response first.', '请先填写回答。'),
+            ? t('Record or attach audio first.', 'Hãy ghi âm hoặc đính kèm âm thanh trước.')
+            : t('Write your response first.', 'Hãy viết câu trả lời trước.'),
       );
       return;
     }
@@ -338,13 +342,18 @@ function WorkshopActivity({
         setMessage(
           t(
             'Saved. Review your feedback, make one change, then submit a revision. Every version is retained.',
-            '已保存。对照反馈修改一处，再提交修改稿；每个版本都将保留。',
+            'Đã lưu. Xem lại phản hồi, chỉnh sửa một điểm, rồi nộp bản sửa; mọi phiên bản đều được giữ lại.',
           ),
         );
       }
     } catch {
       if (isCurrent())
-        setMessage(t('Save failed. Your response is still here; retry.', '保存失败，当前输入仍保留，请重试。'));
+        setMessage(
+          t(
+            'Save failed. Your response is still here; retry.',
+            'Lưu thất bại. Câu trả lời của bạn vẫn còn đây; hãy thử lại.',
+          ),
+        );
     } finally {
       if (isCurrent()) setBusy(false);
     }
@@ -382,7 +391,7 @@ function WorkshopActivity({
         setMessage(
           t(
             'AI feedback unavailable. Your work is preserved. Retry or use the self-review checklist.',
-            'AI 反馈暂不可用，内容未丢失。可重试或使用自评清单。',
+            'Phản hồi AI hiện chưa khả dụng. Nội dung của bạn vẫn được giữ nguyên. Hãy thử lại hoặc dùng danh sách tự đánh giá.',
           ),
         );
     } finally {
@@ -405,12 +414,12 @@ function WorkshopActivity({
             href={`/library/import?job=${encodeURIComponent(item.metadata!.importJobId!)}&block=${encodeURIComponent(item.metadata!.sourceBlockId!)}`}
             className="inline-flex min-h-11 items-center text-sm text-indigo-700"
           >
-            {t('Locate source passage', '定位原文段落')}
+            {t('Locate source passage', 'Định vị đoạn văn gốc')}
           </Link>
         ))}
       <details open={activity !== 'retelling'} className="my-4 rounded-xl bg-slate-50 p-4">
         <summary className="min-h-10 cursor-pointer text-sm font-medium text-indigo-700">
-          {t('Source material · show / hide', '原文 · 展开 / 隐藏')}
+          {t('Source material · show / hide', 'Tài liệu gốc · hiện / ẩn')}
         </summary>
         <TranslationBar module="read" />
         <div className="max-h-64 overflow-y-auto text-base leading-7 text-slate-800">
@@ -419,18 +428,18 @@ function WorkshopActivity({
             showTranslation={showTranslation}
             sentenceTranslations={alignPracticeTranslations(source, translations.sentenceTranslations)}
           />
-          {showTranslation && translations.isLoading && <p className="text-sm">{t('Translating…', '翻译中…')}</p>}
+          {showTranslation && translations.isLoading && <p className="text-sm">{t('Translating…', 'Đang dịch…')}</p>}
           {showTranslation && translations.error && (
             <button type="button" className={button} onClick={translations.retry}>
-              {t('Translation unavailable. Retry', '翻译暂不可用，重试')}
+              {t('Translation unavailable. Retry', 'Bản dịch chưa khả dụng. Thử lại')}
             </button>
           )}
         </div>
       </details>
       <label className="block text-sm font-medium text-slate-700">
         {oral
-          ? t('Summary / sentence and stress notes', '复述摘要 / 练习句与重音标记')
-          : t('Your response', '你的回答')}
+          ? t('Summary / sentence and stress notes', 'Tóm tắt kể lại / câu luyện tập và ghi chú trọng âm')
+          : t('Your response', 'Câu trả lời của bạn')}
         <textarea
           value={answer}
           disabled={busy}
@@ -440,7 +449,7 @@ function WorkshopActivity({
       </label>
       {activity === 'comprehension' && (
         <label className="mt-3 block text-sm font-medium text-slate-700">
-          {t('Exact supporting quote from the source', '支持回答的原文引用')}
+          {t('Exact supporting quote from the source', 'Trích dẫn nguyên văn hỗ trợ câu trả lời')}
           <textarea
             value={quote}
             disabled={busy}
@@ -459,10 +468,10 @@ function WorkshopActivity({
             className={`${button} bg-indigo-50 text-indigo-700`}
             onClick={() => (recording ? recorder.current?.stop() : void startRecording())}
           >
-            {recording ? t('Stop recording', '停止录音') : t('Record / retry', '录音 / 重录')}
+            {recording ? t('Stop recording', 'Dừng ghi âm') : t('Record / retry', 'Ghi âm / Ghi lại')}
           </button>
           <label className="block text-sm text-slate-700">
-            {t('Or attach a recording (up to 25 MB)', '或上传录音（最大 25 MB）')}
+            {t('Or attach a recording (up to 25 MB)', 'Hoặc đính kèm bản ghi âm (tối đa 25 MB)')}
             <input
               type="file"
               accept="audio/*"
@@ -471,7 +480,7 @@ function WorkshopActivity({
                 const file = event.target.files?.[0];
                 if (!file) return;
                 if (file.size > 25 * 1024 * 1024 || !file.type.startsWith('audio/')) {
-                  setMessage(t('Choose an audio file up to 25 MB.', '请选择不超过 25 MB 的音频。'));
+                  setMessage(t('Choose an audio file up to 25 MB.', 'Hãy chọn tệp âm thanh không quá 25 MB.'));
                   return;
                 }
                 setBlob(file);
@@ -483,23 +492,23 @@ function WorkshopActivity({
           <p className="text-xs text-slate-600">
             {t(
               'Up to 2 minutes; stops when backgrounded. Save before switching activities. Listen back and compare; no acoustic score is inferred from recording or text.',
-              '最长 2 分钟，进入后台会停止。切换练习前请保存录音。回听并对照原文；录音或文字不等同于专业声学评分。',
+              'Tối đa 2 phút; dừng khi chuyển sang nền. Hãy lưu trước khi đổi hoạt động. Nghe lại và đối chiếu; không có điểm âm học nào được suy ra từ bản ghi hay văn bản.',
             )}
           </p>
         </div>
       )}
       <fieldset className="my-4 space-y-2 rounded-xl bg-slate-50 p-4">
         <legend className="text-sm font-medium">
-          {t('Self-review (not an automatic score)', '自评清单（不是自动评分）')}
+          {t('Self-review (not an automatic score)', 'Tự đánh giá (không phải điểm tự động)')}
         </legend>
         <p className="text-sm text-slate-600">
           {t(
             'Did I cover the main point? Is my evidence or new context clear? What is one change for my next attempt?',
-            '是否表达了主旨？依据或新情境是否清楚？下一稿准备改进什么？',
+            'Bạn đã nêu được ý chính chưa? Bằng chứng hoặc ngữ cảnh mới có rõ ràng không? Điều gì cần thay đổi cho lần thử tiếp theo?',
           )}
         </p>
         <label className="block text-sm">
-          {t('My next improvement', '下次改进点')}
+          {t('My next improvement', 'Điểm cần cải thiện tiếp theo')}
           <textarea
             value={notes}
             onChange={(event) => setNotes(event.target.value)}
@@ -510,7 +519,7 @@ function WorkshopActivity({
       {feedback && (
         <div className="my-4 whitespace-pre-wrap text-sm leading-6 text-slate-700">
           <h4 className="font-semibold text-indigo-700">
-            {t('AI suggestions — verify against your intent', 'AI 建议 — 请核对是否符合本意')}
+            {t('AI suggestions — verify against your intent', 'Gợi ý từ AI — hãy đối chiếu với ý định của bạn')}
           </h4>
           {feedback.notes}
         </div>
@@ -518,7 +527,7 @@ function WorkshopActivity({
       <p className="mb-2 text-xs text-slate-500">
         {t(
           'AI review sends this source and response to your configured provider. Audio stays local. Optional; may use provider credits.',
-          'AI 反馈会将本课原文和回答发给配置的服务商，不发送录音。可选功能，可能消耗服务商额度。',
+          'Phản hồi AI sẽ gửi tài liệu gốc và câu trả lời này đến nhà cung cấp bạn đã cấu hình. Âm thanh vẫn ở lại máy. Đây là tính năng tùy chọn và có thể tiêu tốn hạn mức nhà cung cấp.',
         )}
       </p>
       <div className="flex flex-wrap gap-2">
@@ -528,7 +537,7 @@ function WorkshopActivity({
           disabled={busy || !answer.trim() || recording}
           onClick={() => void review()}
         >
-          {t('Get AI feedback', '获取 AI 反馈')}
+          {t('Get AI feedback', 'Nhận phản hồi từ AI')}
         </button>
         <button
           type="button"
@@ -536,7 +545,11 @@ function WorkshopActivity({
           disabled={busy || recording}
           onClick={() => void save()}
         >
-          {busy ? t('Working…', '处理中…') : parent ? t('Save revision', '保存修改稿') : t('Save response', '保存回答')}
+          {busy
+            ? t('Working…', 'Đang xử lý…')
+            : parent
+              ? t('Save revision', 'Lưu bản sửa')
+              : t('Save response', 'Lưu câu trả lời')}
         </button>
       </div>
       {message && (
@@ -546,17 +559,19 @@ function WorkshopActivity({
       )}
       <details className="mt-6">
         <summary className="min-h-11 cursor-pointer text-sm font-medium text-slate-700">
-          {t('Submission history', '提交历史')} ({history.length})
+          {t('Submission history', 'Lịch sử nộp bài')} ({history.length})
         </summary>
         <ol className="space-y-4">
           {history.map((item) => (
             <li key={item.id} className="border-t border-slate-100 py-3 text-sm">
               <p className="text-xs text-slate-500">
                 {new Date(item.createdAt).toLocaleString()} ·{' '}
-                {item.feedback.source === 'ai' ? 'AI' : t('Self-review', '自评')}
+                {item.feedback.source === 'ai' ? 'AI' : t('Self-review', 'Tự đánh giá')}
               </p>
               {item.usedTranslation && (
-                <p className="text-xs text-slate-500">{t('Translation assistance used', '使用过翻译辅助')}</p>
+                <p className="text-xs text-slate-500">
+                  {t('Translation assistance used', 'Đã dùng hỗ trợ dịch thuật')}
+                </p>
               )}
               <p className="my-2 whitespace-pre-wrap text-slate-800">{item.answer}</p>
               <p className="whitespace-pre-wrap text-slate-600">{item.feedback.notes}</p>
@@ -575,7 +590,7 @@ function WorkshopActivity({
                   setAudioUrl('');
                 }}
               >
-                {t('Revise this version', '修改此版本')}
+                {t('Revise this version', 'Sửa lại phiên bản này')}
               </button>
             </li>
           ))}
@@ -598,7 +613,9 @@ function SavedRecording({ id, zh }: { id: string; zh: boolean }) {
     <audio controls src={url} className="my-2 max-w-full" />
   ) : (
     <p className="text-xs text-slate-500">
-      {zh ? '录音在另一设备或尚未恢复。' : 'Recording is on another device or not restored yet.'}
+      {zh
+        ? 'Bản ghi âm đang ở thiết bị khác hoặc chưa được khôi phục.'
+        : 'Recording is on another device or not restored yet.'}
     </p>
   );
 }

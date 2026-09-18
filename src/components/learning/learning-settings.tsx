@@ -9,11 +9,11 @@ import { useLanguageStore } from '@/stores/language-store';
 import { useLearningGoalStore } from '@/stores/learning-goal-store';
 
 const focusZh: Record<LearningGoal, string> = {
-  speaking: '口语',
-  exam: '考试',
-  travel: '旅行',
-  work: '职场',
-  balanced: '均衡提升',
+  speaking: 'Nói',
+  exam: 'Thi cử',
+  travel: 'Du lịch',
+  work: 'Công việc',
+  balanced: 'Cân bằng',
 };
 const choiceClass = (selected: boolean) =>
   `min-h-11 rounded-xl px-3 py-2 text-sm font-medium transition-colors focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600 ${selected ? 'bg-indigo-600 text-white' : 'bg-white text-slate-700 ring-1 ring-inset ring-slate-200 hover:bg-indigo-50'}`;
@@ -34,26 +34,26 @@ export function LearningSettings({ practices, words }: { practices: number; word
       <summary className="flex cursor-pointer list-none flex-wrap items-center justify-between gap-x-6 gap-y-3 px-6 py-4 text-sm [&::-webkit-details-marker]:hidden">
         <span className="flex min-w-0 flex-wrap items-center gap-x-5 gap-y-1 text-slate-600">
           <span className="tabular-nums">
-            {t('Today', '今日')}{' '}
+            {t('Today', 'Hôm nay')}{' '}
             <strong className="text-slate-900">
               {practices} / {goal.sessionsPerDay}
             </strong>{' '}
-            {t('practices', '次练习')}
+            {t('practices', 'buổi luyện tập')}
           </span>
           <span className="tabular-nums">
-            {words} / {goal.wordsPerDay} {t('words practiced', '个词汇练习')}
+            {words} / {goal.wordsPerDay} {t('words practiced', 'từ đã luyện tập')}
           </span>
         </span>
         <span className="inline-flex min-h-11 items-center gap-2 font-medium text-indigo-700">
           <Settings2 className="h-4 w-4" />
-          {t('Learning settings', '学习设置')}
+          {t('Learning settings', 'Cài đặt học tập')}
           <ChevronDown className="h-4 w-4 group-open:rotate-180" />
         </span>
       </summary>
       <div className="space-y-6 px-6 pb-6">
         <div>
           <h3 id="learning-focus-heading" className="text-base font-semibold text-slate-900">
-            {t('Learning focus', '学习重点')}
+            {t('Learning focus', 'Trọng tâm học tập')}
           </h3>
           <p
             data-testid="learning-focus-description"
@@ -61,7 +61,7 @@ export function LearningSettings({ practices, words }: { practices: number; word
           >
             {t(
               'Choose a focus for today’s targeted practice. Your course still includes listening, reading, speaking and writing.',
-              '选择今日专项练习的方向，课程仍保留听、说、读、写四项练习。',
+              'Chọn một trọng tâm cho bài luyện tập chuyên sâu hôm nay. Khóa học của bạn vẫn bao gồm cả nghe, đọc, nói và viết.',
             )}
           </p>
           <div
@@ -85,7 +85,7 @@ export function LearningSettings({ practices, words }: { practices: number; word
         <div className="grid gap-6 lg:grid-cols-2">
           <div>
             <h3 id="daily-practice-target" className="text-sm font-semibold text-slate-900">
-              {t('Daily practice target', '每日练习目标')}
+              {t('Daily practice target', 'Chỉ tiêu luyện tập hằng ngày')}
             </h3>
             <div role="group" aria-labelledby="daily-practice-target" className="mt-3 flex flex-wrap gap-2">
               {[...new Set([2, 4, 6, 8, goal.sessionsPerDay])]
@@ -98,14 +98,14 @@ export function LearningSettings({ practices, words }: { practices: number; word
                     aria-pressed={goal.sessionsPerDay === count}
                     onClick={() => setGoal({ sessionsPerDay: count })}
                   >
-                    {count} {t('practices', '次练习')}
+                    {count} {t('practices', 'buổi luyện tập')}
                   </button>
                 ))}
             </div>
           </div>
           <div>
             <h3 id="daily-vocabulary-target" className="text-sm font-semibold text-slate-900">
-              {t('Vocabulary practice target', '每日词汇目标')}
+              {t('Vocabulary practice target', 'Chỉ tiêu từ vựng hằng ngày')}
             </h3>
             <div role="group" aria-labelledby="daily-vocabulary-target" className="mt-3 flex flex-wrap gap-2">
               {[...new Set([10, 20, 30, 50, goal.wordsPerDay])]
@@ -118,7 +118,7 @@ export function LearningSettings({ practices, words }: { practices: number; word
                     aria-pressed={goal.wordsPerDay === count}
                     onClick={() => setGoal({ wordsPerDay: count })}
                   >
-                    {count} {t('words', '词')}
+                    {count} {t('words', 'từ')}
                   </button>
                 ))}
             </div>
@@ -127,14 +127,14 @@ export function LearningSettings({ practices, words }: { practices: number; word
         <p className="text-xs leading-5 text-slate-500">
           {t(
             'Targets update automatically from saved practice. Vocabulary counts distinct library items practiced today, not mastery.',
-            '进度根据已保存的练习自动更新。词汇按当天练习过的不同资料条目计数，不代表已掌握。',
+            'Chỉ tiêu tự động cập nhật từ tiến độ luyện tập đã lưu. Từ vựng được tính theo số mục thư viện khác nhau đã luyện hôm nay, không phải mức độ thành thạo.',
           )}
         </p>
         <Link
           href="/settings"
           className="inline-flex min-h-11 items-center text-sm font-medium text-indigo-700 underline underline-offset-4"
         >
-          {t('Assess or update my English level', '评估或更新我的英语水平')}
+          {t('Assess or update my English level', 'Đánh giá hoặc cập nhật trình độ tiếng Anh của tôi')}
         </Link>
       </div>
     </details>

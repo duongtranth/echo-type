@@ -44,9 +44,9 @@ export function ScenarioGrid({
           <Badge
             key={cat.value}
             variant="outline"
-            className={`cursor-pointer transition-colors duration-150 text-xs px-2.5 py-1 ${
+            className={`cursor-pointer font-mono uppercase tracking-wide transition-colors duration-150 text-[10px] px-2.5 py-1 ${
               activeCategory === cat.value
-                ? 'bg-indigo-600 text-white border-indigo-600'
+                ? 'bg-gradient-to-r from-indigo-600 to-violet-600 text-white border-indigo-600 shadow-sm'
                 : 'bg-white text-slate-600 border-slate-200 hover:border-indigo-300 hover:text-indigo-600'
             }`}
             onClick={() => setActiveCategory(cat.value)}
