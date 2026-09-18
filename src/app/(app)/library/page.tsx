@@ -569,23 +569,41 @@ function ScenarioCollectionsGroup({ collections }: { collections: CollectionItem
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
                   {catCollections.map((collection) => (
                     <Link key={collection.id} href={`/library/collections/${collection.id}`} prefetch={false}>
-                      <Card className="bg-white/70 backdrop-blur-sm border-indigo-100 shadow-sm hover:shadow-md hover:border-indigo-200 transition-all duration-200 cursor-pointer h-full">
-                        <CardContent className="p-4">
-                          <div className="flex items-start gap-3">
-                            <span className="text-2xl shrink-0">{collection.icon}</span>
-                            <div className="min-w-0 flex-1">
-                              <h4 className="font-semibold text-indigo-900 text-sm truncate">{collection.title}</h4>
-                              <p className="text-xs text-indigo-500 truncate">{collection.titleZh}</p>
-                              <div className="flex items-center gap-1.5 mt-2 flex-wrap">
-                                <Badge className={difficultyColors[collection.difficulty]} variant="secondary">
-                                  {messages.difficulty[collection.difficulty as keyof typeof messages.difficulty] ??
-                                    collection.difficulty}
-                                </Badge>
-                                <span className="text-[11px] text-slate-400">{collection.itemIds.length} items</span>
-                              </div>
-                            </div>
+                      <Card className="group h-full border-indigo-100 bg-white/70 p-4 shadow-sm backdrop-blur-sm transition-all duration-200 hover:-translate-y-0.5 hover:border-indigo-200 hover:shadow-md">
+                        <div className="flex items-start gap-3">
+                          <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-indigo-50 text-xl">
+                            {collection.icon}
                           </div>
-                        </CardContent>
+                          <div className="min-w-0 flex-1">
+                            <h4 className="truncate font-heading font-bold text-indigo-950">{collection.title}</h4>
+                            <p className="truncate text-xs text-indigo-500">{collection.titleZh}</p>
+                          </div>
+                        </div>
+
+                        {collection.description && (
+                          <p className="mt-3 line-clamp-2 text-xs leading-5 text-slate-500">{collection.description}</p>
+                        )}
+
+                        <div className="mt-3 flex items-center justify-between">
+                          <div className="flex items-center gap-1.5 flex-wrap">
+                            <Badge
+                              className={cn(
+                                'font-mono text-[10px] uppercase tracking-wide',
+                                difficultyColors[collection.difficulty],
+                              )}
+                              variant="secondary"
+                            >
+                              {messages.difficulty[collection.difficulty as keyof typeof messages.difficulty] ??
+                                collection.difficulty}
+                            </Badge>
+                            <span className="font-mono text-[10px] text-slate-400">
+                              {collection.itemIds.length} items
+                            </span>
+                          </div>
+                          <span className="text-xs font-medium text-primary opacity-0 transition-opacity group-hover:opacity-100">
+                            Mở →
+                          </span>
+                        </div>
                       </Card>
                     </Link>
                   ))}
