@@ -1,6 +1,6 @@
 'use client';
 
-import { Heart, Play } from 'lucide-react';
+import { Heart, Play, Plus } from 'lucide-react';
 import Link from 'next/link';
 import { useEffect, useState } from 'react';
 import {
@@ -19,6 +19,7 @@ import { useI18n } from '@/lib/i18n/use-i18n';
 import { detectIOSNativeHost, reportNativeQAState } from '@/lib/tauri';
 import { cn } from '@/lib/utils';
 import { useFavoriteStore } from '@/stores/favorite-store';
+import { AddFavoriteDialog } from './add-favorite-dialog';
 import { FavoriteDetail } from './favorite-detail';
 import { FavoriteItemRow } from './favorite-item-row';
 import { FolderChips } from './folder-chips';
@@ -32,6 +33,7 @@ export function FavoritesList() {
   const totalCount = favorites.length;
   const [search, setSearch] = useState('');
   const [expandedId, setExpandedId] = useState<string | null>(null);
+  const [showAddDialog, setShowAddDialog] = useState(false);
 
   const favoritesInActiveFolder = activeFolderId
     ? favorites.filter((item) => item.folderId === activeFolderId)
@@ -81,6 +83,14 @@ export function FavoritesList() {
             description={t.description}
             action={
               <div className="flex shrink-0 items-center gap-2">
+                <Button
+                  size="sm"
+                  onClick={() => setShowAddDialog(true)}
+                  className={cn(IOS_TERTIARY_BUTTON_CLASS, 'h-10 gap-1.5 px-4 text-slate-800')}
+                >
+                  <Plus className="h-3.5 w-3.5" />
+                  {t.addWord}
+                </Button>
                 {dueCount > 0 ? (
                   <Link href="/favorites/review" className="inline-flex">
                     <Button size="sm" className={cn(IOS_TERTIARY_BUTTON_CLASS, 'h-10 gap-1.5 px-4 text-slate-800')}>
@@ -133,6 +143,10 @@ export function FavoritesList() {
               onChange={(e) => setSearch(e.target.value)}
               className="h-9 flex-1 sm:w-48"
             />
+            <Button size="sm" variant="outline" className="gap-1.5" onClick={() => setShowAddDialog(true)}>
+              <Plus className="h-3.5 w-3.5" />
+              {t.addWord}
+            </Button>
             {dueCount > 0 && (
               <Link href="/favorites/review" className="hidden sm:block">
                 <Button size="sm" className="gap-1.5">
@@ -144,6 +158,8 @@ export function FavoritesList() {
           </div>
         </div>
       )}
+
+      <AddFavoriteDialog open={showAddDialog} onOpenChange={setShowAddDialog} />
 
       {/* Folder chips */}
       <FolderChips />
@@ -159,13 +175,13 @@ export function FavoritesList() {
             title={t.emptyTitle}
             description={t.emptyDescription}
             action={
-              dueCount > 0 ? (
-                <Link href="/favorites/review" className="inline-flex">
-                  <Button className="h-10 rounded-full bg-indigo-600 px-4 text-white shadow-[0_12px_26px_rgba(79,70,229,0.2)]">
-                    {t.startReview}
-                  </Button>
-                </Link>
-              ) : null
+              <Button
+                onClick={() => setShowAddDialog(true)}
+                className="h-10 rounded-full bg-indigo-600 px-4 text-white shadow-[0_12px_26px_rgba(79,70,229,0.2)]"
+              >
+                <Plus className="mr-1.5 h-3.5 w-3.5" />
+                {t.addWord}
+              </Button>
             }
           />
         ) : (
@@ -178,6 +194,10 @@ export function FavoritesList() {
             </div>
             <p className="text-lg font-medium text-slate-600">{t.emptyTitle}</p>
             <p className="text-sm text-slate-400 mt-1 max-w-sm">{t.emptyDescription}</p>
+            <Button size="sm" className="mt-4 gap-1.5" onClick={() => setShowAddDialog(true)}>
+              <Plus className="h-3.5 w-3.5" />
+              {t.addWord}
+            </Button>
           </div>
         ))}
 
