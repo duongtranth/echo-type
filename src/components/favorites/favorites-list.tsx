@@ -1,6 +1,6 @@
 'use client';
 
-import { Heart, Play, Plus } from 'lucide-react';
+import { Heart, Play, Plus, Waypoints } from 'lucide-react';
 import Link from 'next/link';
 import { useEffect, useState } from 'react';
 import {
@@ -36,7 +36,7 @@ export function FavoritesList() {
   const [showAddDialog, setShowAddDialog] = useState(false);
 
   const favoritesInActiveFolder = activeFolderId
-    ? favorites.filter((item) => item.folderId === activeFolderId)
+    ? favorites.filter((item) => item.folderIds.includes(activeFolderId))
     : favorites;
   const dueCount = favorites.filter((item) => item.nextReview != null && item.nextReview <= Date.now()).length;
 
@@ -91,6 +91,12 @@ export function FavoritesList() {
                   <Plus className="h-3.5 w-3.5" />
                   {t.addWord}
                 </Button>
+                <Link href="/favorites/graph" className="inline-flex">
+                  <Button size="sm" className={cn(IOS_TERTIARY_BUTTON_CLASS, 'h-10 gap-1.5 px-4 text-slate-800')}>
+                    <Waypoints className="h-3.5 w-3.5" />
+                    {t.graphView}
+                  </Button>
+                </Link>
                 {dueCount > 0 ? (
                   <Link href="/favorites/review" className="inline-flex">
                     <Button size="sm" className={cn(IOS_TERTIARY_BUTTON_CLASS, 'h-10 gap-1.5 px-4 text-slate-800')}>
@@ -147,6 +153,12 @@ export function FavoritesList() {
               <Plus className="h-3.5 w-3.5" />
               {t.addWord}
             </Button>
+            <Link href="/favorites/graph" className="hidden sm:block">
+              <Button size="sm" variant="outline" className="gap-1.5">
+                <Waypoints className="h-3.5 w-3.5" />
+                {t.graphView}
+              </Button>
+            </Link>
             {dueCount > 0 && (
               <Link href="/favorites/review" className="hidden sm:block">
                 <Button size="sm" className="gap-1.5">

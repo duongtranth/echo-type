@@ -32,5 +32,22 @@
   "translating": "Đang dịch...",
   "saveSingle": "Lưu",
   "saveBatch": "Lưu {{count}} mục",
-  "saveBatchPlural": "Lưu {{count}} mục"
+  "saveBatchPlural": "Lưu {{count}} mục",
+  "pos": "Từ loại",
+  "pos_noun": "danh từ",
+  "pos_verb": "động từ",
+  "pos_adjective": "tính từ",
+  "pos_adverb": "trạng từ",
+  "pos_phrase": "cụm từ",
+  "pos_idiom": "thành ngữ",
+  "tags": "Thẻ",
+  "labelExamples": "Ví dụ của bạn (không bắt buộc, mỗi dòng một câu)",
+  "placeholderExamples": "I procrastinated on this report all week.",
+  "addImage": "Thêm ảnh minh hoạ",
+  "graphView": "Sơ đồ",
+  "graphTitle": "Sơ đồ từ vựng",
+  "graphDescription": "Những từ chung folder hoặc chung thẻ sẽ được kéo lại gần nhau.",
+  "graphEmptyTitle": "Chưa có gì để vẽ",
+  "graphEmptyDescription": "Thêm vài từ có folder hoặc thẻ để thấy chúng kết nối ở đây.",
+  "viewInFavorites": "Xem trong Favorites →"
 }

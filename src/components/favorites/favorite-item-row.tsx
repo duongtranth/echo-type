@@ -84,6 +84,27 @@ export function FavoriteItemRow({ item, isExpanded, onToggle }: Props) {
       >
         {badge.label}
       </span>
+      {item.pos && (
+        <span
+          className={cn(
+            'shrink-0 rounded-full text-[10px] font-medium bg-slate-100 text-slate-500',
+            isIOSNativeHost ? 'px-2.5 py-1' : 'px-1.5 py-0.5 rounded',
+          )}
+        >
+          {item.pos}
+        </span>
+      )}
+      {item.tags?.slice(0, 2).map((tag) => (
+        <span
+          key={tag}
+          className={cn(
+            'shrink-0 rounded-full text-[10px] font-medium border border-indigo-100 text-indigo-500',
+            isIOSNativeHost ? 'px-2.5 py-1' : 'px-1.5 py-0.5 rounded',
+          )}
+        >
+          {tag}
+        </span>
+      ))}
 
       <div className="flex-1 min-w-0">
         <div className="flex items-baseline gap-2">

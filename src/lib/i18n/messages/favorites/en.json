@@ -32,5 +32,22 @@
   "translating": "Translating...",
   "saveSingle": "Save",
   "saveBatch": "Save {{count}} item",
-  "saveBatchPlural": "Save {{count}} items"
+  "saveBatchPlural": "Save {{count}} items",
+  "pos": "Part of speech",
+  "pos_noun": "noun",
+  "pos_verb": "verb",
+  "pos_adjective": "adjective",
+  "pos_adverb": "adverb",
+  "pos_phrase": "phrase",
+  "pos_idiom": "idiom",
+  "tags": "Tags",
+  "labelExamples": "Your own examples (optional, one per line)",
+  "placeholderExamples": "I procrastinated on this report all week.",
+  "addImage": "Add illustration",
+  "graphView": "Graph view",
+  "graphTitle": "Word graph",
+  "graphDescription": "Words that share a folder or tag are pulled closer together.",
+  "graphEmptyTitle": "Nothing to graph yet",
+  "graphEmptyDescription": "Add a few words with folders or tags to see them connect here.",
+  "viewInFavorites": "View in Favorites →"
 }

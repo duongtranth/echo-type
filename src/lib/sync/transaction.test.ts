@@ -6,7 +6,7 @@ vi.mock('@/lib/db',()=>({get db(){return context.database;}}));
 import { SyncEngine, SYNC_TABLES } from './engine';
 import { toSupabaseFavorite } from './mapper';
 for (const edited of [false,true]) it(`persists hard-delete intent and ${edited?'conflicts with a newer remote favorite edit':'sends a revision-checked tombstone'}`,async()=>{
- const db=await setup();const favorite={id:'f',text:'hello',normalizedText:'hello',translation:'你好',type:'word',folderId:'default',targetLang:'zh',autoCollected:false,createdAt:1000,updatedAt:1000};
+ const db=await setup();const favorite={id:'f',text:'hello',normalizedText:'hello',translation:'你好',type:'word',folderIds:['default'],targetLang:'zh',autoCollected:false,createdAt:1000,updatedAt:1000};
  await db.table('favorites').put(favorite);await db.table('syncEntityState').put({id:'favorites:f',revision:1,snapshot:favorite});
  await db.table('favorites').delete('f');const calls:any[]=[];
  const raw={...toSupabaseFavorite(favorite as any,'transaction-test'),text:edited?'remote edit':'hello',sync_revision:edited?2:1};

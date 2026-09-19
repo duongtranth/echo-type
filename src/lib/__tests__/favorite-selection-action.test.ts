@@ -6,11 +6,15 @@ describe('getFavoriteSelectionAction', () => {
     expect(getFavoriteSelectionAction(undefined, 'folder-a')).toBe('add');
   });
 
-  it('moves an existing favorite when another folder is selected', () => {
-    expect(getFavoriteSelectionAction({ folderId: 'auto' }, 'folder-a')).toBe('move');
+  it('adds the selected folder to an existing favorite that is not in it yet', () => {
+    expect(getFavoriteSelectionAction({ folderIds: ['auto'] }, 'folder-a')).toBe('addFolder');
   });
 
-  it('removes an existing favorite when its current folder remains selected', () => {
-    expect(getFavoriteSelectionAction({ folderId: 'folder-a' }, 'folder-a')).toBe('remove');
+  it('removes an existing favorite from a folder it is already in', () => {
+    expect(getFavoriteSelectionAction({ folderIds: ['folder-a'] }, 'folder-a')).toBe('remove');
+  });
+
+  it('removes from a folder even when the favorite belongs to several folders', () => {
+    expect(getFavoriteSelectionAction({ folderIds: ['folder-a', 'auto'] }, 'folder-a')).toBe('remove');
   });
 });

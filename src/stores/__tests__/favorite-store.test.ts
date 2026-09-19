@@ -69,7 +69,7 @@ describe('favorite-store', () => {
       text: 'Hello, World!',
       translation: '你好世界',
       type: 'phrase',
-      folderId: 'default',
+      folderIds: ['default'],
       targetLang: 'zh-CN',
     });
     expect(id).toBeTruthy();
@@ -85,7 +85,7 @@ describe('favorite-store', () => {
       text: 'Hello',
       translation: '你好',
       type: 'word',
-      folderId: 'default',
+      folderIds: ['default'],
       targetLang: 'zh-CN',
     });
     expect(useFavoriteStore.getState().isFavorited('hello')).toBe(true);
@@ -98,7 +98,7 @@ describe('favorite-store', () => {
       text: 'test',
       translation: '测试',
       type: 'word',
-      folderId: 'default',
+      folderIds: ['default'],
       targetLang: 'zh-CN',
     });
     await useFavoriteStore.getState().removeFavorite(id);
@@ -115,14 +115,14 @@ describe('favorite-store', () => {
       text: 'word1',
       translation: '词1',
       type: 'word',
-      folderId: 'default',
+      folderIds: ['default'],
       targetLang: 'zh-CN',
     });
     await useFavoriteStore.getState().addFavorite({
       text: 'word2',
       translation: '词2',
       type: 'word',
-      folderId: 'auto',
+      folderIds: ['auto'],
       targetLang: 'zh-CN',
     });
 
@@ -135,13 +135,28 @@ describe('favorite-store', () => {
     expect(useFavoriteStore.getState().getFilteredFavorites()[0].text).toBe('word1');
   });
 
+  it('supports saving one favorite into multiple folders', async () => {
+    await useFavoriteStore.getState().addFavorite({
+      text: 'multi',
+      translation: 'nhiều',
+      type: 'word',
+      folderIds: ['default', 'auto'],
+      targetLang: 'zh-CN',
+    });
+
+    useFavoriteStore.getState().setActiveFolderId('default');
+    expect(useFavoriteStore.getState().getFilteredFavorites()).toHaveLength(1);
+    useFavoriteStore.getState().setActiveFolderId('auto');
+    expect(useFavoriteStore.getState().getFilteredFavorites()).toHaveLength(1);
+  });
+
   it('grades review and updates nextReview', async () => {
     const { Rating } = await import('ts-fsrs');
     const id = await useFavoriteStore.getState().addFavorite({
       text: 'study',
       translation: '学习',
       type: 'word',
-      folderId: 'default',
+      folderIds: ['default'],
       targetLang: 'zh-CN',
     });
     await useFavoriteStore.getState().gradeReview(id, Rating.Good);

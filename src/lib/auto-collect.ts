@@ -53,7 +53,7 @@ export async function tryAutoCollect(
     text,
     translation,
     type,
-    folderId: 'auto',
+    folderIds: ['auto'],
     targetLang,
     sourceModule: sourceModule as any,
     sourceContentId,

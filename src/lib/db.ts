@@ -312,6 +312,22 @@ class EchoTypeDB extends Dexie {
     this.version(19).stores({ syncEntityState: 'id' });
     // Version 20: add wordImages table for cached vocabulary illustration photos
     this.version(20).stores({ wordImages: 'cacheKey, createdAt' });
+    // Version 21: favorites move from a single folderId to multi-folder membership, plus richer metadata.
+    this.version(21)
+      .stores({
+        favorites:
+          'id, normalizedText, type, *folderIds, sourceContentId, targetLang, nextReview, autoCollected, createdAt, updatedAt, *tags',
+      })
+      .upgrade(async (tx) => {
+        await tx
+          .table('favorites')
+          .toCollection()
+          .modify((row) => {
+            const legacyFolderId = row.folderId ?? 'default';
+            row.folderIds = [legacyFolderId];
+            delete row.folderId;
+          });
+      });
     // Track all mutations, including scheduling, folder edits and long-session completion.
     for (const name of ['records', 'sessions', 'favoriteFolders', 'books', 'collections', 'weakSpots']) {
       this.table(name).hook('creating', (_key, row) => {

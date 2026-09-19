@@ -1,9 +1,9 @@
-export type FavoriteSelectionAction = 'add' | 'move' | 'remove';
+export type FavoriteSelectionAction = 'add' | 'addFolder' | 'remove';
 
 export function getFavoriteSelectionAction(
-  existingFavorite: { folderId: string } | undefined,
+  existingFavorite: { folderIds: string[] } | undefined,
   selectedFolderId: string,
 ): FavoriteSelectionAction {
   if (!existingFavorite) return 'add';
-  return existingFavorite.folderId === selectedFolderId ? 'remove' : 'move';
+  return existingFavorite.folderIds.includes(selectedFolderId) ? 'remove' : 'addFolder';
 }

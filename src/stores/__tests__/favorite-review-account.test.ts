@@ -5,7 +5,7 @@ const context=vi.hoisted(()=>({database:{favorites:{update:vi.fn(),toArray:vi.fn
 vi.mock('@/lib/db',()=>({get db(){return context.database;}}));
 import {useFavoriteStore} from '../favorite-store';
 it('does not apply an old account grade after account switch',async()=>{
- const favorite:FavoriteItem={id:'same',text:'old account',normalizedText:'old account',translation:'old',type:'word',folderId:'default',targetLang:'zh',autoCollected:false,createdAt:1,updatedAt:1};
+ const favorite:FavoriteItem={id:'same',text:'old account',normalizedText:'old account',translation:'old',type:'word',folderIds:['default'],targetLang:'zh',autoCollected:false,createdAt:1,updatedAt:1};
  useFavoriteStore.setState({favorites:[favorite],isLoaded:true});
  let finish!:(value:number)=>void;
  context.database.favorites.update.mockImplementation(()=>new Promise<number>(resolve=>{finish=resolve;}));
@@ -20,7 +20,7 @@ it('does not apply an old account grade after account switch',async()=>{
 
 it('does not reuse or apply a delayed load from the previous account',async()=>{
  let finish!:(value:FavoriteItem[])=>void;
- const old:FavoriteItem={id:'old',text:'private old',normalizedText:'old',translation:'old',type:'word',folderId:'default',targetLang:'zh',autoCollected:false,createdAt:1,updatedAt:1};
+ const old:FavoriteItem={id:'old',text:'private old',normalizedText:'old',translation:'old',type:'word',folderIds:['default'],targetLang:'zh',autoCollected:false,createdAt:1,updatedAt:1};
  useFavoriteStore.setState({favorites:[],folders:[],isLoaded:false});
  context.database={favorites:{update:vi.fn(),toArray:vi.fn(()=>new Promise<FavoriteItem[]>(resolve=>{finish=resolve;}))},favoriteFolders:{toArray:vi.fn().mockResolvedValue([])}};
  const pending=useFavoriteStore.getState().loadFavorites();

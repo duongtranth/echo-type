@@ -16,7 +16,7 @@ export interface FavoriteItem {
   normalizedText: string;
   translation: string;
   type: FavoriteType;
-  folderId: string;
+  folderIds: string[];
   sourceContentId?: string;
   sourceModule?: FavoriteSourceModule;
   context?: string;
@@ -27,6 +27,13 @@ export interface FavoriteItem {
   fsrsCard?: FSRSCardData;
   nextReview?: number;
   autoCollected: boolean;
+  /** Part of speech, e.g. "noun", "verb" — user-selected, optional. */
+  pos?: string;
+  tags?: string[];
+  /** User-authored example sentences, distinct from `context` (the original source snippet). */
+  examples?: string[];
+  /** Whether to show an illustrative image, lazily fetched/cached by word text via useWordImage. */
+  hasImage?: boolean;
   createdAt: number;
   updatedAt: number;
 }

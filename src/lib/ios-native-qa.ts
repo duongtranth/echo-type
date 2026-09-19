@@ -224,7 +224,7 @@ async function seedFavoriteItem() {
     normalizedText: 'native shell',
     translation: '原生壳',
     type: 'phrase',
-    folderId: 'default',
+    folderIds: ['default'],
     sourceModule: 'library',
     sourceContentId: IOS_NATIVE_QA_IMPORT_ITEM_ID,
     context: 'The iOS native shell should preserve the full learning flow.',

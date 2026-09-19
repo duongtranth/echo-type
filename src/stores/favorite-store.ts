@@ -26,6 +26,7 @@ interface FavoriteState {
   ) => Promise<string>;
   removeFavorite: (id: string) => Promise<void>;
   updateFavorite: (id: string, updates: Partial<FavoriteItem>) => Promise<void>;
+  updateFavoriteFolders: (id: string, folderIds: string[]) => Promise<void>;
   isFavorited: (text: string) => boolean;
   getFavoriteByText: (text: string) => FavoriteItem | undefined;
 
@@ -151,6 +152,11 @@ export const useFavoriteStore = create<FavoriteState>((set, get) => {
       }));
     },
 
+    updateFavoriteFolders: async (id, folderIds) => {
+      const normalized = folderIds.length > 0 ? folderIds : ['default'];
+      await get().updateFavorite(id, { folderIds: normalized });
+    },
+
     isFavorited: (text) => {
       const normalized = normalizeText(text);
       return get().favorites.some((f) => f.normalizedText === normalized);
@@ -188,12 +194,22 @@ export const useFavoriteStore = create<FavoriteState>((set, get) => {
       if (id === 'default' || id === 'auto') {
         throw new Error('Cannot delete reserved folders');
       }
-      // Move items in this folder to 'default'
-      await db.favorites.where('folderId').equals(id).modify({ folderId: 'default' });
+      // Remove this folder from every item's membership, falling back to 'default' if that was its only folder.
+      await db.favorites
+        .where('folderIds')
+        .equals(id)
+        .modify((fav) => {
+          const remaining = fav.folderIds.filter((fid: string) => fid !== id);
+          fav.folderIds = remaining.length > 0 ? remaining : ['default'];
+        });
       await db.favoriteFolders.delete(id);
       set((state) => ({
         folders: state.folders.filter((f) => f.id !== id),
-        favorites: state.favorites.map((f) => (f.folderId === id ? { ...f, folderId: 'default' } : f)),
+        favorites: state.favorites.map((f) => {
+          if (!f.folderIds.includes(id)) return f;
+          const remaining = f.folderIds.filter((fid) => fid !== id);
+          return { ...f, folderIds: remaining.length > 0 ? remaining : ['default'] };
+        }),
         isLoaded: true,
       }));
     },
@@ -204,7 +220,7 @@ export const useFavoriteStore = create<FavoriteState>((set, get) => {
     getFilteredFavorites: () => {
       const { favorites, activeFolderId } = get();
       if (!activeFolderId) return favorites;
-      return favorites.filter((f) => f.folderId === activeFolderId);
+      return favorites.filter((f) => f.folderIds.includes(activeFolderId));
     },
 
     getDueForReview: () => {

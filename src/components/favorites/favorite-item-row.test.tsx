@@ -24,7 +24,7 @@ describe('FavoriteItemRow', () => {
           normalizedText: 'we are running short on time',
           translation: '我们时间不太充裕了',
           type: 'sentence',
-          folderId: 'default',
+          folderIds: ['default'],
           targetLang: 'zh-CN',
           autoCollected: false,
           createdAt: 1,

@@ -1,5 +1,6 @@
 'use client';
 
+import { ImageOff, Plus, X } from 'lucide-react';
 import { useState } from 'react';
 import { Rating } from 'ts-fsrs';
 import {
@@ -8,7 +9,11 @@ import {
   IOS_SUBCARD_CLASS,
   IOS_TINTED_SUBCARD_CLASS,
 } from '@/components/shared/ios-native-ui';
+import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Skeleton } from '@/components/ui/skeleton';
+import { useWordImage } from '@/hooks/use-word-image';
 import { previewRatings } from '@/lib/fsrs';
 import { detectIOSNativeHost } from '@/lib/tauri';
 import { cn } from '@/lib/utils';
@@ -30,12 +35,35 @@ export function FavoriteDetail({ item }: Props) {
   const isIOSNativeHost = detectIOSNativeHost();
   const gradeReview = useFavoriteStore((s) => s.gradeReview);
   const updateFavorite = useFavoriteStore((s) => s.updateFavorite);
+  const updateFavoriteFolders = useFavoriteStore((s) => s.updateFavoriteFolders);
+  const folders = useFavoriteStore((s) => s.folders);
   const [notes, setNotes] = useState(item.notes || '');
+  const [newExample, setNewExample] = useState('');
 
   const previews = previewRatings(item.fsrsCard);
+  const { url: imageUrl, attribution, isLoading: isImageLoading } = useWordImage(item.text, !!item.hasImage);
 
   const handleSaveNotes = () => {
     updateFavorite(item.id, { notes });
+  };
+
+  const handleToggleFolder = (folderId: string) => {
+    const next = item.folderIds.includes(folderId)
+      ? item.folderIds.filter((id) => id !== folderId)
+      : [...item.folderIds, folderId];
+    updateFavoriteFolders(item.id, next);
+  };
+
+  const handleAddExample = () => {
+    const trimmed = newExample.trim();
+    if (!trimmed) return;
+    updateFavorite(item.id, { examples: [...(item.examples ?? []), trimmed] });
+    setNewExample('');
+  };
+
+  const handleRemoveExample = (index: number) => {
+    const next = (item.examples ?? []).filter((_, i) => i !== index);
+    updateFavorite(item.id, { examples: next });
   };
 
   return (
@@ -52,6 +80,126 @@ export function FavoriteDetail({ item }: Props) {
       <div className={isIOSNativeHost ? `${IOS_SUBCARD_CLASS} p-3.5` : undefined}>
         <p className={cn('mb-0.5 text-xs text-slate-400', isIOSNativeHost && IOS_EYEBROW_CLASS)}>Translation</p>
         <p className="text-sm text-slate-800">{item.translation}</p>
+      </div>
+
+      {/* Illustration */}
+      {item.hasImage && (
+        <div className="flex flex-col items-center gap-1">
+          <div className="relative h-28 w-28 overflow-hidden rounded-2xl bg-indigo-50">
+            {isImageLoading && <Skeleton className="h-full w-full" />}
+            {!isImageLoading && imageUrl && (
+              <img src={imageUrl} alt={item.text} className="h-full w-full object-cover" />
+            )}
+            {!isImageLoading && !imageUrl && (
+              <div className="flex h-full w-full items-center justify-center text-indigo-200">
+                <ImageOff className="h-6 w-6" />
+              </div>
+            )}
+          </div>
+          {attribution && (
+            <p className="text-[9px] text-slate-300">
+              Ảnh:{' '}
+              <a href={attribution.photographerUrl} target="_blank" rel="noopener noreferrer" className="underline">
+                {attribution.photographer}
+              </a>{' '}
+              /{' '}
+              <a href={attribution.unsplashUrl} target="_blank" rel="noopener noreferrer" className="underline">
+                Unsplash
+              </a>
+            </p>
+          )}
+        </div>
+      )}
+
+      {/* Part of speech + tags */}
+      {(item.pos || (item.tags && item.tags.length > 0)) && (
+        <div className="flex flex-wrap items-center gap-1.5">
+          {item.pos && (
+            <Badge variant="secondary" className="text-[10px]">
+              {item.pos}
+            </Badge>
+          )}
+          {item.tags?.map((tag) => (
+            <Badge key={tag} variant="outline" className="text-[10px] border-indigo-100 text-indigo-500">
+              {tag}
+            </Badge>
+          ))}
+        </div>
+      )}
+
+      {/* Folder membership */}
+      {folders.length > 0 && (
+        <div className={isIOSNativeHost ? `${IOS_SUBCARD_CLASS} p-3.5` : undefined}>
+          <p className={cn('mb-1.5 text-xs text-slate-400', isIOSNativeHost && IOS_EYEBROW_CLASS)}>Folders</p>
+          <div className="flex flex-wrap gap-1.5">
+            {folders.map((f) => {
+              const active = item.folderIds.includes(f.id);
+              return (
+                <button
+                  key={f.id}
+                  type="button"
+                  onClick={() => handleToggleFolder(f.id)}
+                  className={cn(
+                    'rounded-full border px-2.5 py-1 text-[11px] transition-colors',
+                    active
+                      ? 'border-indigo-300 bg-indigo-100 text-indigo-700'
+                      : 'border-slate-200 text-slate-500 hover:bg-slate-50',
+                  )}
+                >
+                  {f.emoji} {f.name}
+                </button>
+              );
+            })}
+          </div>
+        </div>
+      )}
+
+      {/* User-authored examples */}
+      <div className={isIOSNativeHost ? `${IOS_SUBCARD_CLASS} p-3.5` : undefined}>
+        <p className={cn('mb-1.5 text-xs text-slate-400', isIOSNativeHost && IOS_EYEBROW_CLASS)}>Examples</p>
+        {(item.examples ?? []).length > 0 && (
+          <ul className="mb-2 space-y-1">
+            {(item.examples ?? []).map((example, index) => (
+              <li
+                key={`${item.id}-example-${index}`}
+                className="flex items-start justify-between gap-2 rounded bg-slate-50 px-2 py-1.5 text-xs text-slate-700"
+              >
+                <span>{example}</span>
+                <button
+                  type="button"
+                  onClick={() => handleRemoveExample(index)}
+                  aria-label={`Remove example ${index + 1}`}
+                  className="shrink-0 text-slate-300 hover:text-red-500"
+                >
+                  <X className="h-3 w-3" />
+                </button>
+              </li>
+            ))}
+          </ul>
+        )}
+        <div className="flex gap-1.5">
+          <Input
+            value={newExample}
+            onChange={(e) => setNewExample(e.target.value)}
+            onKeyDown={(e) => {
+              if (e.key === 'Enter') {
+                e.preventDefault();
+                handleAddExample();
+              }
+            }}
+            placeholder="Add an example..."
+            className="h-8 flex-1 bg-white text-xs"
+          />
+          <Button
+            size="sm"
+            variant="outline"
+            className="h-8 shrink-0 px-2"
+            onClick={handleAddExample}
+            disabled={!newExample.trim()}
+          >
+            <Plus className="h-3.5 w-3.5" />
+          </Button>
+        </div>
       </div>
 
       {/* Context */}

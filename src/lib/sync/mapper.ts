@@ -125,7 +125,8 @@ export function toSupabaseFavorite(item: FavoriteItem, userId: string): Record<s
     normalized_text: item.normalizedText,
     translation: item.translation,
     type: item.type,
-    folder_id: item.folderId,
+    folder_ids: item.folderIds,
+    folder_id: item.folderIds[0] ?? 'default',
     source_content_id: item.sourceContentId ?? null,
     source_module: item.sourceModule ?? null,
     context: item.context ?? null,
@@ -136,6 +137,10 @@ export function toSupabaseFavorite(item: FavoriteItem, userId: string): Record<s
     fsrs_card: item.fsrsCard ?? null,
     next_review: item.nextReview != null ? new Date(item.nextReview).toISOString() : null,
     auto_collected: item.autoCollected,
+    pos: item.pos ?? null,
+    tags: item.tags ?? [],
+    examples: item.examples ?? [],
+    has_image: item.hasImage ?? false,
     created_at: new Date(item.createdAt).toISOString(),
     updated_at: new Date(item.updatedAt).toISOString(),
   };
@@ -148,7 +153,10 @@ export function fromSupabaseFavorite(row: Record<string, unknown>): FavoriteItem
     normalizedText: row.normalized_text as string,
     translation: row.translation as string,
     type: row.type as FavoriteItem['type'],
-    folderId: row.folder_id as string,
+    folderIds:
+      Array.isArray(row.folder_ids) && row.folder_ids.length > 0
+        ? (row.folder_ids as string[])
+        : [(row.folder_id as string) ?? 'default'],
     sourceContentId: (row.source_content_id as string) ?? undefined,
     sourceModule: (row.source_module as FavoriteItem['sourceModule']) ?? undefined,
     context: (row.context as string) ?? undefined,
@@ -159,6 +167,10 @@ export function fromSupabaseFavorite(row: Record<string, unknown>): FavoriteItem
     fsrsCard: (row.fsrs_card as FavoriteItem['fsrsCard']) ?? undefined,
     nextReview: row.next_review != null ? new Date(row.next_review as string).getTime() : undefined,
     autoCollected: (row.auto_collected as boolean) ?? false,
+    pos: (row.pos as string) ?? undefined,
+    tags: Array.isArray(row.tags) && row.tags.length > 0 ? (row.tags as string[]) : undefined,
+    examples: Array.isArray(row.examples) && row.examples.length > 0 ? (row.examples as string[]) : undefined,
+    hasImage: (row.has_image as boolean) ?? false,
     createdAt: new Date(row.created_at as string).getTime(),
     updatedAt: new Date(row.updated_at as string).getTime(),
   };

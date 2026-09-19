@@ -1,7 +1,8 @@
 'use client';
 
-import { List, Plus, Type as TypeIcon } from 'lucide-react';
+import { ImagePlus, List, Plus, Type as TypeIcon } from 'lucide-react';
 import { useState } from 'react';
+import { TagSelector } from '@/components/shared/tag-selector';
 import { Button } from '@/components/ui/button';
 import {
   Dialog,
@@ -14,6 +15,7 @@ import {
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { useI18n } from '@/lib/i18n/use-i18n';
+import { cn } from '@/lib/utils';
 import { useFavoriteStore } from '@/stores/favorite-store';
 import { useTTSStore } from '@/stores/tts-store';
 import type { FavoriteType } from '@/types/favorite';
@@ -23,11 +25,17 @@ interface AddFavoriteDialogProps {
   onOpenChange: (open: boolean) => void;
 }
 
+const POS_OPTIONS = ['noun', 'verb', 'adjective', 'adverb', 'phrase', 'idiom'] as const;
+
 function inferFavoriteType(text: string): FavoriteType {
   const words = text.trim().split(/\s+/).filter(Boolean);
   if (words.length <= 1) return 'word';
   if (words.length <= 6) return 'phrase';
   return 'sentence';
+}
+
+function toggleInArray(list: string[], value: string): string[] {
+  return list.includes(value) ? list.filter((v) => v !== value) : [...list, value];
 }
 
 async function translateOne(text: string, targetLang: string): Promise<string> {
@@ -61,18 +69,61 @@ async function translateBatch(texts: string[], targetLang: string): Promise<stri
   }
 }
 
+function FolderPicker({
+  folders,
+  selected,
+  onToggle,
+  label,
+}: {
+  folders: { id: string; emoji: string; name: string }[];
+  selected: string[];
+  onToggle: (id: string) => void;
+  label: string;
+}) {
+  if (folders.length === 0) return null;
+  return (
+    <div>
+      <p className="text-sm font-medium text-indigo-700 mb-1">{label}</p>
+      <div className="flex gap-2 flex-wrap">
+        {folders.map((f) => {
+          const active = selected.includes(f.id);
+          return (
+            <Button
+              key={f.id}
+              type="button"
+              variant={active ? 'default' : 'outline'}
+              size="sm"
+              onClick={() => onToggle(f.id)}
+              className={active ? 'bg-indigo-600 cursor-pointer' : 'border-indigo-200 text-indigo-600 cursor-pointer'}
+            >
+              {f.emoji} {f.name}
+            </Button>
+          );
+        })}
+      </div>
+    </div>
+  );
+}
+
 export function AddFavoriteDialog({ open, onOpenChange }: AddFavoriteDialogProps) {
   const { addFavorite, folders, activeFolderId } = useFavoriteStore();
   const targetLang = useTTSStore((s) => s.targetLang);
   const { messages } = useI18n('favorites');
   const [mode, setMode] = useState<'single' | 'batch'>('single');
 
+  const defaultFolderIds = activeFolderId ? [activeFolderId] : ['default'];
+
   const [text, setText] = useState('');
   const [translation, setTranslation] = useState('');
-  const [folderId, setFolderId] = useState(activeFolderId ?? 'default');
+  const [folderIds, setFolderIds] = useState<string[]>(defaultFolderIds);
+  const [pos, setPos] = useState<string>('');
+  const [tagsValue, setTagsValue] = useState('');
+  const [examplesText, setExamplesText] = useState('');
+  const [hasImage, setHasImage] = useState(false);
 
   const [batchText, setBatchText] = useState('');
-  const [batchFolderId, setBatchFolderId] = useState(activeFolderId ?? 'default');
+  const [batchFolderIds, setBatchFolderIds] = useState<string[]>(defaultFolderIds);
+  const [batchTagsValue, setBatchTagsValue] = useState('');
 
   const [saving, setSaving] = useState(false);
 
@@ -84,9 +135,14 @@ export function AddFavoriteDialog({ open, onOpenChange }: AddFavoriteDialogProps
   const resetForm = () => {
     setText('');
     setTranslation('');
-    setFolderId(activeFolderId ?? 'default');
+    setFolderIds(defaultFolderIds);
+    setPos('');
+    setTagsValue('');
+    setExamplesText('');
+    setHasImage(false);
     setBatchText('');
-    setBatchFolderId(activeFolderId ?? 'default');
+    setBatchFolderIds(defaultFolderIds);
+    setBatchTagsValue('');
     setSaving(false);
   };
 
@@ -100,11 +156,23 @@ export function AddFavoriteDialog({ open, onOpenChange }: AddFavoriteDialogProps
     if (!trimmed) return;
     setSaving(true);
     const finalTranslation = translation.trim() || (await translateOne(trimmed, targetLang));
+    const examples = examplesText
+      .split('\n')
+      .map((l) => l.trim())
+      .filter(Boolean);
+    const tags = tagsValue
+      .split(',')
+      .map((t) => t.trim())
+      .filter(Boolean);
     await addFavorite({
       text: trimmed,
       translation: finalTranslation,
       type: inferFavoriteType(trimmed),
-      folderId,
+      folderIds: folderIds.length > 0 ? folderIds : ['default'],
+      pos: pos || undefined,
+      tags: tags.length > 0 ? tags : undefined,
+      examples: examples.length > 0 ? examples : undefined,
+      hasImage,
       sourceModule: 'library',
       targetLang,
     });
@@ -115,13 +183,18 @@ export function AddFavoriteDialog({ open, onOpenChange }: AddFavoriteDialogProps
     if (batchLines.length === 0) return;
     setSaving(true);
     const translations = await translateBatch(batchLines, targetLang);
+    const tags = batchTagsValue
+      .split(',')
+      .map((t) => t.trim())
+      .filter(Boolean);
     for (let i = 0; i < batchLines.length; i++) {
       const line = batchLines[i]!;
       await addFavorite({
         text: line,
         translation: translations[i] || '',
         type: inferFavoriteType(line),
-        folderId: batchFolderId,
+        folderIds: batchFolderIds.length > 0 ? batchFolderIds : ['default'],
+        tags: tags.length > 0 ? tags : undefined,
         sourceModule: 'library',
         targetLang,
       });
@@ -187,28 +260,65 @@ export function AddFavoriteDialog({ open, onOpenChange }: AddFavoriteDialogProps
               />
             </div>
 
-            {folders.length > 0 && (
-              <div>
-                <p className="text-sm font-medium text-indigo-700 mb-1">{messages.folder}</p>
-                <div className="flex gap-2 flex-wrap">
-                  {folders.map((f) => (
-                    <Button
-                      key={f.id}
-                      variant={folderId === f.id ? 'default' : 'outline'}
-                      size="sm"
-                      onClick={() => setFolderId(f.id)}
-                      className={
-                        folderId === f.id
-                          ? 'bg-indigo-600 cursor-pointer'
-                          : 'border-indigo-200 text-indigo-600 cursor-pointer'
-                      }
-                    >
-                      {f.emoji} {f.name}
-                    </Button>
-                  ))}
-                </div>
+            <FolderPicker
+              folders={folders}
+              selected={folderIds}
+              onToggle={(id) => setFolderIds((prev) => toggleInArray(prev, id))}
+              label={messages.folder}
+            />
+
+            <div>
+              <p className="text-sm font-medium text-indigo-700 mb-1">{messages.pos}</p>
+              <div className="flex gap-2 flex-wrap">
+                {POS_OPTIONS.map((p) => (
+                  <Button
+                    key={p}
+                    type="button"
+                    variant={pos === p ? 'default' : 'outline'}
+                    size="sm"
+                    onClick={() => setPos(pos === p ? '' : p)}
+                    className={
+                      pos === p ? 'bg-indigo-600 cursor-pointer' : 'border-indigo-200 text-indigo-600 cursor-pointer'
+                    }
+                  >
+                    {messages[`pos_${p}` as keyof typeof messages] as string}
+                  </Button>
+                ))}
               </div>
-            )}
+            </div>
+
+            <div>
+              <p className="text-sm font-medium text-indigo-700 mb-1">{messages.tags}</p>
+              <TagSelector value={tagsValue} onChange={setTagsValue} className="bg-white/50 border-indigo-200" />
+            </div>
+
+            <div>
+              <label htmlFor="add-favorite-examples" className="text-sm font-medium text-indigo-700 mb-1 block">
+                {messages.labelExamples}
+              </label>
+              <Textarea
+                id="add-favorite-examples"
+                value={examplesText}
+                onChange={(e) => setExamplesText(e.target.value)}
+                placeholder={messages.placeholderExamples}
+                rows={3}
+                className="bg-white/50 border-indigo-200"
+              />
+            </div>
+
+            <Button
+              type="button"
+              variant={hasImage ? 'default' : 'outline'}
+              size="sm"
+              onClick={() => setHasImage((v) => !v)}
+              className={cn(
+                'gap-1.5',
+                hasImage ? 'bg-indigo-600 cursor-pointer' : 'border-indigo-200 text-indigo-600 cursor-pointer',
+              )}
+            >
+              <ImagePlus className="h-3.5 w-3.5" />
+              {messages.addImage}
+            </Button>
 
             <DialogFooter>
               <Button
@@ -255,28 +365,21 @@ export function AddFavoriteDialog({ open, onOpenChange }: AddFavoriteDialogProps
               )}
             </div>
 
-            {folders.length > 0 && (
-              <div>
-                <p className="text-sm font-medium text-indigo-700 mb-1">{messages.folder}</p>
-                <div className="flex gap-2 flex-wrap">
-                  {folders.map((f) => (
-                    <Button
-                      key={f.id}
-                      variant={batchFolderId === f.id ? 'default' : 'outline'}
-                      size="sm"
-                      onClick={() => setBatchFolderId(f.id)}
-                      className={
-                        batchFolderId === f.id
-                          ? 'bg-indigo-600 cursor-pointer'
-                          : 'border-indigo-200 text-indigo-600 cursor-pointer'
-                      }
-                    >
-                      {f.emoji} {f.name}
-                    </Button>
-                  ))}
-                </div>
-              </div>
-            )}
+            <FolderPicker
+              folders={folders}
+              selected={batchFolderIds}
+              onToggle={(id) => setBatchFolderIds((prev) => toggleInArray(prev, id))}
+              label={messages.folder}
+            />
+
+            <div>
+              <p className="text-sm font-medium text-indigo-700 mb-1">{messages.tags}</p>
+              <TagSelector
+                value={batchTagsValue}
+                onChange={setBatchTagsValue}
+                className="bg-white/50 border-indigo-200"
+              />
+            </div>
 
             <DialogFooter>
               <Button

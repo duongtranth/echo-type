@@ -217,7 +217,7 @@ export const useJournalStore = create<JournalStore>((set, get) => ({
       text: turn.text,
       translation: turn.translation ?? '',
       type: classifyFavoriteType(turn.text),
-      folderId: 'default',
+      folderIds: ['default'],
       sourceModule: 'journal',
       sourceContentId: journalId,
       context: journal.title,

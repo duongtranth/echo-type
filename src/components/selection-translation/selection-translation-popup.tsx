@@ -87,6 +87,7 @@ export const SelectionTranslationPopup = forwardRef<HTMLDivElement, Props>(
     const addFavorite = useFavoriteStore((s) => s.addFavorite);
     const removeFavorite = useFavoriteStore((s) => s.removeFavorite);
     const updateFavorite = useFavoriteStore((s) => s.updateFavorite);
+    const updateFavoriteFolders = useFavoriteStore((s) => s.updateFavoriteFolders);
     const addFolder = useFavoriteStore((s) => s.addFolder);
     const loadFavorites = useFavoriteStore((s) => s.loadFavorites);
     const isFavoritesLoaded = useFavoriteStore((s) => s.isLoaded);
@@ -259,18 +260,21 @@ export const SelectionTranslationPopup = forwardRef<HTMLDivElement, Props>(
         setFavoriteError(null);
         if (favoriteAction === 'remove' && existingFavorite) {
           try {
-            await removeFavorite(existingFavorite.id);
+            const remaining = existingFavorite.folderIds.filter((id) => id !== selectedFolderId);
+            if (remaining.length === 0) {
+              await removeFavorite(existingFavorite.id);
+            } else {
+              await updateFavoriteFolders(existingFavorite.id, remaining);
+            }
           } catch (err) {
             setFavoriteError(err instanceof Error ? err.message : 'Failed to remove favorite');
           }
-        } else if (favoriteAction === 'move' && existingFavorite) {
+        } else if (favoriteAction === 'addFolder' && existingFavorite) {
           try {
-            await updateFavorite(existingFavorite.id, {
-              folderId: selectedFolderId,
-              autoCollected: false,
-            });
+            await updateFavoriteFolders(existingFavorite.id, [...existingFavorite.folderIds, selectedFolderId]);
+            await updateFavorite(existingFavorite.id, { autoCollected: false });
           } catch (err) {
-            setFavoriteError(err instanceof Error ? err.message : 'Failed to move favorite');
+            setFavoriteError(err instanceof Error ? err.message : 'Failed to add folder to favorite');
           }
         } else if (result) {
           const translatedText = result.itemTranslation || result.translation;
@@ -279,7 +283,7 @@ export const SelectionTranslationPopup = forwardRef<HTMLDivElement, Props>(
               text: selection.favoriteText,
               translation: translatedText,
               type: selection.type,
-              folderId: selectedFolderId,
+              folderIds: [selectedFolderId],
               sourceContentId: selection.sourceContentId,
               sourceModule: selection.sourceModule as any,
               context: selection.context,
@@ -512,9 +516,9 @@ export const SelectionTranslationPopup = forwardRef<HTMLDivElement, Props>(
                   onClick={handleFavorite}
                 >
                   {favoriteAction === 'remove'
-                    ? 'Bỏ yêu thích'
-                    : favoriteAction === 'move'
-                      ? 'Chuyển vào thư mục này'
+                    ? 'Bỏ khỏi thư mục này'
+                    : favoriteAction === 'addFolder'
+                      ? 'Thêm vào thư mục này'
                       : '♡ Yêu thích'}
                 </Button>
               </div>
