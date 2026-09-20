@@ -55,6 +55,22 @@ async function translateOne(text: string, targetLang: string): Promise<string> {
   }
 }
 
+interface WordInfo {
+  phonetic?: string;
+  pos?: string;
+}
+
+async function fetchWordInfo(word: string): Promise<WordInfo> {
+  try {
+    const response = await fetch(`/api/words/explore?word=${encodeURIComponent(word)}`);
+    if (!response.ok) return {};
+    const data = (await response.json()) as { phonetic?: string; senses?: Array<{ pos?: string }> };
+    return { phonetic: data.phonetic || undefined, pos: data.senses?.[0]?.pos || undefined };
+  } catch {
+    return {};
+  }
+}
+
 async function translateBatch(texts: string[], targetLang: string): Promise<string[]> {
   if (texts.length === 0) return [];
   try {
@@ -162,7 +178,11 @@ export function AddFavoriteDialog({ open, onOpenChange }: AddFavoriteDialogProps
     const trimmed = text.trim();
     if (!trimmed || wordCount(trimmed) > MAX_WORDS) return;
     setSaving(true);
-    const finalTranslation = translation.trim() || (await translateOne(trimmed, targetLang));
+    const isSingleWord = wordCount(trimmed) === 1;
+    const [finalTranslation, wordInfo] = await Promise.all([
+      translation.trim() || translateOne(trimmed, targetLang),
+      isSingleWord ? fetchWordInfo(trimmed) : Promise.resolve<WordInfo>({}),
+    ]);
     const examples = examplesText
       .split('\n')
       .map((l) => l.trim())
@@ -176,7 +196,8 @@ export function AddFavoriteDialog({ open, onOpenChange }: AddFavoriteDialogProps
       translation: finalTranslation,
       type: inferFavoriteType(trimmed),
       folderIds: folderIds.length > 0 ? folderIds : ['default'],
-      pos: pos || undefined,
+      pos: pos || wordInfo.pos || undefined,
+      pronunciation: wordInfo.phonetic || undefined,
       tags: tags.length > 0 ? tags : undefined,
       examples: examples.length > 0 ? examples : undefined,
       hasImage,

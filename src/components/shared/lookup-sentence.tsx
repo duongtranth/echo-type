@@ -20,8 +20,13 @@ export function LookupSentence({ sentence, targetLang, excludeWord, className }:
     <span className={className}>
       {parts.map((part, index) => {
         const isWord = index % 2 === 1;
-        if (!isWord || part.toLowerCase() === excluded) {
-          return <Fragment key={`${index}-${part}`}>{part}</Fragment>;
+        if (!isWord) return <Fragment key={`${index}-${part}`}>{part}</Fragment>;
+        if (part.toLowerCase() === excluded) {
+          return (
+            <strong key={`${index}-${part}`} className="font-semibold text-slate-900">
+              {part}
+            </strong>
+          );
         }
         return (
           <WordLookup key={`${index}-${part}`} word={part.toLowerCase()} contextText={sentence} targetLang={targetLang}>

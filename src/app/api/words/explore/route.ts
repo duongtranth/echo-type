@@ -19,6 +19,12 @@ interface FreeDictionaryEntry {
   sourceUrls?: string[];
 }
 
+interface AccentPhonetic {
+  accent: 'UK' | 'US' | '';
+  text: string;
+  audio: string;
+}
+
 interface WiktionaryDefinition {
   definition?: string;
   examples?: string[];
@@ -118,6 +124,29 @@ function extractPhonetic(entries: FreeDictionaryEntry[]): string {
   return '';
 }
 
+function extractAccentPhonetics(entries: FreeDictionaryEntry[]): AccentPhonetic[] {
+  const seen = new Set<string>();
+  const results: AccentPhonetic[] = [];
+  for (const entry of entries) {
+    for (const item of entry.phonetics ?? []) {
+      const text = item.text?.trim() || '';
+      const audio = item.audio?.trim() || '';
+      if (!text && !audio) continue;
+      const key = `${text}::${audio}`;
+      if (seen.has(key)) continue;
+      seen.add(key);
+      let accent: AccentPhonetic['accent'] = '';
+      if (/-uk\.mp3/i.test(audio)) accent = 'UK';
+      else if (/-us\.mp3/i.test(audio)) accent = 'US';
+      results.push({ accent, text, audio });
+    }
+  }
+  // Prefer accent-tagged entries first (UK, then US), then anything unlabeled, capped at 2.
+  return [...results.filter((p) => p.accent === 'UK'), ...results.filter((p) => p.accent === 'US')]
+    .concat(results.filter((p) => !p.accent))
+    .slice(0, 2);
+}
+
 function extractAudio(entries: FreeDictionaryEntry[]): string {
   for (const entry of entries) {
     const audio = entry.phonetics?.find((item) => item.audio?.trim())?.audio;
@@ -152,27 +181,30 @@ function buildFreeDictionarySenses(entries: FreeDictionaryEntry[]): ExplorerSens
 async function fetchFreeDictionary(word: string): Promise<{
   senses: ExplorerSense[];
   phonetic: string;
+  phonetics: AccentPhonetic[];
   audioUrl: string;
   sourceUrl: string;
 }> {
+  const empty = { senses: [], phonetic: '', phonetics: [], audioUrl: '', sourceUrl: '' };
   try {
     const response = await fetch(`https://api.dictionaryapi.dev/api/v2/entries/en/${encodeURIComponent(word)}`, {
       signal: AbortSignal.timeout(6000),
       next: { revalidate: 86400 },
     });
-    if (!response.ok) return { senses: [], phonetic: '', audioUrl: '', sourceUrl: '' };
+    if (!response.ok) return empty;
 
     const entries = (await response.json()) as FreeDictionaryEntry[];
-    if (!Array.isArray(entries)) return { senses: [], phonetic: '', audioUrl: '', sourceUrl: '' };
+    if (!Array.isArray(entries)) return empty;
 
     return {
       senses: buildFreeDictionarySenses(entries),
       phonetic: extractPhonetic(entries),
+      phonetics: extractAccentPhonetics(entries),
       audioUrl: extractAudio(entries),
       sourceUrl: entries.flatMap((entry) => entry.sourceUrls ?? [])[0] ?? '',
     };
   } catch {
-    return { senses: [], phonetic: '', audioUrl: '', sourceUrl: '' };
+    return empty;
   }
 }
 
@@ -408,6 +440,7 @@ export async function GET(request: Request) {
     {
       word,
       phonetic: dictionary.phonetic,
+      phonetics: dictionary.phonetics,
       audioUrl: dictionary.audioUrl,
       senses,
       synonyms: unique([...senseSynonyms, ...mapWords(synonyms)], 16),

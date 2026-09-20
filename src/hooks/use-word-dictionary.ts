@@ -19,9 +19,16 @@ interface ExplorerRealWorldExample {
   translationVi: string;
 }
 
+export interface AccentPhonetic {
+  accent: 'UK' | 'US' | '';
+  text: string;
+  audio: string;
+}
+
 interface ExplorerApiResponse {
   word: string;
   phonetic?: string;
+  phonetics?: AccentPhonetic[];
   audioUrl?: string;
   senses?: ExplorerSense[];
   synonyms?: string[];
@@ -59,6 +66,7 @@ export interface WordFamilyItem {
 interface CachedResult {
   translation: string;
   phonetic: string;
+  phonetics: AccentPhonetic[];
   pos: string;
   meanings: WordMeaning[];
   example: string;
@@ -143,6 +151,7 @@ function emptyResult(): CachedResult {
   return {
     translation: '',
     phonetic: '',
+    phonetics: [],
     pos: '',
     meanings: [],
     example: '',
@@ -387,6 +396,7 @@ export function useWordDictionary(
         next = {
           translation,
           phonetic: explorer.phonetic ?? '',
+          phonetics: explorer.phonetics ?? [],
           pos: contextMeaning?.pos ?? meanings[0]?.pos ?? '',
           meanings,
           example,

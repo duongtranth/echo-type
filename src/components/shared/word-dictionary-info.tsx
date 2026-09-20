@@ -1,9 +1,9 @@
 'use client';
 
-import { BookOpen, ChevronDown, ChevronUp, ExternalLink, Loader2, Sparkles } from 'lucide-react';
+import { BookOpen, ChevronDown, ChevronUp, ExternalLink, Loader2, Sparkles, Volume2 } from 'lucide-react';
 import { useEffect, useMemo, useState } from 'react';
 import { LookupSentence } from '@/components/shared/lookup-sentence';
-import { useWordDictionary, type WordMeaning } from '@/hooks/use-word-dictionary';
+import { type AccentPhonetic, useWordDictionary, type WordMeaning } from '@/hooks/use-word-dictionary';
 import { formatInterval } from '@/lib/fsrs';
 import { createWordSenseId, getWordSenseProgressMap, setWordSenseStatus } from '@/lib/word-sense-progress';
 import { usePracticeTranslationStore } from '@/stores/practice-translation-store';
@@ -63,6 +63,37 @@ const SENSE_STATUS_OPTIONS: Array<{
 
 function abbreviatePos(pos: string): string {
   return POS_ABBR[pos.toLowerCase()] || pos;
+}
+
+function PhoneticRow({ phonetics, phonetic }: { phonetics: AccentPhonetic[]; phonetic: string }) {
+  const playAudio = (url: string) => {
+    if (!url) return;
+    void new Audio(url).play().catch(() => undefined);
+  };
+
+  if (phonetics.length > 0) {
+    return (
+      <div className="flex flex-wrap items-center justify-center gap-x-4 gap-y-1">
+        {phonetics.map((p) => (
+          <button
+            key={`${p.accent}-${p.text}`}
+            type="button"
+            onClick={() => playAudio(p.audio)}
+            disabled={!p.audio}
+            className="flex items-center gap-1 text-sm text-indigo-500 disabled:cursor-default"
+          >
+            {p.accent && (
+              <span className="text-[10px] font-bold uppercase tracking-wide text-slate-400">{p.accent}</span>
+            )}
+            {p.audio && <Volume2 className="h-3.5 w-3.5" />}
+            <span>{p.text || phonetic}</span>
+          </button>
+        ))}
+      </div>
+    );
+  }
+
+  return phonetic ? <span className="text-sm text-indigo-500">{phonetic}</span> : null;
 }
 
 function posLabel(pos: string): string {
@@ -152,6 +183,7 @@ export function WordDictionaryInfo({ word, targetLang, module, contextText }: Wo
   const showTranslation = usePracticeTranslationStore((state) => state.isVisible(module));
   const {
     phonetic,
+    phonetics,
     pos,
     meanings,
     translation,
@@ -226,7 +258,7 @@ export function WordDictionaryInfo({ word, targetLang, module, contextText }: Wo
   };
 
   const hasMeanings = showTranslation && meanings.length > 0;
-  const hasPhoneticOrPos = phonetic || pos;
+  const hasPhoneticOrPos = phonetic || phonetics.length > 0 || pos;
   const hasTranslationSummary =
     showTranslation && translation && (!hasMeanings || !meaningContainsTranslation(meanings, translation));
   const hasExplorerData =
@@ -253,10 +285,9 @@ export function WordDictionaryInfo({ word, targetLang, module, contextText }: Wo
   return (
     <div className="space-y-2">
       {hasPhoneticOrPos && (
-        <div className="min-h-[1.5rem] flex items-center justify-center gap-1.5">
-          {phonetic && <span className="text-sm text-indigo-500">{phonetic}</span>}
-          {phonetic && pos && <span className="text-xs text-slate-300">·</span>}
-          {pos && <span className="text-xs text-slate-400">{posLabel(pos)}</span>}
+        <div className="flex flex-col items-center gap-1">
+          {pos && <span className="text-xs italic text-slate-400">{posLabel(pos)}</span>}
+          <PhoneticRow phonetics={phonetics} phonetic={phonetic} />
         </div>
       )}
 
@@ -350,7 +381,13 @@ export function WordDictionaryInfo({ word, targetLang, module, contextText }: Wo
                                 <div className="mt-2 space-y-1.5 border-l-2 border-indigo-100 pl-3">
                                   {meaning.examples.map((example) => (
                                     <div key={example.text}>
-                                      <p className="text-xs italic leading-5 text-slate-700">{example.text}</p>
+                                      <p className="text-xs italic leading-5 text-slate-700">
+                                        <LookupSentence
+                                          sentence={example.text}
+                                          targetLang={targetLang}
+                                          excludeWord={word}
+                                        />
+                                      </p>
                                       {example.translation && (
                                         <p className="text-xs leading-5 text-indigo-500">{example.translation}</p>
                                       )}
@@ -420,7 +457,9 @@ export function WordDictionaryInfo({ word, targetLang, module, contextText }: Wo
               <div className="space-y-2.5">
                 {realWorldExamples.map((example) => (
                   <div key={example.text} className="rounded-lg border border-emerald-100 bg-emerald-50/40 px-3 py-2">
-                    <p className="text-sm leading-5 text-slate-800 italic">{example.text}</p>
+                    <p className="text-sm leading-5 text-slate-800 italic">
+                      <LookupSentence sentence={example.text} targetLang={targetLang} excludeWord={word} />
+                    </p>
                     {example.translation && (
                       <p className="mt-0.5 text-xs leading-5 text-emerald-600">{example.translation}</p>
                     )}

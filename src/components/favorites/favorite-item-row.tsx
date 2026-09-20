@@ -2,6 +2,7 @@
 
 import { Trash2, Volume2 } from 'lucide-react';
 import { IOS_PILL_CLASS } from '@/components/shared/ios-native-ui';
+import { POS_ABBR } from '@/components/shared/word-lookup';
 import { Button } from '@/components/ui/button';
 import { detectIOSNativeHost } from '@/lib/tauri';
 import { cn } from '@/lib/utils';
@@ -91,7 +92,7 @@ export function FavoriteItemRow({ item, isExpanded, onToggle }: Props) {
             isIOSNativeHost ? 'px-2.5 py-1' : 'px-1.5 py-0.5 rounded',
           )}
         >
-          {item.pos}
+          {POS_ABBR[item.pos.toLowerCase()] || item.pos}
         </span>
       )}
       {item.tags?.slice(0, 2).map((tag) => (

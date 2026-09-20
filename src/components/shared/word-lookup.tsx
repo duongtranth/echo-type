@@ -10,7 +10,7 @@ import { useTTS } from '@/hooks/use-tts';
 import { useWordDictionary } from '@/hooks/use-word-dictionary';
 import { cn } from '@/lib/utils';
 
-const POS_ABBR: Record<string, string> = {
+export const POS_ABBR: Record<string, string> = {
   noun: 'n.',
   verb: 'v.',
   adjective: 'adj.',
