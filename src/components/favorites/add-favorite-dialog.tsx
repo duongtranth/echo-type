@@ -26,12 +26,14 @@ interface AddFavoriteDialogProps {
 }
 
 const POS_OPTIONS = ['noun', 'verb', 'adjective', 'adverb', 'phrase', 'idiom'] as const;
+const MAX_WORDS = 6;
+
+function wordCount(text: string): number {
+  return text.trim().split(/\s+/).filter(Boolean).length;
+}
 
 function inferFavoriteType(text: string): FavoriteType {
-  const words = text.trim().split(/\s+/).filter(Boolean);
-  if (words.length <= 1) return 'word';
-  if (words.length <= 6) return 'phrase';
-  return 'sentence';
+  return wordCount(text) <= 1 ? 'word' : 'phrase';
 }
 
 function toggleInArray(list: string[], value: string): string[] {
@@ -127,10 +129,15 @@ export function AddFavoriteDialog({ open, onOpenChange }: AddFavoriteDialogProps
 
   const [saving, setSaving] = useState(false);
 
-  const batchLines = batchText
+  const trimmedText = text.trim();
+  const isTextTooLong = trimmedText.length > 0 && wordCount(trimmedText) > MAX_WORDS;
+
+  const allBatchLines = batchText
     .split('\n')
     .map((l) => l.trim())
     .filter(Boolean);
+  const batchLines = allBatchLines.filter((line) => wordCount(line) <= MAX_WORDS);
+  const skippedBatchLines = allBatchLines.length - batchLines.length;
 
   const resetForm = () => {
     setText('');
@@ -153,7 +160,7 @@ export function AddFavoriteDialog({ open, onOpenChange }: AddFavoriteDialogProps
 
   const handleSaveSingle = async () => {
     const trimmed = text.trim();
-    if (!trimmed) return;
+    if (!trimmed || wordCount(trimmed) > MAX_WORDS) return;
     setSaving(true);
     const finalTranslation = translation.trim() || (await translateOne(trimmed, targetLang));
     const examples = examplesText
@@ -242,9 +249,10 @@ export function AddFavoriteDialog({ open, onOpenChange }: AddFavoriteDialogProps
                 value={text}
                 onChange={(e) => setText(e.target.value)}
                 placeholder={messages.placeholderText}
-                className="bg-white/50 border-indigo-200"
+                className={cn('bg-white/50 border-indigo-200', isTextTooLong && 'border-red-300')}
                 autoFocus
               />
+              {isTextTooLong && <p className="mt-1 text-xs text-red-500">{messages.tooLongSingle}</p>}
             </div>
 
             <div>
@@ -323,7 +331,7 @@ export function AddFavoriteDialog({ open, onOpenChange }: AddFavoriteDialogProps
             <DialogFooter>
               <Button
                 onClick={handleSaveSingle}
-                disabled={!text.trim() || saving}
+                disabled={!text.trim() || isTextTooLong || saving}
                 className="w-full bg-green-500 hover:bg-green-600 text-white cursor-pointer"
               >
                 {saving ? (
@@ -361,6 +369,13 @@ export function AddFavoriteDialog({ open, onOpenChange }: AddFavoriteDialogProps
                   {batchLines.length === 1
                     ? messages.itemsDetected.replace('{{count}}', '1')
                     : messages.itemsDetectedPlural.replace('{{count}}', String(batchLines.length))}
+                </p>
+              )}
+              {skippedBatchLines > 0 && (
+                <p className="text-xs text-red-500 mt-1">
+                  {skippedBatchLines === 1
+                    ? messages.tooLongBatchSkipped.replace('{{count}}', '1')
+                    : messages.tooLongBatchSkippedPlural.replace('{{count}}', String(skippedBatchLines))}
                 </p>
               )}
             </div>
